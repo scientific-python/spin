@@ -1,6 +1,6 @@
 [project]
 name = "dev.py"
-version = "0.0dev0"
+version = "0.1a1.dev0"
 description = "Developer tool for scientific Python libraries"
 license = {file = "LICENSE"}
 maintainers = [
