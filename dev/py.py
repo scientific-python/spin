@@ -9,6 +9,17 @@ from . import cmds
 from .cmds import *
 
 
+class DotDict(dict):
+    def __getitem__(self, key):
+        subitem = self
+        for subkey in key.split('.'):
+            try:
+                subitem = dict.__getitem__(subitem, subkey)
+            except KeyError:
+                raise KeyError(f'`{key}` not found in configuration') from None
+        return subitem
+
+
 if __name__ == "__main__":
     if not os.path.exists("pyproject.toml"):
         print("Error: cannot find [pyproject.toml]")
@@ -35,8 +46,9 @@ if __name__ == "__main__":
     }
 
     @click.group(help=f"Developer tool for {project_config['name']}")
-    def group():
-        pass
+    @click.pass_context
+    def group(ctx):
+        ctx.meta['config'] = DotDict(toml_config)
 
     for cmd in config["commands"]:
         group.add_command(commands[cmd])
