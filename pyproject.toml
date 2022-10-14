@@ -4,7 +4,7 @@ version = "0.1a1.dev0"
 description = "Developer tool for scientific Python libraries"
 license = {file = "LICENSE"}
 maintainers = [
-  {name = "Scientific Python", email = "dev.py@scientific-python.org"}
+  {name = "Scientific Python", email = "dev.py@discuss.scientific-python.org"}
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -14,6 +14,9 @@ dependencies = [
   "click",
   "toml"
 ]
+
+[project.optional-dependencies]
+lint = ["pre-commit >= 2.20"]
 
 [project.urls]
 homepage = "https://github.com/scientific-python/dev.py"
