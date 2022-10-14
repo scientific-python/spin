@@ -1,6 +1,11 @@
+[build-system]
+requires = ["flit_core >=3.7,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "dev.py"
 version = "0.1a1.dev0"
+requires-python = ">=3.7"
 description = "Developer tool for scientific Python libraries"
 license = {file = "LICENSE"}
 maintainers = [
