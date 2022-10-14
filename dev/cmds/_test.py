@@ -1,3 +1,4 @@
+import os
 import click
 
 from .util import run, get_config, get_site_packages
@@ -21,4 +22,12 @@ def test(build_dir, pytest_args):
         pytest_args = (cfg['tool.dev.py.package'],)
 
     p = get_site_packages(build_dir)
-    run(["pytest", f"--rootdir={p}"] + list(pytest_args), cwd=p)
+
+    env = os.environ
+    if 'PYTHONPATH' in env:
+        env['PYTHONPATH'] = f"{p}{os.pathsep}{env['PYTHONPATH']}"
+    else:
+        env['PYTHONPATH'] = p
+
+    print(f"$ export PYTHONPATH=\"{env['PYTHONPATH']}\"")
+    run(["pytest", f"--rootdir={p}"] + list(pytest_args), cwd=p, env=env)
