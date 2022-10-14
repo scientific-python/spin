@@ -1,8 +1,5 @@
-import subprocess
 import os
-
 import click
-
 from .util import run
 
 
@@ -19,4 +16,4 @@ def build(build_dir, jobs=None):
         build_cmd += ["--reconfigure"]
     run(build_cmd)
     run(["ninja", "-C", build_dir])
-    run(["meson", f"--prefix={build_dir}", "install"])
+    run(["meson", "install", f"-C", build_dir])
