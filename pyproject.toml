@@ -1,0 +1,22 @@
+[project]
+name = "dev.py"
+version = "0.0dev0"
+description = "Developer tool for scientific Python libraries"
+license = {file = "LICENSE"}
+maintainers = [
+  {name = "Scientific Python", email = "dev.py@scientific-python.org"}
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+dependencies = [
+  "click",
+  "toml"
+]
+
+[project.urls]
+homepage = "https://github.com/scientific-python/dev.py"
+
+[tool.dev.py]
+commands = ["dev.py.build", "dev.py.test"]
