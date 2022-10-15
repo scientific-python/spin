@@ -5,13 +5,11 @@ from pathlib import Path
 
 
 def run(cmd, cwd=None, replace=False, *args, **kwargs):
-    env = kwargs.pop('env', os.environ)
     if cwd:
         print(f"$ cd {cwd}")
     print(f"$ {' '.join(cmd)}")
     if replace:
-        print(env['PYTHONPATH'])
-        os.execvpe(cmd[0], cmd, env=env, *args, **kwargs)
+        os.execvp(cmd[0], cmd, *args, **kwargs)
     else:
         subprocess.run(cmd, cwd=cwd, *args, **kwargs)
 

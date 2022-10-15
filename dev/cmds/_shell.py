@@ -32,13 +32,17 @@ def shell(build_dir, shell_args=[]):
     SHELL_ARGS are passed through directly to the shell, e.g.:
 
     ./dev.py shell -- -c 'echo $PYTHONPATH'
+
+    Ensure that your shell init file (e.g., ~/.zshrc) does not override
+    the PYTHONPATH.
     """
     p = set_pythonpath(build_dir)
     shell = os.environ.get('SHELL', 'sh')
     cmd = [shell] + list(shell_args)
-    print(f'💻 New shell with PYTHONPATH="{p}"')
-    print(f'   Change directory to avoid importing source instead of built package')
-    run(cmd, env=os.environ, replace=True)
+    print(f'💻 Launching shell with PYTHONPATH="{p}"')
+    print(f'⚠  Change directory to avoid importing source instead of built package')
+    print(f'⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH')
+    run(cmd, replace=True)
 
 
 @click.command()
