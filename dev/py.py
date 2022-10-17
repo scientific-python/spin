@@ -34,6 +34,11 @@ if __name__ == "__main__":
 
     try:
         project_config = toml_config["project"]
+    except KeyError:
+        print("No project section found in pyproject.toml")
+        sys.exit(1)
+
+    try:
         config = toml_config["tool"]["dev"]["py"]
     except KeyError:
         print("No configuration found in [pyproject.toml] for [tool.dev.py]")
