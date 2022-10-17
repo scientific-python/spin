@@ -1,4 +1,5 @@
 import os
+import sys
 import click
 
 from .util import run, get_config, set_pythonpath
@@ -19,7 +20,10 @@ def test(build_dir, pytest_args):
     cfg = get_config()
 
     if not pytest_args:
-        pytest_args = (cfg['tool.dev.py.package'],)
+        pytest_args = (cfg.get('tool.dev.py.package', None),)
+        if pytest_args == (None,):
+            print('Please specify `package = packagename` under `tool.dev.py` section of `pyproject.toml`')
+            sys.exit(1)
 
     p = set_pythonpath(build_dir)
 
