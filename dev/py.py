@@ -1,11 +1,13 @@
 import os
 import sys
+import importlib
 from glob import glob
 
 import click
 import toml
 
 from . import cmds
+from .cmds import util
 from .cmds import *
 
 
@@ -56,6 +58,23 @@ if __name__ == "__main__":
         ctx.meta['config'] = DotDict(toml_config)
 
     for cmd in config["commands"]:
+        if cmd not in commands:
+            try:
+                path, func = cmd.split(':')
+                spec = importlib.util.spec_from_file_location("custom", "custom/__init__.py")
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                cmd_func = getattr(mod, func)
+            except ImportError as e:
+                print(f"Could not load custom command `{cmd}`: {e}")
+                raise e
+
+            if cmd_func is None:
+                print(f"Could not load custom command `{cmd}`")
+                sys.exit(-1)
+
+            commands[cmd] = cmd_func
+
         group.add_command(commands[cmd])
 
     group()
