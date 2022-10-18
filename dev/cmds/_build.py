@@ -19,7 +19,10 @@ def build(build_dir, jobs=None):
     if os.path.exists(build_dir):
         flags += ["--reconfigure"]
     p = run(build_cmd + flags, capture_output=True)
-    print(p.stderr.decode("utf-8"))
+    if p.stderr:
+        print(p.stderr.decode("utf-8"))
+    if p.stdout:
+        print(p.stdout.decode("utf-8"))
     if b"does not contain a valid build tree" in p.stderr:
         click.confirm(
             f"Invalid build tree.\nOK to remove `{build_dir}` and try again?",
