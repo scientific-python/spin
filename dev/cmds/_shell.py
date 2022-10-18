@@ -37,11 +37,11 @@ def shell(build_dir, shell_args=[]):
     the PYTHONPATH.
     """
     p = set_pythonpath(build_dir)
-    shell = os.environ.get('SHELL', 'sh')
+    shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
-    print(f'⚠  Change directory to avoid importing source instead of built package')
-    print(f'⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH')
+    print(f"⚠  Change directory to avoid importing source instead of built package")
+    print(f"⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
     run(cmd, replace=True)
 
 
@@ -58,4 +58,14 @@ def python(build_dir, python_args):
     ./dev.py python -- -c 'import sys; print(sys.path)'
     """
     set_pythonpath(build_dir)
-    run(["/usr/bin/env", "python", "-i", "-c", "import sys; print(f\"Python {sys.version}\"); del(sys.path[0])"] + list(python_args), replace=True)
+    run(
+        [
+            "/usr/bin/env",
+            "python",
+            "-i",
+            "-c",
+            'import sys; print(f"Python {sys.version}"); del(sys.path[0])',
+        ]
+        + list(python_args),
+        replace=True,
+    )

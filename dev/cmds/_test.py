@@ -20,12 +20,14 @@ def test(build_dir, pytest_args):
     cfg = get_config()
 
     if not pytest_args:
-        pytest_args = (cfg.get('tool.dev.py.package', None),)
+        pytest_args = (cfg.get("tool.dev.py.package", None),)
         if pytest_args == (None,):
-            print('Please specify `package = packagename` under `tool.dev.py` section of `pyproject.toml`')
+            print(
+                "Please specify `package = packagename` under `tool.dev.py` section of `pyproject.toml`"
+            )
             sys.exit(1)
 
     p = set_pythonpath(build_dir)
 
-    print(f"$ export PYTHONPATH=\"{p}\"")
+    print(f'$ export PYTHONPATH="{p}"')
     run(["pytest", f"--rootdir={p}"] + list(pytest_args), cwd=p)

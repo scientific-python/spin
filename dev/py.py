@@ -14,11 +14,11 @@ from .cmds import *
 class DotDict(dict):
     def __getitem__(self, key):
         subitem = self
-        for subkey in key.split('.'):
+        for subkey in key.split("."):
             try:
                 subitem = dict.__getitem__(subitem, subkey)
             except KeyError:
-                raise KeyError(f'`{key}` not found in configuration') from None
+                raise KeyError(f"`{key}` not found in configuration") from None
         return subitem
 
 
@@ -55,13 +55,15 @@ if __name__ == "__main__":
     @click.group(help=f"Developer tool for {project_config['name']}")
     @click.pass_context
     def group(ctx):
-        ctx.meta['config'] = DotDict(toml_config)
+        ctx.meta["config"] = DotDict(toml_config)
 
     for cmd in config["commands"]:
         if cmd not in commands:
             try:
-                path, func = cmd.split(':')
-                spec = importlib.util.spec_from_file_location("custom", "custom/__init__.py")
+                path, func = cmd.split(":")
+                spec = importlib.util.spec_from_file_location(
+                    "custom", "custom/__init__.py"
+                )
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
                 cmd_func = getattr(mod, func)
