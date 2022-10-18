@@ -22,6 +22,9 @@ lint = ["pre-commit >= 2.20"]
 [project.urls]
 homepage = "https://github.com/scientific-python/dev.py"
 
+[tool.setuptools.packages.find]
+include = ["dev"]
+
 [tool.dev.py]
 package = 'dev'
 commands = ["dev.py.build", "dev.py.test", "dev.py.shell", "dev.py.ipython", "dev.py.python", "custom/__init__.py:example"]
