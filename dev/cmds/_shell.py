@@ -17,7 +17,8 @@ def ipython(build_dir, ipython_args):
 
     ./dev.py ipython -- -i myscript.py
     """
-    set_pythonpath(build_dir)
+    p = set_pythonpath(build_dir)
+    print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
@@ -57,7 +58,8 @@ def python(build_dir, python_args):
 
     ./dev.py python -- -c 'import sys; print(sys.path)'
     """
-    set_pythonpath(build_dir)
+    p = set_pythonpath(build_dir)
+    print(f'🐍 Launching Python with PYTHONPATH="{p}"')
     run(
         [
             "/usr/bin/env",
