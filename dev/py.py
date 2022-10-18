@@ -21,6 +21,12 @@ class DotDict(dict):
                 raise KeyError(f"`{key}` not found in configuration") from None
         return subitem
 
+    def get(self, key, default=None, /):
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return default
+
 
 if __name__ == "__main__":
     if not os.path.exists("pyproject.toml"):

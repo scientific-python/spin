@@ -11,8 +11,10 @@ def run(cmd, cwd=None, replace=False, *args, **kwargs):
     print(f"$ {' '.join(cmd)}")
     if replace:
         os.execvp(cmd[0], cmd, *args, **kwargs)
+        print(f"Failed to launch `{cmd}`")
+        sys.exit(-1)
     else:
-        subprocess.run(cmd, cwd=cwd, *args, **kwargs)
+        return subprocess.run(cmd, cwd=cwd, *args, **kwargs)
 
 
 def get_config():
