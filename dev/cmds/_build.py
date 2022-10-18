@@ -21,10 +21,10 @@ def build(build_dir, jobs=None):
     p = run(build_cmd + flags, capture_output=True)
     print(p.stderr.decode("utf-8"))
     if b"does not contain a valid build tree" in p.stderr:
-        if not click.confirm(
-            f"Invalid build tree.\nOK to remove `{build_dir}` and try again?"
-        ):
-            sys.exit(-1)
+        click.confirm(
+            f"Invalid build tree.\nOK to remove `{build_dir}` and try again?",
+            abort=True,
+        )
         shutil.rmtree(build_dir)
         p = run(build_cmd)
     if not p.returncode == 0:
