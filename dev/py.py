@@ -67,9 +67,7 @@ if __name__ == "__main__":
         if cmd not in commands:
             try:
                 path, func = cmd.split(":")
-                spec = importlib.util.spec_from_file_location(
-                    "custom", "custom/__init__.py"
-                )
+                spec = importlib.util.spec_from_file_location("custom_mod", path)
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
                 cmd_func = getattr(mod, func)
