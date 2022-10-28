@@ -23,7 +23,7 @@ lint = ["pre-commit >= 2.20"]
 homepage = "https://github.com/scientific-python/dev.py"
 
 [tool.setuptools.packages.find]
-include = ["dev"]
+include = ["dev*"]
 
 [tool.dev.py]
 package = 'dev'
