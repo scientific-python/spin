@@ -2,7 +2,7 @@ import os
 import sys
 import click
 
-from .util import run, get_config, set_pythonpath
+from .util import run, get_config, set_pythonpath, get_site_packages
 
 
 @click.command()
@@ -27,7 +27,8 @@ def test(build_dir, pytest_args):
             )
             sys.exit(1)
 
-    p = set_pythonpath(build_dir)
+    p = site_path = get_site_packages(build_dir)
+    set_pythonpath(build_dir)
 
     print(f'$ export PYTHONPATH="{p}"')
-    run(["pytest", f"--rootdir={p}"] + list(pytest_args), cwd=p)
+    run(["pytest", f"--rootdir={site_path}"] + list(pytest_args), cwd=p)
