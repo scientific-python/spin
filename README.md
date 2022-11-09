@@ -12,7 +12,7 @@ package = 'pkg_importname'  # used by pytest
 commands = ['devpy.build', 'devpy.test']
 ```
 
-## Running `dev.py`
+## Running
 
 ```
 python -m devpy
@@ -43,7 +43,7 @@ See, e.g., the [example custom command](https://github.com/scientific-python/dev
 Add custom commands to the `commands` variable in the `[tool.devpy]` section of `pyproject.toml` as follows:
 
 ```
-commands = [..., `custom/__init__.py:example`]
+commands = [..., 'custom/__init__.py:example']
 ```
 
 Here, the command is stored in `custom/__init__.py`, and the function
