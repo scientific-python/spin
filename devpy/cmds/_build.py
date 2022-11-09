@@ -25,20 +25,15 @@ def build(build_dir, meson_args, jobs=None):
 
     if os.path.exists(build_dir):
         flags += ["--reconfigure"]
-    p = run(build_cmd + flags, capture_output=True)
-    if p.stderr:
-        print(p.stderr.decode("utf-8"))
-    if p.stdout:
-        print(p.stdout.decode("utf-8"))
-    if b"does not contain a valid build tree" in p.stderr:
+
+    p = run(build_cmd + flags, sys_exit=False)
+    if p.returncode != 0 and "--reconfigure" in flags:
         click.confirm(
-            f"Invalid build tree.\nOK to remove `{build_dir}` and try again?",
+            f"\nMeson failed; perhaps due to an invalid build tree. OK to remove `{build_dir}` and try again?",
             abort=True,
         )
         shutil.rmtree(build_dir)
-        p = run(build_cmd)
-    if not p.returncode == 0:
-        print("Could not build Meson project")
-        sys.exit(-1)
+        run(build_cmd)
+
     run(["ninja", "-C", build_dir])
-    run(["meson", "install", f"-C", build_dir])
+    run(["meson", "install", f"-C", build_dir], output=False)
