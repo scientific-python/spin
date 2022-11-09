@@ -1,11 +1,11 @@
 [project]
-name = "dev.py"
-version = "0.1a2.dev0"
+name = "devpy"
+version = "0.1a3.dev0"
 requires-python = ">=3.7"
 description = "Developer tool for scientific Python libraries"
 license = {file = "LICENSE"}
 maintainers = [
-  {name = "Scientific Python", email = "dev.py@discuss.scientific-python.org"}
+  {name = "Scientific Python", email = "devpy@discuss.scientific-python.org"}
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -20,11 +20,11 @@ dependencies = [
 lint = ["pre-commit >= 2.20"]
 
 [project.urls]
-homepage = "https://github.com/scientific-python/dev.py"
+homepage = "https://github.com/scientific-python/devpy"
 
 [tool.setuptools.packages.find]
-include = ["dev*"]
+include = ["devpy*"]
 
-[tool.dev.py]
-package = 'dev'
-commands = ["dev.py.build", "dev.py.test", "dev.py.shell", "dev.py.ipython", "dev.py.python", "custom/__init__.py:example"]
+[tool.devpy]
+package = 'devpy'
+commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/__init__.py:example"]

@@ -1,12 +1,11 @@
 python_sources = [
   '__init__.py',
-  '_build.py',
-  '_shell.py',
-  '_test.py',
-  'util.py'
+  '__main__.py'
 ]
 
 py3.install_sources(
   python_sources,
-  subdir: 'dev/cmds'
+  subdir: 'dev'
 )
+
+subdir('cmds')

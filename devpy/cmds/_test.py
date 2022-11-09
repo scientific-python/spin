@@ -20,10 +20,10 @@ def test(build_dir, pytest_args):
     cfg = get_config()
 
     if not pytest_args:
-        pytest_args = (cfg.get("tool.dev.py.package", None),)
+        pytest_args = (cfg.get("tool.devpy.package", None),)
         if pytest_args == (None,):
             print(
-                "Please specify `package = packagename` under `tool.dev.py` section of `pyproject.toml`"
+                "Please specify `package = packagename` under `tool.devpy` section of `pyproject.toml`"
             )
             sys.exit(1)
 

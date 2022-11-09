@@ -47,13 +47,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        config = toml_config["tool"]["dev"]["py"]
+        config = toml_config["tool"]["devpy"]
     except KeyError:
-        print("No configuration found in [pyproject.toml] for [tool.dev.py]")
+        print("No configuration found in [pyproject.toml] for [tool.devpy]")
         sys.exit(1)
 
     commands = {
-        f"dev.py.{name}": getattr(cmds, name)
+        f"devpy.{name}": getattr(cmds, name)
         for name in dir(cmds)
         if not name.startswith("_")
     }

@@ -3,19 +3,19 @@
 ## Configuration
 
 Settings are in your project's `pyproject.toml`.
-As an example, see the `[tool.dev.py]` section of [this project's `pyproject.toml`](https://github.com/scientific-python/dev.py/blob/main/pyproject.toml).
+As an example, see the `[tool.devpy]` section of [this project's `pyproject.toml`](https://github.com/scientific-python/devpy/blob/main/pyproject.toml).
 
-The `[tool.dev.py]` section should contain:
+The `[tool.devpy]` section should contain:
 
 ```
 package = 'pkg_importname'  # used by pytest
-commands = ['dev.py.build', 'dev.py.test']
+commands = ['devpy.build', 'devpy.test']
 ```
 
 ## Running `dev.py`
 
 ```
-python -m dev.py
+python -m devpy
 ```
 
 On Unix-like systems, you can also copy the `dev.py` script to the root of your project directory, and launch it as:
@@ -36,11 +36,11 @@ On Unix-like systems, you can also copy the `dev.py` script to the root of your 
 
 ## 🧪 Custom commands
 
-`dev.py` can invoke custom commands. These commands define their own arguments, and they also have access to the `pyproject.toml` file for further configuration.
+`devpy` can invoke custom commands. These commands define their own arguments, and they also have access to the `pyproject.toml` file for further configuration.
 
-See, e.g., the [example custom command](https://github.com/scientific-python/dev.py/blob/main/custom/__init__.py).
+See, e.g., the [example custom command](https://github.com/scientific-python/devpy/blob/main/custom/__init__.py).
 
-Add custom commands to the `commands` variable in the `[tool.dev.py]` section of `pyproject.toml` as follows:
+Add custom commands to the `commands` variable in the `[tool.devpy]` section of `pyproject.toml` as follows:
 
 ```
 commands = [..., `custom/__init__.py:example`]

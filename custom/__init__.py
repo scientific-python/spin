@@ -1,5 +1,5 @@
 import click
-from dev.py import util
+from devpy import util
 
 
 @click.command()
