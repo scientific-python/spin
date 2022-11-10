@@ -7,8 +7,8 @@ from pathlib import Path
 
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
     if cwd:
-        print(f"$ cd {cwd}")
-    print(f"$ {' '.join(cmd)}")
+        print(f"$ cd {cwd}", flush=True)
+    print(f"$ {' '.join(cmd)}", flush=True)
 
     if output is False:
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}
