@@ -1,5 +1,7 @@
 import os
+import sys
 import copy
+
 import click
 
 from .util import run, get_config, get_site_packages, set_pythonpath
@@ -59,15 +61,23 @@ def python(build_dir, python_args):
     ./dev.py python -- -c 'import sys; print(sys.path)'
     """
     p = set_pythonpath(build_dir)
+    v = sys.version_info
+    if (v.major < 3) or (v.major == 3 and v.minor < 11):
+        print("We're sorry, but this feature only works on Python 3.11 and greater 😢")
+        print()
+        print(
+            "Why? Because we need the '-P' flag so the interpreter doesn't muck with PYTHONPATH"
+        )
+        print()
+        print("However! You can still launch your own interpreter:")
+        print()
+        print(f"  PYTHONPATH='{p}' python")
+        print()
+        print("And then call:")
+        print()
+        print("import sys; del(sys.path[0])")
+        sys.exit(-1)
+
     print(f'🐍 Launching Python with PYTHONPATH="{p}"')
-    run(
-        [
-            "/usr/bin/env",
-            "python",
-            "-i",
-            "-c",
-            'import sys; print(f"Python {sys.version}"); del(sys.path[0])',
-        ]
-        + list(python_args),
-        replace=True,
-    )
+
+    run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
