@@ -3,9 +3,10 @@ python_sources = [
   '__main__.py'
 ]
 
-py3.install_sources(
+py.install_sources(
   python_sources,
-  subdir: 'dev'
+  subdir: 'devpy'
 )
 
 subdir('cmds')
+subdir('tests')

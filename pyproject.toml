@@ -25,6 +25,11 @@ homepage = "https://github.com/scientific-python/devpy"
 [tool.setuptools.packages.find]
 include = ["devpy*"]
 
+[tool.pytest.ini_options]
+filterwarnings = [
+  "ignore:cannot collect 'test' because it is not a function:",
+]
+
 [tool.devpy]
 package = 'devpy'
 commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/__init__.py:example"]

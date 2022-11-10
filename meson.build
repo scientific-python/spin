@@ -3,7 +3,7 @@ project(
 )
 
 py_mod = import('python')
-py3 = py_mod.find_installation()
-py3_dep = py3.dependency()
+py = py_mod.find_installation()
+py_dep = py.dependency()
 
 subdir('devpy')
