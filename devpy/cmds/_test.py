@@ -9,8 +9,11 @@ from .util import run, get_config, set_pythonpath, get_site_packages
 @click.option(
     "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
 )
+@click.option(
+    "--site-path", help="For devpy testing only; installed package path", hidden=True
+)
 @click.argument("pytest_args", nargs=-1)
-def test(build_dir, pytest_args):
+def test(build_dir, site_path, pytest_args):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -27,8 +30,9 @@ def test(build_dir, pytest_args):
             )
             sys.exit(1)
 
-    p = site_path = get_site_packages(build_dir)
-    set_pythonpath(build_dir)
+    if not site_path:
+        site_path = get_site_packages(build_dir)
+        set_pythonpath(build_dir)
 
-    print(f'$ export PYTHONPATH="{p}"')
-    run(["pytest", f"--rootdir={site_path}"] + list(pytest_args), cwd=p)
+    print(f'$ export PYTHONPATH="{site_path}"')
+    run(["pytest", f"--rootdir={site_path}"] + list(pytest_args), cwd=site_path)

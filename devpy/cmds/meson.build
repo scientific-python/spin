@@ -6,7 +6,7 @@ python_sources = [
   'util.py'
 ]
 
-py3.install_sources(
+py.install_sources(
   python_sources,
   subdir: 'devpy/cmds'
 )

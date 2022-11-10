@@ -1,21 +1,23 @@
 import os
 import sys
 import subprocess
-import click
+import shlex
 from pathlib import Path
+
+import click
 
 
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
     if cwd:
         print(f"$ cd {cwd}", flush=True)
-    print(f"$ {' '.join(cmd)}", flush=True)
+    print(f"$ {shlex.join(cmd)}", flush=True)
 
     if output is False:
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}
         kwargs = {**output_kwargs, **kwargs}
 
     if replace:
-        os.execvp(cmd[0], cmd, *args, **kwargs)
+        os.execvp(cmd[0], cmd)
         print(f"Failed to launch `{cmd}`")
         sys.exit(-1)
     else:
