@@ -9,9 +9,12 @@ from .util import run
 @click.option(
     "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
 )
-@click.option("-j", "--jobs", help="Nr of parallel tasks to launch", type=int)
+@click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
+@click.option(
+    "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
+)
 @click.argument("meson_args", nargs=-1)
-def build(build_dir, meson_args, jobs=None):
+def build(build_dir, meson_args, jobs=None, verbose=False):
     """🔧 Build package with Meson/ninja
 
     MESON_ARGS are passed through directly to pytest, e.g.:
@@ -36,4 +39,4 @@ def build(build_dir, meson_args, jobs=None):
         run(build_cmd)
 
     run(["ninja", "-C", build_dir])
-    run(["meson", "install", f"-C", build_dir], output=False)
+    run(["meson", "install", f"-C", build_dir], output=verbose)
