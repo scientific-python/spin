@@ -32,4 +32,4 @@ filterwarnings = [
 
 [tool.devpy]
 package = 'devpy'
-commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/__init__.py:example"]
+commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/cmds.py:example"]

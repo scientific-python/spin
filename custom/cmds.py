@@ -14,4 +14,4 @@ def example(flag):
     config = util.get_config()
     print("Flag provided is:", flag)
     print("Tool config is:")
-    print(config["tool.dev.py"])
+    print(config["tool.devpy"])
