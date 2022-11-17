@@ -23,7 +23,7 @@ def build(build_dir, meson_args, jobs=None, verbose=False):
 
     """
     build_dir = os.path.abspath(build_dir)
-    build_cmd = ["meson", f"--prefix={build_dir}", "build"] + list(meson_args)
+    build_cmd = ["meson", "setup", f"--prefix={build_dir}", "build"] + list(meson_args)
     flags = []
 
     if os.path.exists(build_dir):
