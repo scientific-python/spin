@@ -39,4 +39,4 @@ def build(build_dir, meson_args, jobs=None, verbose=False):
         run(build_cmd)
 
     run(["ninja", "-C", build_dir])
-    run(["meson", "install", f"-C", build_dir], output=verbose)
+    run(["meson", "install", "--only-changed", f"-C", build_dir], output=verbose)
