@@ -10,6 +10,7 @@ import click
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
     if cwd:
         print(f"$ cd {cwd}", flush=True)
+        os.chdir(cwd)
     print(f"$ {shlex.join(cmd)}", flush=True)
 
     if output is False:
@@ -21,7 +22,7 @@ def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwarg
         print(f"Failed to launch `{cmd}`")
         sys.exit(-1)
     else:
-        p = subprocess.run(cmd, cwd=cwd, *args, **kwargs)
+        p = subprocess.run(cmd, *args, **kwargs)
         if p.returncode != 0 and sys_exit:
             # Output was suppressed, but the process failed, so print it anyway
             if output is False:
