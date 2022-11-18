@@ -2,7 +2,7 @@ import os
 import sys
 import shutil
 import click
-from .util import run
+from .util import run, install_dir
 
 
 @click.command()
@@ -21,9 +21,11 @@ def build(build_dir, meson_args, jobs=None, verbose=False):
 
     ./dev.py build -- -Dpkg_config_path=/lib64/pkgconfig
 
+    The package is installed to BUILD_DIR-install
+
     """
     build_dir = os.path.abspath(build_dir)
-    build_cmd = ["meson", "setup", f"--prefix={build_dir}", "build"] + list(meson_args)
+    build_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
     flags = []
 
     if os.path.exists(build_dir):
@@ -39,4 +41,7 @@ def build(build_dir, meson_args, jobs=None, verbose=False):
         run(build_cmd)
 
     run(["ninja", "-C", build_dir])
-    run(["meson", "install", f"-C", build_dir], output=verbose)
+    run(
+        ["meson", "install", "-C", build_dir, "--destdir", install_dir(build_dir)],
+        output=verbose,
+    )
