@@ -48,6 +48,14 @@ def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
 
     run(["ninja", "-C", build_dir])
     run(
-        ["meson", "install", "-C", build_dir, "--destdir", install_dir(build_dir)],
+        [
+            "meson",
+            "install",
+            "--only-changed",
+            "-C",
+            build_dir,
+            "--destdir",
+            install_dir(build_dir),
+        ],
         output=verbose,
     )
