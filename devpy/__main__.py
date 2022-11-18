@@ -70,14 +70,21 @@ if __name__ == "__main__":
                 spec = importlib.util.spec_from_file_location("custom_mod", path)
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
-                cmd_func = getattr(mod, func)
-            except ImportError as e:
-                print(f"Could not load custom command `{cmd}`: {e}")
+                try:
+                    cmd_func = getattr(mod, func)
+                except AttributeError:
+                    print(f"!! Could not load command `{func}` from file `{path}`.\n")
+                    continue
+            except FileNotFoundError:
+                print(
+                    f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"
+                )
+                continue
+            except Exception as e:
+                print(
+                    f"!! Could not import file `{path}` to load custom command `{cmd}`.\n"
+                )
                 raise e
-
-            if cmd_func is None:
-                print(f"Could not load custom command `{cmd}`")
-                sys.exit(-1)
 
             commands[cmd] = cmd_func
 
