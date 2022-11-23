@@ -13,7 +13,8 @@ classifiers = [
 ]
 dependencies = [
   "click",
-  "toml"
+  "toml",
+  "colorama"
 ]
 
 [project.optional-dependencies]

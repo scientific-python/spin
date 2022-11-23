@@ -9,9 +9,9 @@ import click
 
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
     if cwd:
-        print(f"$ cd {cwd}", flush=True)
+        click.secho(f"$ cd {cwd}", dim=True)
         os.chdir(cwd)
-    print(f"$ {shlex.join(cmd)}", flush=True)
+    click.secho(f"$ {shlex.join(cmd)}", dim=True)
 
     if output is False:
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}

@@ -10,6 +10,10 @@ from . import cmds
 from .cmds import util
 from .cmds import *
 from .sectioned_help import SectionedHelpGroup
+from .color_format import ColorHelpFormatter
+
+
+click.Context.formatter_class = ColorHelpFormatter
 
 
 class DotDict(dict):
