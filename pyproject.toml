@@ -13,7 +13,8 @@ classifiers = [
 ]
 dependencies = [
   "click",
-  "toml"
+  "toml",
+  "colorama; platform_system == 'Windows'"
 ]
 
 [project.optional-dependencies]

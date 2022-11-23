@@ -3,7 +3,7 @@ import collections
 
 
 class SectionedHelpGroup(click.Group):
-    """Sections commands into help groups"""
+    """Organize commands as sections"""
 
     def __init__(self, *args, **kwargs):
         self.section_commands = collections.defaultdict(list)
