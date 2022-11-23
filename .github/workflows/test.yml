@@ -25,7 +25,7 @@ jobs:
       - name: Install
         run: |
           pip install -e .
-          pip install pytest meson-python
+          pip install pytest meson-python ninja
       - name: Test
         run: |
           python -m devpy test --site-path=$PWD
