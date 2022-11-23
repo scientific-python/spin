@@ -69,6 +69,7 @@ if __name__ == "__main__":
     @click.pass_context
     def group(ctx):
         ctx.meta["config"] = DotDict(toml_config)
+        ctx.show_default = True
 
     config_cmds = config["commands"]
     # Commands can be provided as a list, or as a dictionary
