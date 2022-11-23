@@ -41,4 +41,4 @@ package = 'devpy'
 
 "Build" = ["devpy.build", "devpy.test"]
 "Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
-"Extensions" = ["custom/cmds.py:example"]
+"Extensions" = ["example_pkg/.devpy/cmds.py:example"]

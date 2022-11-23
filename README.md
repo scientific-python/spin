@@ -27,7 +27,7 @@ commands = ['devpy.build', 'devpy.test']
 python -m devpy
 ```
 
-On Unix-like systems, you can also copy the `dev.py` script to the root of your project directory, and launch it as:
+On Unix-like systems, you can also copy the [`dev.py` script](https://github.com/scientific-python/devpy/blob/main/example_pkg/dev.py) to the root of your project directory, and launch it as:
 
 ```
 ./dev.py

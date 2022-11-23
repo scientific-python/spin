@@ -28,4 +28,6 @@ jobs:
           pip install pytest meson-python ninja
       - name: Test
         run: |
-          python -m devpy test --site-path=$PWD
+          cd example_pkg
+          ./dev.py build
+          ./dev.py test
