@@ -27,5 +27,10 @@ jobs:
           pip install -e .
           pip install pytest meson-python ninja
       - name: Test
+        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
+        env:
+          TERM: xterm-256color
         run: |
-          python -m devpy test --site-path=$PWD
+          cd example_pkg
+          ./dev.py build
+          ./dev.py test

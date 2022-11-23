@@ -1,0 +1,17 @@
+[project]
+name = "devpy-example"
+version = "0.0dev0"
+requires-python = ">=3.7"
+description = "DevPy Example Package"
+
+[tool.devpy]
+package = 'example_pkg'
+
+[tool.devpy.commands]
+# If you don't need sections, you can also provide a list of commands under [tool.devpy]:
+#
+# commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/cmds.py:example"]
+
+"Build" = ["devpy.build", "devpy.test"]
+"Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
+"Extensions" = [".devpy/cmds.py:example"]
