@@ -9,6 +9,7 @@ import toml
 from . import cmds
 from .cmds import util
 from .cmds import *
+from .sectioned_help import SectionedHelpGroup
 
 
 class DotDict(dict):
@@ -58,36 +59,47 @@ if __name__ == "__main__":
         if not name.startswith("_")
     }
 
-    @click.group(help=f"Developer tool for {project_config['name']}")
+    @click.group(
+        help=f"Developer tool for {project_config['name']}", cls=SectionedHelpGroup
+    )
     @click.pass_context
     def group(ctx):
         ctx.meta["config"] = DotDict(toml_config)
 
-    for cmd in config["commands"]:
-        if cmd not in commands:
-            try:
-                path, func = cmd.split(":")
-                spec = importlib.util.spec_from_file_location("custom_mod", path)
-                mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
+    config_cmds = config["commands"]
+    # Commands can be provided as a list, or as a dictionary
+    # so that they can be sorted into sections
+    if isinstance(config_cmds, list):
+        config_cmds = {"Commands": config_cmds}
+
+    for section, cmds in config_cmds.items():
+        for cmd in cmds:
+            if cmd not in commands:
                 try:
-                    cmd_func = getattr(mod, func)
-                except AttributeError:
-                    print(f"!! Could not load command `{func}` from file `{path}`.\n")
+                    path, func = cmd.split(":")
+                    spec = importlib.util.spec_from_file_location("custom_mod", path)
+                    mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(mod)
+                    try:
+                        cmd_func = getattr(mod, func)
+                    except AttributeError:
+                        print(
+                            f"!! Could not load command `{func}` from file `{path}`.\n"
+                        )
+                        continue
+                except FileNotFoundError:
+                    print(
+                        f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"
+                    )
                     continue
-            except FileNotFoundError:
-                print(
-                    f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"
-                )
-                continue
-            except Exception as e:
-                print(
-                    f"!! Could not import file `{path}` to load custom command `{cmd}`.\n"
-                )
-                raise e
+                except Exception as e:
+                    print(
+                        f"!! Could not import file `{path}` to load custom command `{cmd}`.\n"
+                    )
+                    raise e
 
-            commands[cmd] = cmd_func
+                commands[cmd] = cmd_func
 
-        group.add_command(commands[cmd])
+            group.add_command(commands[cmd], section=section)
 
     group()
