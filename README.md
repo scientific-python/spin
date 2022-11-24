@@ -98,5 +98,5 @@ Environments:
 
 ## History
 
-The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers, [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers, and [improved](https://github.com/scipy/scipy/commit/8704c0025539bd97473da8b84c8f0735c31ff6e2) by Smit Lunagariya, Gagandeep Singh, Matthew Brett, Dhruv Vats, and Harsh Mishra.
+The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
 Inspired by that implementation, `devpy` (this package) is a minimal rewrite by Stéfan van der Walt, that aims to be easily extendable so that it can be used across ecosystem libraries.
