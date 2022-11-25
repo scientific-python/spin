@@ -12,7 +12,7 @@ When many of the build and installation commands changed, it made sense to abstr
 ## Configuration
 
 Settings are in your project's `pyproject.toml`.
-As an example, see the `[tool.devpy]` section of [this project's `pyproject.toml`](https://github.com/scientific-python/devpy/blob/main/pyproject.toml).
+As an example, see the `[tool.devpy]` section of [an example `pyproject.toml`](https://github.com/scientific-python/devpy/blob/main/example_pkg/pyproject.toml).
 
 The `[tool.devpy]` section should contain:
 
@@ -36,7 +36,7 @@ On Unix-like systems, you can also copy the [`dev.py` script](https://github.com
 ## Built-in commands
 
 ```
-  build    🔧 Build package with Meson/ninja
+  build    🔧 Build package with Meson/ninja and install to `build-install`
   ipython  💻 Launch IPython shell with PYTHONPATH set
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
@@ -45,15 +45,58 @@ On Unix-like systems, you can also copy the [`dev.py` script](https://github.com
 
 ## 🧪 Custom commands
 
-`devpy` can invoke custom commands. These commands define their own arguments, and they also have access to the `pyproject.toml` file for further configuration.
+`devpy` can invoke custom commands. These commands define their own arguments, and have access to the `pyproject.toml` file for further configuration.
 
-See, e.g., the [example custom command](https://github.com/scientific-python/devpy/blob/main/custom/__init__.py).
+See, e.g., the [example custom command](https://github.com/scientific-python/devpy/blob/main/example_pkg/.devpy/cmds.py).
 
 Add custom commands to the `commands` variable in the `[tool.devpy]` section of `pyproject.toml` as follows:
 
 ```
-commands = [..., 'custom/__init__.py:example']
+commands = [..., '.devpy/cmds.py:example']
 ```
 
-Here, the command is stored in `custom/__init__.py`, and the function
+Here, the command is stored in `.devpy/cmds.py`, and the function
 is named `example`.
+
+### Configuration
+
+Custom commands can access the `pyproject.toml` as follows:
+
+```python
+from devpy import util
+
+@click.command()
+def example():
+    """Command that accesses `pyproject.toml` configuration"""
+    config = util.get_config()
+    print(config["tool.devpy"])
+```
+
+### Command sections
+
+Once you have several commands, it may be useful to organize them into sections.
+In `pyproject.toml`, instead of specifying the commands as a list, use the following structure:
+
+```toml
+[tool.devpy.commands]
+"Build" = ["devpy.build", "devpy.test"]
+"Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
+```
+
+These commands will then be rendered as:
+
+```
+Build:
+  build  🔧 Build package with Meson/ninja and install
+  test   🔧 Run tests
+
+Environments:
+  shell    💻 Launch shell with PYTHONPATH set
+  ipython  💻 Launch IPython shell with PYTHONPATH set
+  python   🐍 Launch Python shell with PYTHONPATH set
+```
+
+## History
+
+The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
+Inspired by that implementation, `devpy` (this package) is a minimal rewrite by Stéfan van der Walt, that aims to be easily extendable so that it can be used across ecosystem libraries.
