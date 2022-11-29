@@ -26,6 +26,7 @@ jobs:
         run: |
           pip install -e .
           pip install pytest meson-python ninja
+          pip install -r example_pkg/doc/requirements.txt
       - name: Test
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
@@ -34,3 +35,4 @@ jobs:
           cd example_pkg
           ./dev.py build
           ./dev.py test
+          ./dev.py doc

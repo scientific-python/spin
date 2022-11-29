@@ -25,20 +25,3 @@ homepage = "https://github.com/scientific-python/devpy"
 
 [tool.setuptools.packages.find]
 include = ["devpy*"]
-
-[tool.pytest.ini_options]
-filterwarnings = [
-  "ignore:cannot collect 'test' because it is not a function:",
-]
-
-[tool.devpy]
-package = 'devpy'
-
-[tool.devpy.commands]
-# If you don't need sections, you can also provide a list of commands under [tool.devpy]:
-#
-# commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/cmds.py:example"]
-
-"Build" = ["devpy.build", "devpy.test"]
-"Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
-"Extensions" = ["example_pkg/.devpy/cmds.py:example"]

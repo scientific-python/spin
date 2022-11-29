@@ -6,7 +6,7 @@ Typically, their lives are made simpler by a Makefile, but Makefiles can be conv
 The rationale behind `devpy` is therefore to provide a simple interface for common development tasks.
 It comes with a few common build commands out the box, but can easily be customized per project.
 
-As a curiosity: the impetus behind developing the tool was the mass migration of scientific Python libraries (SciPy, scikit-image, and NumPy, etc.) to Meson, after distutils was deprecated.
+As a curiosity: the impetus behind developing the tool was the mass migration of scientific Python libraries (SciPy, scikit-image, and NumPy, etc.) to [Meson](https://mesonbuild.com/), after `distutils` was deprecated.
 When many of the build and installation commands changed, it made sense to abstract away the nuisance of having to re-learn them.
 
 ## Configuration

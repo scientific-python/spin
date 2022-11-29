@@ -45,7 +45,9 @@ def get_site_packages(build_dir):
 def set_pythonpath(build_dir):
     site_packages = get_site_packages(build_dir)
     if site_packages is None:
-        print(f"No `site-packages` directory found under {build_dir}; aborting")
+        print(
+            f"No `site-packages` directory found under {install_dir(build_dir)}; run `./dev.py build` first"
+        )
         sys.exit(1)
 
     env = os.environ

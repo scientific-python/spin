@@ -14,4 +14,5 @@ package = 'example_pkg'
 
 "Build" = ["devpy.build", "devpy.test"]
 "Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
+"Documentation" = ["devpy.doc"]
 "Extensions" = [".devpy/cmds.py:example"]
