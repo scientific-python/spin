@@ -45,11 +45,7 @@ if __name__ == "__main__":
             print("Cannot parse [pyproject.toml]")
             sys.exit(1)
 
-    try:
-        project_config = toml_config["project"]
-    except KeyError:
-        print("No project section found in pyproject.toml")
-        sys.exit(1)
+    project_config = toml_config.get("project", {})
 
     try:
         config = toml_config["tool"]["devpy"]
@@ -63,9 +59,9 @@ if __name__ == "__main__":
         if not name.startswith("_")
     }
 
-    @click.group(
-        help=f"Developer tool for {project_config['name']}", cls=SectionedHelpGroup
-    )
+    proj_name = project_config.get("name", config["package"])
+
+    @click.group(help=f"Developer tool for {proj_name}", cls=SectionedHelpGroup)
     @click.pass_context
     def group(ctx):
         ctx.meta["config"] = DotDict(toml_config)
