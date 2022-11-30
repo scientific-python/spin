@@ -31,4 +31,7 @@ def test(build_dir, pytest_args):
     set_pythonpath(build_dir)
 
     print(f'$ export PYTHONPATH="{site_path}"')
-    run(["pytest", f"--rootdir={site_path}"] + list(pytest_args), cwd=site_path)
+    run(
+        ["python", "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
+        cwd=site_path,
+    )
