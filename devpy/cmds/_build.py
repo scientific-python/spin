@@ -26,6 +26,7 @@ def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
 
     """
     build_dir = os.path.abspath(build_dir)
+    inst_dir = install_dir(build_dir)
     build_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
     flags = []
 
@@ -33,6 +34,9 @@ def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
         print(f"Removing `{build_dir}`")
         if os.path.isdir(build_dir):
             shutil.rmtree(build_dir)
+        print(f"Removing `{inst_dir}`")
+        if os.path.isdir(inst_dir):
+            shutil.rmtree(inst_dir)
 
     if os.path.exists(build_dir):
         flags += ["--reconfigure"]
