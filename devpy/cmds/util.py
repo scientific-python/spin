@@ -36,10 +36,9 @@ def get_config():
 
 
 def get_site_packages(build_dir):
-    X, Y = sys.version_info.major, sys.version_info.minor
     for root, dirs, files in os.walk(install_dir(build_dir)):
         for subdir in dirs:
-            if subdir == "site-packages" and root.endswith(f"python{X}.{Y}"):
+            if subdir == "site-packages":
                 return os.path.abspath(os.path.join(root, subdir))
 
 
