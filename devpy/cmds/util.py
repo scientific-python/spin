@@ -36,10 +36,20 @@ def get_config():
 
 
 def get_site_packages(build_dir):
+    candidate_paths = []
     for root, dirs, files in os.walk(install_dir(build_dir)):
         for subdir in dirs:
             if subdir == "site-packages":
-                return os.path.abspath(os.path.join(root, subdir))
+                candidate_paths.append(os.path.abspath(os.path.join(root, subdir)))
+
+    if len(candidate_paths) == 0:
+        return None
+
+    # Prefer paths with current Python version in them
+    X, Y = sys.version_info.major, sys.version_info.minor
+    candidate_paths = sorted(candidate_paths, key=lambda p: f"python{X}.{Y}" in p)
+    candidate_paths = sorted(candidate_paths, key=lambda p: f"python{X}" in p)
+    return candidate_paths[-1]
 
 
 def set_pythonpath(build_dir):
