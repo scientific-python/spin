@@ -4,7 +4,7 @@ import copy
 
 import click
 
-from .util import run, get_config, get_site_packages, set_pythonpath
+from .util import run, get_config, set_pythonpath
 
 
 @click.command()

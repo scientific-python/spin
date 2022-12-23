@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shlex
+import sysconfig
 from pathlib import Path
 
 import click
@@ -39,25 +40,35 @@ def get_site_packages(build_dir):
     candidate_paths = []
     for root, dirs, files in os.walk(install_dir(build_dir)):
         for subdir in dirs:
-            if subdir == "site-packages":
+            if subdir == "site-packages" or subdir == "dist-packages":
                 candidate_paths.append(os.path.abspath(os.path.join(root, subdir)))
 
-    if len(candidate_paths) == 0:
-        return None
-
-    # Prefer paths with current Python version in them
     X, Y = sys.version_info.major, sys.version_info.minor
-    candidate_paths = sorted(candidate_paths, key=lambda p: f"python{X}.{Y}" in p)
-    candidate_paths = sorted(candidate_paths, key=lambda p: f"python{X}" in p)
-    return candidate_paths[-1]
 
+    site_packages = None
+    if any(f"python{X}." in p for p in candidate_paths):
+        # We have a system that uses `python3.X/site-packages` or `python3.X/dist-packages`
+        site_packages = [p for p in candidate_paths if f"python{X}.{Y}" in p]
+        if len(site_packages) == 0:
+            print(f"No site-packages found in `{build_dir}` for Python {X}.{Y}")
+            sys.exit(1)
+        else:
+            site_packages = site_packages[0]
+    else:
+        # A naming scheme that does not encode the Python major/minor version is used, so return
+        # the first site-packages path found
+        if len(candidate_paths) != 0:
+            site_packages = candidate_paths[0]
 
-def set_pythonpath(build_dir):
-    site_packages = get_site_packages(build_dir)
     if site_packages is None:
         print(f"No `site-packages` directory found under {build_dir}; aborting")
         sys.exit(1)
 
+    return site_packages
+
+
+def set_pythonpath(build_dir):
+    site_packages = get_site_packages(build_dir)
     env = os.environ
 
     if "PYTHONPATH" in env:
