@@ -103,4 +103,8 @@ if __name__ == "__main__":
 
             group.add_command(commands[cmd], section=section)
 
-    group()
+    try:
+        group()
+    except Exception as e:
+        print(f"{e}; aborting.")
+        sys.exit(1)

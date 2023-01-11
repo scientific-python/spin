@@ -50,19 +50,25 @@ def get_site_packages(build_dir):
         # We have a system that uses `python3.X/site-packages` or `python3.X/dist-packages`
         site_packages = [p for p in candidate_paths if f"python{X}.{Y}" in p]
         if len(site_packages) == 0:
-            print(f"No site-packages found in `{build_dir}` for Python {X}.{Y}")
-            sys.exit(1)
+            raise FileNotFoundError(
+                "No site-packages found in `{build_dir}` for Python {X}.{Y}"
+            )
         else:
             site_packages = site_packages[0]
     else:
         # A naming scheme that does not encode the Python major/minor version is used, so return
-        # the first site-packages path found
-        if len(candidate_paths) != 0:
+        # whatever site-packages path was found
+        if len(candidate_paths) > 1:
+            raise FileNotFoundError(
+                "Multiple `site-packages` found, but cannot use Python version to disambiguate"
+            )
+        elif len(candidate_paths) == 1:
             site_packages = candidate_paths[0]
 
     if site_packages is None:
-        print(f"No `site-packages` directory found under {build_dir}; aborting")
-        sys.exit(1)
+        raise FileNotFoundError(
+            f"No `site-packages` or `dist-packages` found under {build_dir}"
+        )
 
     return site_packages
 
