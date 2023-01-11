@@ -16,7 +16,9 @@ permissions:
 
 jobs:
   test_devpy:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
