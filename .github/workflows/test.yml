@@ -26,7 +26,10 @@ jobs:
         run: |
           pip install -e .
           pip install pytest meson-python ninja
-      - name: Test
+      - name: Library tests
+        run: |
+          PYTHONPATH=. pytest --pyargs devpy
+      - name: Functional tests
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
           TERM: xterm-256color

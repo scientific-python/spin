@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shlex
+import sysconfig
 from pathlib import Path
 
 import click
@@ -36,18 +37,44 @@ def get_config():
 
 
 def get_site_packages(build_dir):
+    candidate_paths = []
     for root, dirs, files in os.walk(install_dir(build_dir)):
         for subdir in dirs:
-            if subdir == "site-packages":
-                return os.path.abspath(os.path.join(root, subdir))
+            if subdir == "site-packages" or subdir == "dist-packages":
+                candidate_paths.append(os.path.abspath(os.path.join(root, subdir)))
+
+    X, Y = sys.version_info.major, sys.version_info.minor
+
+    site_packages = None
+    if any(f"python{X}." in p for p in candidate_paths):
+        # We have a system that uses `python3.X/site-packages` or `python3.X/dist-packages`
+        site_packages = [p for p in candidate_paths if f"python{X}.{Y}" in p]
+        if len(site_packages) == 0:
+            raise FileNotFoundError(
+                "No site-packages found in `{build_dir}` for Python {X}.{Y}"
+            )
+        else:
+            site_packages = site_packages[0]
+    else:
+        # A naming scheme that does not encode the Python major/minor version is used, so return
+        # whatever site-packages path was found
+        if len(candidate_paths) > 1:
+            raise FileNotFoundError(
+                "Multiple `site-packages` found, but cannot use Python version to disambiguate"
+            )
+        elif len(candidate_paths) == 1:
+            site_packages = candidate_paths[0]
+
+    if site_packages is None:
+        raise FileNotFoundError(
+            f"No `site-packages` or `dist-packages` found under {build_dir}"
+        )
+
+    return site_packages
 
 
 def set_pythonpath(build_dir):
     site_packages = get_site_packages(build_dir)
-    if site_packages is None:
-        print(f"No `site-packages` directory found under {build_dir}; aborting")
-        sys.exit(1)
-
     env = os.environ
 
     if "PYTHONPATH" in env:
