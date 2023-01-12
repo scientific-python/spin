@@ -1,7 +1,7 @@
 import tempfile
 import sys
 import os
-from os.path import join as pjoin
+from os.path import join as pjoin, normpath
 
 import pytest
 
@@ -30,9 +30,9 @@ def test_path_discovery():
                 f"/usr/lib64/python{X}.{Y + 2}/site-packages",
             ],
         )
-        assert f"/usr/lib64/python{X}.{Y}/site-packages" in util.get_site_packages(
-            build_dir
-        )
+        assert normpath(
+            f"/usr/lib64/python{X}.{Y}/site-packages"
+        ) in util.get_site_packages(build_dir)
 
     # Debian uses dist-packages
     with tempfile.TemporaryDirectory() as d:
@@ -44,9 +44,9 @@ def test_path_discovery():
                 f"/usr/lib64/python{X}.{Y}/dist-packages",
             ],
         )
-        assert f"/usr/lib64/python{X}.{Y}/dist-packages" in util.get_site_packages(
-            build_dir
-        )
+        assert normpath(
+            f"/usr/lib64/python{X}.{Y}/dist-packages"
+        ) in util.get_site_packages(build_dir)
 
     # If there is no version information in site-packages,
     # use whatever site-packages can be found
@@ -54,7 +54,7 @@ def test_path_discovery():
         build_dir = pjoin(d, "build")
         install_dir = pjoin(d, "build-install")
         make_paths(install_dir, ["/Python3/site-packages"])
-        assert "/Python3/site-packages" in util.get_site_packages(build_dir)
+        assert normpath("/Python3/site-packages") in util.get_site_packages(build_dir)
 
     # Raise if no site-package directory present
     with tempfile.TemporaryDirectory() as d:

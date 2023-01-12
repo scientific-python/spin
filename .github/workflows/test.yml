@@ -16,23 +16,36 @@ permissions:
 
 jobs:
   test_devpy:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: ["3.7"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python_version }}
       - name: Install
         run: |
           pip install -e .
           pip install pytest meson-python ninja
       - name: Library tests
+        env:
+          PYTHONPATH: "."
         run: |
-          PYTHONPATH=. pytest --pyargs devpy
-      - name: Functional tests
+          pytest --pyargs devpy
+      - name: Functional tests (linux)
+        if: matrix.os == 'ubuntu-latest'
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
           TERM: xterm-256color
+        run: |
+          cd example_pkg
+          ./dev.py build
+          ./dev.py test
+      - name: Functional tests (other)
+        if: matrix.os != 'ubuntu-latest'
         run: |
           cd example_pkg
           ./dev.py build

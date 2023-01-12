@@ -12,7 +12,8 @@ def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwarg
     if cwd:
         click.secho(f"$ cd {cwd}", bold=True, fg="bright_blue")
         os.chdir(cwd)
-    click.secho(f"$ {shlex.join(cmd)}", bold=True, fg="bright_blue")
+    cmdstr = ' '.join(shlex.quote(arg) for arg in cmd)
+    click.secho(f"$ {cmdstr}", bold=True, fg="bright_blue")
 
     if output is False:
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}
