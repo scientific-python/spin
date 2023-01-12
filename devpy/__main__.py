@@ -1,3 +1,4 @@
+import collections
 import os
 import sys
 import importlib
@@ -16,21 +17,15 @@ from .color_format import ColorHelpFormatter
 click.Context.formatter_class = ColorHelpFormatter
 
 
-class DotDict(dict):
+class DotDict(collections.UserDict):
     def __getitem__(self, key):
-        subitem = self
+        subitem = self.data
         for subkey in key.split("."):
             try:
-                subitem = dict.__getitem__(subitem, subkey)
+                subitem = subitem[subkey]
             except KeyError:
                 raise KeyError(f"`{key}` not found in configuration") from None
         return subitem
-
-    def get(self, key, default=None, /):
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            return default
 
 
 if __name__ == "__main__":
