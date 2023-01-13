@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-lint = ["pre-commit >= 2.20"]
+lint = ["pre-commit >= 2.21"]
 
 [project.urls]
 homepage = "https://github.com/scientific-python/devpy"
