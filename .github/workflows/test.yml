@@ -48,5 +48,5 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: |
           cd example_pkg
-          ./dev.py build
-          ./dev.py test
+          python dev.py build
+          python dev.py test
