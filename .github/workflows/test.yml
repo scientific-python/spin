@@ -44,6 +44,8 @@ jobs:
           cd example_pkg
           ./dev.py build
           ./dev.py test
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
         run: |
