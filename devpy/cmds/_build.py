@@ -18,12 +18,16 @@ from .util import run, install_dir
 def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
     """🔧 Build package with Meson/ninja and install
 
-    MESON_ARGS are passed through directly to pytest, e.g.:
+    MESON_ARGS are passed through e.g.:
 
     ./dev.py build -- -Dpkg_config_path=/lib64/pkgconfig
 
     The package is installed to BUILD_DIR-install
 
+    By default builds for release, to be able to use a debugger set CFLAGS
+    appropriately. For example, for linux use
+
+    CFLAGS="-O0 -g" ./dev.py build
     """
     build_dir = os.path.abspath(build_dir)
     inst_dir = install_dir(build_dir)
