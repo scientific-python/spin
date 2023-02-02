@@ -50,7 +50,7 @@ def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
         shutil.rmtree(build_dir)
         run(build_cmd)
 
-    run(["ninja", "-C", build_dir])
+    run(["meson", "compile", "-C", build_dir])
     run(
         [
             "meson",
