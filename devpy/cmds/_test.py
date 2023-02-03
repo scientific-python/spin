@@ -16,6 +16,10 @@ def test(build_dir, pytest_args):
     PYTEST_ARGS are passed through directly to pytest, e.g.:
 
     ./dev.py test -- -v
+
+    By default, runs the full test suite. To skip "slow" tests, run
+
+    ./dev.py test -- -m "not slow"
     """
     cfg = get_config()
 
