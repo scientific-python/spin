@@ -44,6 +44,13 @@ jobs:
           cd example_pkg
           ./dev.py build
           ./dev.py test
+      - name: Patch Windows runner
+        if: matrix.os == 'windows-latest'
+        run: |
+          Remove-Item -Path C:\Strawberry -Recurse
+          Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
+          Remove-Item -Path C:\msys64 -Recurse -Force
+          Remove-Item -Path "C:\Program Files\LLVM" -Recurse
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
         run: |
