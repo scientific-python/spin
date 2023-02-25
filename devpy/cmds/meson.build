@@ -1,6 +1,7 @@
 python_sources = [
   '__init__.py',
   '_build.py',
+  '_doc.py'
   '_shell.py',
   '_test.py',
   'util.py'
