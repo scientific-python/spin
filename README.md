@@ -79,7 +79,7 @@ In `pyproject.toml`, instead of specifying the commands as a list, use the follo
 
 ```toml
 [tool.devpy.commands]
-"Build" = ["devpy.build", "devpy.test"]
+"Build" = ["devpy.build_meson", "devpy.test"]
 "Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
 ```
 

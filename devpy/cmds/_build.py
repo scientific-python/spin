@@ -5,7 +5,7 @@ import click
 from .util import run, install_dir
 
 
-@click.command()
+@click.command("build")
 @click.option(
     "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
 )
@@ -15,7 +15,7 @@ from .util import run, install_dir
     "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
 )
 @click.argument("meson_args", nargs=-1)
-def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
+def build_meson(build_dir, meson_args, jobs=None, clean=False, verbose=False):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -67,3 +67,7 @@ def build(build_dir, meson_args, jobs=None, clean=False, verbose=False):
         ],
         output=verbose,
     )
+
+
+# Alias for backward compatibility
+build = build_meson
