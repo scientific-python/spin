@@ -29,7 +29,7 @@ jobs:
       - name: Install
         run: |
           pip install -e .
-          pip install pytest meson-python ninja
+          pip install pytest meson-python ninja build
       - name: Library tests
         env:
           PYTHONPATH: "."
@@ -44,6 +44,7 @@ jobs:
           cd example_pkg
           ./dev.py build
           ./dev.py test
+          ./dev.py sdist
       - name: Patch Windows runner
         if: matrix.os == 'windows-latest'
         run: |
@@ -57,3 +58,4 @@ jobs:
           cd example_pkg
           python dev.py build
           python dev.py test
+          python dev.py sdist
