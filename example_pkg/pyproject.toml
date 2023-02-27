@@ -1,8 +1,14 @@
 [project]
-name = "devpy-example"
+name = "example_pkg"
 version = "0.0dev0"
 requires-python = ">=3.7"
 description = "DevPy Example Package"
+
+[build-system]
+build-backend = "mesonpy"
+requires = [
+  "meson-python>=0.13.0rc0",
+]
 
 [tool.devpy]
 package = 'example_pkg'
@@ -12,6 +18,6 @@ package = 'example_pkg'
 #
 # commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/cmds.py:example"]
 
-"Build" = ["devpy.build", "devpy.test"]
+"Build" = ["devpy.build", "devpy.test", ".devpy/cmds.py:sdist"]
 "Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
 "Extensions" = [".devpy/cmds.py:example"]

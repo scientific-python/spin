@@ -15,3 +15,9 @@ def example(flag):
     print("Flag provided is:", flag)
     print("Tool config is:")
     print(config["tool.devpy"])
+
+
+@click.command()
+def sdist():
+    """📦 Build a source distribution in `dist/`."""
+    util.run(["python", "-m", "build", ".", "--sdist"])
