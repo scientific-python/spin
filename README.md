@@ -9,6 +9,16 @@ It comes with a few common build commands out the box, but can easily be customi
 As a curiosity: the impetus behind developing the tool was the mass migration of scientific Python libraries (SciPy, scikit-image, and NumPy, etc.) to Meson, after distutils was deprecated.
 When many of the build and installation commands changed, it made sense to abstract away the nuisance of having to re-learn them.
 
+## Installation
+
+`devpy` is not yet available via PyPi (but soon!).
+
+Meanwhile, please install it directly from GitHub:
+
+```
+pip install git+https://github.com/scientific-python/devpy
+```
+
 ## Configuration
 
 Settings are in your project's `pyproject.toml`.
