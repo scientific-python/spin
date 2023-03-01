@@ -8,28 +8,22 @@ from .util import run, get_config, set_pythonpath
 
 
 @click.command()
-@click.option(
-    "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
-)
 @click.argument("ipython_args", nargs=-1)
-def ipython(build_dir, ipython_args):
+def ipython(ipython_args):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
 
     ./dev.py ipython -- -i myscript.py
     """
-    p = set_pythonpath(build_dir)
+    p = set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
 @click.command()
-@click.option(
-    "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
-)
 @click.argument("shell_args", nargs=-1)
-def shell(build_dir, shell_args=[]):
+def shell(shell_args=[]):
     """💻 Launch shell with PYTHONPATH set
 
     SHELL_ARGS are passed through directly to the shell, e.g.:
@@ -39,7 +33,7 @@ def shell(build_dir, shell_args=[]):
     Ensure that your shell init file (e.g., ~/.zshrc) does not override
     the PYTHONPATH.
     """
-    p = set_pythonpath(build_dir)
+    p = set_pythonpath()
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
@@ -53,14 +47,14 @@ def shell(build_dir, shell_args=[]):
     "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
 )
 @click.argument("python_args", nargs=-1)
-def python(build_dir, python_args):
+def python(python_args):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
 
     ./dev.py python -- -c 'import sys; print(sys.path)'
     """
-    p = set_pythonpath(build_dir)
+    p = set_pythonpath()
     v = sys.version_info
     if (v.major < 3) or (v.major == 3 and v.minor < 11):
         print("We're sorry, but this feature only works on Python 3.11 and greater 😢")

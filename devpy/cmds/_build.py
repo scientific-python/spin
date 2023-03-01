@@ -6,16 +6,13 @@ from .util import run, install_dir
 
 
 @click.command("build")
-@click.option(
-    "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
-)
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
 @click.option(
     "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
 )
 @click.argument("meson_args", nargs=-1)
-def build_meson(build_dir, meson_args, jobs=None, clean=False, verbose=False):
+def build_meson(meson_args, jobs=None, clean=False, verbose=False):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -29,8 +26,7 @@ def build_meson(build_dir, meson_args, jobs=None, clean=False, verbose=False):
 
     CFLAGS="-O0 -g" ./dev.py build
     """
-    build_dir = os.path.abspath(build_dir)
-    inst_dir = install_dir(build_dir)
+    build_dir = os.path.abspath("build")
     build_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
     flags = []
 
@@ -38,9 +34,9 @@ def build_meson(build_dir, meson_args, jobs=None, clean=False, verbose=False):
         print(f"Removing `{build_dir}`")
         if os.path.isdir(build_dir):
             shutil.rmtree(build_dir)
-        print(f"Removing `{inst_dir}`")
-        if os.path.isdir(inst_dir):
-            shutil.rmtree(inst_dir)
+        print(f"Removing `{install_dir}`")
+        if os.path.isdir(install_dir):
+            shutil.rmtree(install_dir)
 
     if os.path.exists(build_dir):
         flags += ["--reconfigure"]
@@ -63,7 +59,7 @@ def build_meson(build_dir, meson_args, jobs=None, clean=False, verbose=False):
             "-C",
             build_dir,
             "--destdir",
-            install_dir(build_dir),
+            f"../{install_dir}",
         ],
         output=verbose,
     )

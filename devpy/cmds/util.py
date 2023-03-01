@@ -8,6 +8,9 @@ from pathlib import Path
 import click
 
 
+install_dir = "build-install"
+
+
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
     if cwd:
         click.secho(f"$ cd {cwd}", bold=True, fg="bright_blue")
@@ -37,9 +40,13 @@ def get_config():
     return click.get_current_context().meta["config"]
 
 
-def get_site_packages(build_dir):
+def get_commands():
+    return click.get_current_context().meta["commands"]
+
+
+def get_site_packages():
     candidate_paths = []
-    for root, dirs, files in os.walk(install_dir(build_dir)):
+    for root, dirs, files in os.walk(install_dir):
         for subdir in dirs:
             if subdir == "site-packages" or subdir == "dist-packages":
                 candidate_paths.append(os.path.abspath(os.path.join(root, subdir)))
@@ -52,7 +59,7 @@ def get_site_packages(build_dir):
         site_packages = [p for p in candidate_paths if f"python{X}.{Y}" in p]
         if len(site_packages) == 0:
             raise FileNotFoundError(
-                "No site-packages found in `{build_dir}` for Python {X}.{Y}"
+                f"No site-packages found in {install_dir} for Python {X}.{Y}"
             )
         else:
             site_packages = site_packages[0]
@@ -61,21 +68,21 @@ def get_site_packages(build_dir):
         # whatever site-packages path was found
         if len(candidate_paths) > 1:
             raise FileNotFoundError(
-                "Multiple `site-packages` found, but cannot use Python version to disambiguate"
+                f"Multiple `site-packages` found in `{install_dir}`, but cannot use Python version to disambiguate"
             )
         elif len(candidate_paths) == 1:
             site_packages = candidate_paths[0]
 
     if site_packages is None:
         raise FileNotFoundError(
-            f"No `site-packages` or `dist-packages` found under {build_dir}"
+            f"No `site-packages` or `dist-packages` found under `{install_dir}`"
         )
 
     return site_packages
 
 
-def set_pythonpath(build_dir):
-    site_packages = get_site_packages(build_dir)
+def set_pythonpath():
+    site_packages = get_site_packages()
     env = os.environ
 
     if "PYTHONPATH" in env:
@@ -84,10 +91,3 @@ def set_pythonpath(build_dir):
         env["PYTHONPATH"] = site_packages
 
     return env["PYTHONPATH"]
-
-
-def install_dir(build_dir):
-    return os.path.join(
-        build_dir,
-        os.path.abspath(f"{build_dir}/../{os.path.basename(build_dir)}-install"),
-    )
