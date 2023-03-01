@@ -2,15 +2,13 @@ import os
 import sys
 import click
 
-from .util import run, get_config, set_pythonpath, get_site_packages
+from .util import run, get_config, get_commands, set_pythonpath, get_site_packages
 
 
 @click.command()
-@click.option(
-    "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
-)
 @click.argument("pytest_args", nargs=-1)
-def test(build_dir, pytest_args):
+@click.pass_context
+def test(ctx, pytest_args):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -23,6 +21,15 @@ def test(build_dir, pytest_args):
     """
     cfg = get_config()
 
+    command_groups = get_commands()
+    commands = [cmd for section in command_groups for cmd in command_groups[section]]
+    build_cmd = next((cmd for cmd in commands if cmd.name == "build"), None)
+    if build_cmd:
+        click.secho(
+            f"Invoking `build` prior to running tests:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
     if not pytest_args:
         pytest_args = (cfg.get("tool.devpy.package", None),)
         if pytest_args == (None,):
@@ -31,8 +38,8 @@ def test(build_dir, pytest_args):
             )
             sys.exit(1)
 
-    site_path = get_site_packages(build_dir)
-    set_pythonpath(build_dir)
+    site_path = get_site_packages()
+    set_pythonpath()
 
     print(f'$ export PYTHONPATH="{site_path}"')
     run(
