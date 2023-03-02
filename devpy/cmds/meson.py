@@ -159,6 +159,7 @@ def test(ctx, pytest_args):
     run(
         [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
         cwd=site_path,
+        replace=True,
     )
 
 
