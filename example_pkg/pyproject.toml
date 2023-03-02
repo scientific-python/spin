@@ -22,7 +22,7 @@ package = 'example_pkg'
 #   "devpy.cmds.meson.shell",
 #   "devpy.cmds.meson.ipython",
 #   "devpy.cmds.meson.python",
-#   "custom/cmds.py:example"
+#   ".devpy/cmds.py:example"
 # ]
 
 "Build" = [

@@ -9,6 +9,26 @@ import click
 
 
 def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
+    """Run a shell command.
+
+    Parameters
+    ----------
+    cwd : str
+        Change to this directory before execution.
+    replace : bool
+        Whether to replace the current process.
+    sys_exit : bool
+        Whether to exit if the shell command returns with error != 0.
+    output : bool
+        Whether to display output as the process runs.
+        If set to ``False``, can be accessed afterwards as
+        ``p.stdout``.
+        If `sys_exit` is True and the process fails, output is printed
+        regardless.
+
+    Other arguments and keywords are passed directly to `subprocess.run`.
+
+    """
     if cwd:
         click.secho(f"$ cd {cwd}", bold=True, fg="bright_blue")
         os.chdir(cwd)
@@ -34,8 +54,20 @@ def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwarg
 
 
 def get_config():
+    """Return the pyproject.toml as a dictionary."""
     return click.get_current_context().meta["config"]
 
 
 def get_commands():
+    """Return a list of all commands.
+
+    Returns
+    -------
+    cmds : dict
+       The keys of the dictionary are the section names, the values
+       lists of commands.
+
+       If no sections are provided, all commands are listed under the
+       ``commands`` key.
+    """
     return click.get_current_context().meta["commands"]
