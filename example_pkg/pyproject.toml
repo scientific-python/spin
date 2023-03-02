@@ -16,8 +16,23 @@ package = 'example_pkg'
 [tool.devpy.commands]
 # If you don't need sections, you can also provide a list of commands under [tool.devpy]:
 #
-# commands = ["devpy.build", "devpy.test", "devpy.shell", "devpy.ipython", "devpy.python", "custom/cmds.py:example"]
+# commands = [
+#   "devpy.cmds.meson.build",
+#   "devpy.cmds.meson.test",
+#   "devpy.cmds.meson.shell",
+#   "devpy.cmds.meson.ipython",
+#   "devpy.cmds.meson.python",
+#   "custom/cmds.py:example"
+# ]
 
-"Build" = ["devpy.build", "devpy.test", ".devpy/cmds.py:sdist"]
-"Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
+"Build" = [
+  "devpy.cmds.meson.build",
+  "devpy.cmds.meson.test",
+  "devpy.cmds.build.sdist"
+]
+"Environments" = [
+  "devpy.cmds.meson.shell",
+  "devpy.cmds.meson.ipython",
+  "devpy.cmds.meson.python"
+]
 "Extensions" = [".devpy/cmds.py:example"]

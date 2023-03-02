@@ -1,3 +1,4 @@
+import json
 import click
 from devpy import util
 
@@ -10,14 +11,12 @@ def example(flag):
     Accepts arbitrary flags, and shows how to access `pyproject.toml`
     config.
     """
-    print("Running example custom command")
+    click.secho("Running example custom command", bold=True, fg="bright_blue")
+    print()
     config = util.get_config()
-    print("Flag provided is:", flag)
-    print("Tool config is:")
-    print(config["tool.devpy"])
+    commands = util.get_commands()
+    click.secho("Flag provided with --flag is: ", fg="yellow", nl=False)
+    print(flag or None)
 
-
-@click.command()
-def sdist():
-    """📦 Build a source distribution in `dist/`."""
-    util.run(["python", "-m", "build", ".", "--sdist"])
+    click.secho("\nTool config is:", fg="yellow")
+    print(json.dumps(config["tool.devpy"], indent=2))

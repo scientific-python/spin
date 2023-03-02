@@ -1,5 +1,4 @@
 python_sources = [
-  'test_builtin_cmds.py',
   'test_util.py'
 ]
 
