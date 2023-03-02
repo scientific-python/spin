@@ -5,7 +5,7 @@ from os.path import join as pjoin, normpath
 
 import pytest
 
-from devpy import util
+from devpy.cmds import meson
 
 
 def make_paths(root, paths):
@@ -22,7 +22,7 @@ def test_path_discovery(monkeypatch):
     with tempfile.TemporaryDirectory() as d:
         with monkeypatch.context() as m:
             install_dir = pjoin(d, "build-install")
-            m.setattr(util, "install_dir", install_dir)
+            m.setattr(meson, "install_dir", install_dir)
 
             make_paths(
                 install_dir,
@@ -34,14 +34,14 @@ def test_path_discovery(monkeypatch):
             )
             assert (
                 normpath(f"/usr/lib64/python{X}.{Y}/site-packages")
-                in util.get_site_packages()
+                in meson.get_site_packages()
             )
 
     # Debian uses dist-packages
     with tempfile.TemporaryDirectory() as d:
         with monkeypatch.context() as m:
             install_dir = pjoin(d, "build-install")
-            m.setattr(util, "install_dir", install_dir)
+            m.setattr(meson, "install_dir", install_dir)
 
             make_paths(
                 install_dir,
@@ -51,7 +51,7 @@ def test_path_discovery(monkeypatch):
             )
             assert (
                 normpath(f"/usr/lib64/python{X}.{Y}/dist-packages")
-                in util.get_site_packages()
+                in meson.get_site_packages()
             )
 
     # If there is no version information in site-packages,
@@ -59,19 +59,19 @@ def test_path_discovery(monkeypatch):
     with tempfile.TemporaryDirectory() as d:
         with monkeypatch.context() as m:
             install_dir = pjoin(d, "build-install")
-            m.setattr(util, "install_dir", install_dir)
+            m.setattr(meson, "install_dir", install_dir)
 
             make_paths(install_dir, ["/Python3/site-packages"])
-            assert normpath("/Python3/site-packages") in util.get_site_packages()
+            assert normpath("/Python3/site-packages") in meson.get_site_packages()
 
     # Raise if no site-package directory present
     with tempfile.TemporaryDirectory() as d:
         with monkeypatch.context() as m:
             install_dir = pjoin(d, "build-install")
-            m.setattr(util, "install_dir", install_dir)
+            m.setattr(meson, "install_dir", install_dir)
 
             with pytest.raises(FileNotFoundError):
-                util.get_site_packages()
+                meson.get_site_packages()
 
     # If there are multiple site-package paths, but without version information,
     # refuse the temptation to guess
@@ -81,13 +81,13 @@ def test_path_discovery(monkeypatch):
             install_dir, [f"/Python3/x/site-packages", f"/Python3/y/site-packages"]
         )
         with pytest.raises(FileNotFoundError):
-            util.get_site_packages()
+            meson.get_site_packages()
 
     # Multiple site-package paths found, but none that matches our Python
     with tempfile.TemporaryDirectory() as d:
         with monkeypatch.context() as m:
             install_dir = pjoin(d, "build-install")
-            m.setattr(util, "install_dir", install_dir)
+            m.setattr(meson, "install_dir", install_dir)
 
             make_paths(
                 install_dir,
@@ -97,4 +97,4 @@ def test_path_discovery(monkeypatch):
                 ],
             )
             with pytest.raises(FileNotFoundError):
-                util.get_site_packages()
+                meson.get_site_packages()

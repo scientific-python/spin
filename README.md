@@ -27,8 +27,44 @@ As an example, see the `[tool.devpy]` section of [an example `pyproject.toml`](h
 The `[tool.devpy]` section should contain:
 
 ```
-package = 'pkg_importname'  # used by pytest
-commands = ['devpy.build', 'devpy.test']
+package = "pkg_importname"  # name of your package
+commands = [
+  "devpy.cmds.meson.build",
+  "devpy.cmds.meson.test"
+]
+```
+
+See [the command selection](#built-in-commands) below.
+
+### Command sections
+
+Once you have several commands, it may be useful to organize them into sections.
+In `pyproject.toml`, instead of specifying the commands as a list, use the following structure:
+
+```toml
+[tool.devpy.commands]
+"Build" = [
+  "devpy.cmds.meson.build",
+  "devpy.cmds.meson.test"
+]
+"Environments" = [
+  "devpy.cmds.meson.shell",
+  "devpy.cmds.meson.ipython",
+  "devpy.cmds.meson.python"
+]
+```
+
+These commands will then be rendered as:
+
+```
+Build:
+  build  🔧 Build package with Meson/ninja and install
+  test   🔧 Run tests
+
+Environments:
+  shell    💻 Launch shell with PYTHONPATH set
+  ipython  💻 Launch IPython shell with PYTHONPATH set
+  python   🐍 Launch Python shell with PYTHONPATH set
 ```
 
 ## Running
@@ -45,12 +81,22 @@ On Unix-like systems, you can also copy the [`dev.py` script](https://github.com
 
 ## Built-in commands
 
+### [Meson](https://meson-python.readthedocs.io)
+
 ```
   build    🔧 Build package with Meson/ninja and install to `build-install`
   ipython  💻 Launch IPython shell with PYTHONPATH set
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
-  test     🔧 Run tests
+  test     🔧 Run pytest
+```
+
+### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
+
+`devpy` was started with Meson in mind, but we're working on expanding commands for PEP 517 `build`.
+
+```
+  sdist    📦 Build a source distribution in `dist/`.
 ```
 
 ## 🧪 Custom commands
@@ -80,30 +126,6 @@ def example():
     """Command that accesses `pyproject.toml` configuration"""
     config = util.get_config()
     print(config["tool.devpy"])
-```
-
-### Command sections
-
-Once you have several commands, it may be useful to organize them into sections.
-In `pyproject.toml`, instead of specifying the commands as a list, use the following structure:
-
-```toml
-[tool.devpy.commands]
-"Build" = ["devpy.build_meson", "devpy.test"]
-"Environments" = ["devpy.shell", "devpy.ipython", "devpy.python"]
-```
-
-These commands will then be rendered as:
-
-```
-Build:
-  build  🔧 Build package with Meson/ninja and install
-  test   🔧 Run tests
-
-Environments:
-  shell    💻 Launch shell with PYTHONPATH set
-  ipython  💻 Launch IPython shell with PYTHONPATH set
-  python   🐍 Launch Python shell with PYTHONPATH set
 ```
 
 ## History

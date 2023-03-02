@@ -48,12 +48,6 @@ if __name__ == "__main__":
         print("No configuration found in [pyproject.toml] for [tool.devpy]")
         sys.exit(1)
 
-    commands = {
-        f"devpy.{name}": getattr(cmds, name)
-        for name in dir(cmds)
-        if not name.startswith("_")
-    }
-
     proj_name = project_config.get("name", config["package"])
 
     @click.group(help=f"Developer tool for {proj_name}", cls=SectionedHelpGroup)
@@ -69,31 +63,54 @@ if __name__ == "__main__":
     if isinstance(config_cmds, list):
         config_cmds = {"Commands": config_cmds}
 
+    # Backward compatibility workaround
+    # Originally, you could specify any of these commands as `devpy.cmd`
+    # and we'd fetch it from util
+    commands = {
+        "devpy.build": cmds.meson.build,
+        "devpy.test": cmds.meson.test,
+        "devpy.ipython": cmds.meson.ipython,
+        "devpy.python": cmds.meson.python,
+        "devpy.shell": cmds.meson.shell,
+    }
+
     for section, cmds in config_cmds.items():
         for cmd in cmds:
             if cmd not in commands:
-                try:
-                    path, func = cmd.split(":")
-                    spec = importlib.util.spec_from_file_location("custom_mod", path)
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
+                # First, see if we can directly import the command
+                if not ":" in cmd:
+                    path, func = cmd.rsplit(".", maxsplit=1)
                     try:
-                        cmd_func = getattr(mod, func)
-                    except AttributeError:
+                        mod = importlib.import_module(path)
+                    except ImportError:
                         print(
-                            f"!! Could not load command `{func}` from file `{path}`.\n"
+                            f"!! Could not import module `{path}` to load command `{cmd}`"
                         )
                         continue
-                except FileNotFoundError:
-                    print(
-                        f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"
-                    )
+                else:
+                    try:
+                        path, func = cmd.split(":")
+                        spec = importlib.util.spec_from_file_location(
+                            "custom_mod", path
+                        )
+                        mod = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(mod)
+                    except FileNotFoundError:
+                        print(
+                            f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"
+                        )
+                        continue
+                    except Exception as e:
+                        print(
+                            f"!! Could not import file `{path}` to load custom command `{cmd}`.\n"
+                        )
+                        raise e
+
+                try:
+                    cmd_func = getattr(mod, func)
+                except AttributeError:
+                    print(f"!! Could not load command `{func}` from file `{path}`.\n")
                     continue
-                except Exception as e:
-                    print(
-                        f"!! Could not import file `{path}` to load custom command `{cmd}`.\n"
-                    )
-                    raise e
 
                 commands[cmd] = cmd_func
 
