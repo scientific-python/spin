@@ -73,7 +73,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
 
     ./dev.py build -- -Dpkg_config_path=/lib64/pkgconfig
 
-    The package is installed to BUILD_DIR-install
+    The package is installed to build-install
 
     By default builds for release, to be able to use a debugger set CFLAGS
     appropriately. For example, for linux use
@@ -199,9 +199,6 @@ def shell(shell_args=[]):
 
 
 @click.command()
-@click.option(
-    "--build-dir", default="build", help="Build directory; default is `$PWD/build`"
-)
 @click.argument("python_args", nargs=-1)
 def python(python_args):
     """🐍 Launch Python shell with PYTHONPATH set
