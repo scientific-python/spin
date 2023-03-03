@@ -8,7 +8,9 @@ from pathlib import Path
 import click
 
 
-def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwargs):
+def run(
+    cmd, cwd=None, replace=False, sys_exit=True, output=True, echo=True, *args, **kwargs
+):
     """Run a shell command.
 
     Parameters
@@ -25,15 +27,20 @@ def run(cmd, cwd=None, replace=False, sys_exit=True, output=True, *args, **kwarg
         ``p.stdout``.
         If `sys_exit` is True and the process fails, output is printed
         regardless.
+    echo : bool
+        Whether or not to echo commands.
 
     Other arguments and keywords are passed directly to `subprocess.run`.
 
     """
     if cwd:
-        click.secho(f"$ cd {cwd}", bold=True, fg="bright_blue")
+        if echo:
+            click.secho(f"$ cd {cwd}", bold=True, fg="bright_blue")
         os.chdir(cwd)
+
     cmdstr = " ".join(shlex.quote(arg) for arg in cmd)
-    click.secho(f"$ {cmdstr}", bold=True, fg="bright_blue")
+    if echo:
+        click.secho(f"$ {cmdstr}", bold=True, fg="bright_blue")
 
     if output is False:
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}

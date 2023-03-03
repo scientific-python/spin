@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+import json
 
 import click
 
@@ -10,8 +11,8 @@ from .util import run, get_config, get_commands
 install_dir = "build-install"
 
 
-def set_pythonpath():
-    site_packages = get_site_packages()
+def _set_pythonpath():
+    site_packages = _get_site_packages()
     env = os.environ
 
     if "PYTHONPATH" in env:
@@ -22,7 +23,7 @@ def set_pythonpath():
     return env["PYTHONPATH"]
 
 
-def get_site_packages():
+def _get_site_packages():
     candidate_paths = []
     for root, dirs, files in os.walk(install_dir):
         for subdir in dirs:
@@ -59,6 +60,23 @@ def get_site_packages():
     return site_packages
 
 
+def _meson_version():
+    try:
+        p = run(["meson", "--version"], output=False, echo=False)
+        return p.stdout.decode("ascii").strip()
+    except:
+        pass
+
+
+def _meson_version_configured():
+    try:
+        meson_info_fn = os.path.join("build", "meson-info", "meson-info.json")
+        meson_info = json.load(open(meson_info_fn))
+        return meson_info["meson_version"]["full"]
+    except:
+        pass
+
+
 @click.command()
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
@@ -80,9 +98,8 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
 
     CFLAGS="-O0 -g" ./dev.py build
     """
-    build_dir = os.path.abspath("build")
-    build_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
-    flags = []
+    build_dir = "build"
+    setup_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -92,20 +109,23 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
         if os.path.isdir(install_dir):
             shutil.rmtree(install_dir)
 
-    if os.path.exists(build_dir):
-        flags += ["--reconfigure"]
+    if not (os.path.exists(build_dir) and _meson_version_configured()):
+        p = run(setup_cmd, sys_exit=False)
+        if p.returncode != 0:
+            raise RuntimeError(
+                "Meson configuration failed; please try `dev.py build` again with the `--clean` flag."
+            )
+    else:
+        # Build dir has been configured; check if it was configured by
+        # current version of Meson
 
-    p = run(build_cmd + flags, sys_exit=False)
-    if p.returncode != 0 and "--reconfigure" in flags:
-        click.confirm(
-            f"\nMeson failed; perhaps due to an invalid build tree. OK to remove `{build_dir}` and try again?",
-            abort=True,
-        )
-        shutil.rmtree(build_dir)
-        run(build_cmd)
+        if _meson_version() != _meson_version_configured():
+            run(setup_cmd + ["--reconfigure"])
 
-    run(["meson", "compile", "-C", build_dir])
-    run(
+        # Any other conditions that warrant a reconfigure?
+
+    p = run(["meson", "compile", "-C", build_dir], sys_exit=False)
+    p = run(
         [
             "meson",
             "install",
@@ -152,8 +172,8 @@ def test(ctx, pytest_args):
             )
             sys.exit(1)
 
-    site_path = get_site_packages()
-    set_pythonpath()
+    site_path = _get_site_packages()
+    _set_pythonpath()
 
     print(f'$ export PYTHONPATH="{site_path}"')
     run(
@@ -172,7 +192,7 @@ def ipython(ipython_args):
 
     ./dev.py ipython -- -i myscript.py
     """
-    p = set_pythonpath()
+    p = _set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
@@ -189,7 +209,7 @@ def shell(shell_args=[]):
     Ensure that your shell init file (e.g., ~/.zshrc) does not override
     the PYTHONPATH.
     """
-    p = set_pythonpath()
+    p = _set_pythonpath()
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
@@ -207,7 +227,7 @@ def python(python_args):
 
     ./dev.py python -- -c 'import sys; print(sys.path)'
     """
-    p = set_pythonpath()
+    p = _set_pythonpath()
     v = sys.version_info
     if (v.major < 3) or (v.major == 3 and v.minor < 11):
         print("We're sorry, but this feature only works on Python 3.11 and greater 😢")
