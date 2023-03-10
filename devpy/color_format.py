@@ -13,7 +13,7 @@ class RegexpFormatter:
         self.reset_style = click.style("", reset=True)
 
     def __call__(self, txt):
-        for (expr, format) in self.rules.items():
+        for expr, format in self.rules.items():
             txt = expr.sub(click.style("\\g<0>", **format) + self.default_style, txt)
         txt = self.default_style + txt + self.reset_style
         return txt
