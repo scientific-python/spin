@@ -15,7 +15,7 @@ Example `version`
 - Update and review `CHANGELOG.md`:
 
       gem install github_changelog_generator
-      github_changelog_generator -u scientific-python -p dev.py --since-tag=<last tag>
+      github_changelog_generator -u scientific-python -p devpy --since-tag=<last tag>
 
 - Update `version` in `pyproject.toml`.
 
@@ -35,12 +35,12 @@ Example `version`
 
       git push --tags origin main
 
-  where `origin` is the name of the `github.com:scientific-python/dev.py`
+  where `origin` is the name of the `github.com:scientific-python/devpy`
   repository
 
 - Review the github release page:
 
-      https://github.com/scientific-python/dev.py/releases
+      https://github.com/scientific-python/devpy/releases
 
 - Publish on PyPi:
 
