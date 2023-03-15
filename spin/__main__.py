@@ -43,9 +43,9 @@ if __name__ == "__main__":
     project_config = toml_config.get("project", {})
 
     try:
-        config = toml_config["tool"]["devpy"]
+        config = toml_config["tool"]["spin"]
     except KeyError:
-        print("No configuration found in [pyproject.toml] for [tool.devpy]")
+        print("No configuration found in [pyproject.toml] for [tool.spin]")
         sys.exit(1)
 
     proj_name = project_config.get("name", config["package"])
@@ -64,14 +64,14 @@ if __name__ == "__main__":
         config_cmds = {"Commands": config_cmds}
 
     # Backward compatibility workaround
-    # Originally, you could specify any of these commands as `devpy.cmd`
+    # Originally, you could specify any of these commands as `spin.cmd`
     # and we'd fetch it from util
     commands = {
-        "devpy.build": cmds.meson.build,
-        "devpy.test": cmds.meson.test,
-        "devpy.ipython": cmds.meson.ipython,
-        "devpy.python": cmds.meson.python,
-        "devpy.shell": cmds.meson.shell,
+        "spin.build": cmds.meson.build,
+        "spin.test": cmds.meson.test,
+        "spin.ipython": cmds.meson.ipython,
+        "spin.python": cmds.meson.python,
+        "spin.shell": cmds.meson.shell,
     }
 
     for section, cmds in config_cmds.items():

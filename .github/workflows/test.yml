@@ -15,7 +15,7 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-  test_devpy:
+  test_spin:
     strategy:
       matrix:
         python_version: ["3.7"]
@@ -34,7 +34,7 @@ jobs:
         env:
           PYTHONPATH: "."
         run: |
-          pytest --pyargs devpy
+          pytest --pyargs spin
       - name: Functional tests (linux)
         if: matrix.os == 'ubuntu-latest'
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
@@ -42,9 +42,9 @@ jobs:
           TERM: xterm-256color
         run: |
           cd example_pkg
-          ./dev.py build
-          ./dev.py test
-          ./dev.py sdist
+          ./spin build
+          ./spin test
+          ./spin sdist
       - name: Patch Windows runner
         if: matrix.os == 'windows-latest'
         run: |
@@ -56,6 +56,6 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: |
           cd example_pkg
-          python dev.py build
-          python dev.py test
-          python dev.py sdist
+          python spin build
+          python spin test
+          python spin sdist
