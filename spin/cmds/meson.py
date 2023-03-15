@@ -165,10 +165,10 @@ def test(ctx, pytest_args):
         ctx.invoke(build_cmd)
 
     if not pytest_args:
-        pytest_args = (cfg.get("tool.devpy.package", None),)
+        pytest_args = (cfg.get("tool.spin.package", None),)
         if pytest_args == (None,):
             print(
-                "Please specify `package = packagename` under `tool.devpy` section of `pyproject.toml`"
+                "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
             )
             sys.exit(1)
 

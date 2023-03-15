@@ -5,7 +5,7 @@ from os.path import join as pjoin, normpath
 
 import pytest
 
-from devpy.cmds import meson
+from spin.cmds import meson
 
 
 def make_paths(root, paths):

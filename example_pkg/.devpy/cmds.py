@@ -1,6 +1,6 @@
 import json
 import click
-from devpy import util
+from spin import util
 
 
 @click.command()
@@ -19,4 +19,4 @@ def example(flag):
     print(flag or None)
 
     click.secho("\nTool config is:", fg="yellow")
-    print(json.dumps(config["tool.devpy"], indent=2))
+    print(json.dumps(config["tool.spin"], indent=2))

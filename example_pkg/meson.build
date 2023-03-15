@@ -1,5 +1,5 @@
 project(
-  'devpy-example-pkg',
+  'spin-example-pkg',
   'c',
   version: '0.0.dev0',
   license: 'BSD-3',

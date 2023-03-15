@@ -1,11 +1,11 @@
 [project]
-name = "devpy"
-version = "0.2rc1.dev0"
+name = "spin"
+version = "0.2b1"
 requires-python = ">=3.7"
 description = "Developer tool for scientific Python libraries"
 license = {file = "LICENSE"}
 maintainers = [
-  {name = "Scientific Python", email = "devpy@discuss.scientific-python.org"}
+  {name = "Scientific Python", email = "spin@discuss.scientific-python.org"}
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -21,10 +21,10 @@ dependencies = [
 lint = ["pre-commit >= 3.1"]
 
 [project.urls]
-homepage = "https://github.com/scientific-python/devpy"
+homepage = "https://github.com/scientific-python/spin"
 
 [tool.setuptools.packages.find]
-include = ["devpy*"]
+include = ["spin*"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
