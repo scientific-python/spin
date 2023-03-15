@@ -1,4 +1,9 @@
-# Developer tool for scientific Python libraries
+# 💫 Scientific Python INcantations (`spin`)
+
+## A developer tool for scientific Python libraries
+
+**NOTE:** If you are looking for `devpy`, this is it! We had to rename
+the package to publish it on PyPi.
 
 Developers need to memorize a whole bunch of magic command-line incantations.
 And these incantations change from time to time!
@@ -132,3 +137,4 @@ def example():
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
 Inspired by that implementation, `spin` (this package) is a minimal rewrite by Stéfan van der Walt, that aims to be easily extendable so that it can be used across ecosystem libraries.
+We thank Danila Bredikhin and Luca Marconato who kindly donated the `spin` name on PyPi.
