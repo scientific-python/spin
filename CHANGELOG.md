@@ -1,6 +1,20 @@
 # Changelog
 
-## [v0.1](https://github.com/scientific-python/spin/tree/v0.1)
+## [v0.1rc0](https://github.com/scientific-python/spin/tree/v0.1rc0) (2023-3-16)
+
+[Full Changelog](https://github.com/scientific-python/spin/compare/v0.1...v0.1rc0)
+
+**Closed issues:**
+
+- Make releases that projects can pin to [\#53](https://github.com/scientific-python/spin/issues/53)
+
+**Merged pull requests:**
+
+- Test on more Python versions [\#64](https://github.com/scientific-python/spin/pull/64) ([jarrodmillman](https://github.com/jarrodmillman))
+- Rename package [\#63](https://github.com/scientific-python/spin/pull/63) ([jarrodmillman](https://github.com/jarrodmillman))
+- Update release process [\#61](https://github.com/scientific-python/spin/pull/61) ([jarrodmillman](https://github.com/jarrodmillman))
+
+## [v0.1](https://github.com/scientific-python/spin/tree/v0.1) (2023-3-10)
 
 [Full Changelog](https://github.com/scientific-python/spin/compare/v0.1a1...v0.1)
 
