@@ -1,8 +1,8 @@
 # Changelog
 
-## [v0.1rc0](https://github.com/scientific-python/spin/tree/v0.1rc0) (2023-3-16)
+## [v0.2](https://github.com/scientific-python/spin/tree/v0.2) (2023-3-17)
 
-[Full Changelog](https://github.com/scientific-python/spin/compare/v0.1...v0.1rc0)
+[Full Changelog](https://github.com/scientific-python/spin/compare/v0.1...v0.2)
 
 **Closed issues:**
 
