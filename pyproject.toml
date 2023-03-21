@@ -17,6 +17,9 @@ dependencies = [
   "colorama; platform_system == 'Windows'"
 ]
 
+[project.scripts]
+spin = "spin.__main__:main"
+
 [project.optional-dependencies]
 lint = ["pre-commit >= 3.1"]
 
