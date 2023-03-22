@@ -2,7 +2,7 @@
 name = "example_pkg"
 version = "0.0dev0"
 requires-python = ">=3.7"
-description = "DevPy Example Package"
+description = "spin Example Package"
 
 [build-system]
 build-backend = "mesonpy"
