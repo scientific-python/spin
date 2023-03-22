@@ -45,6 +45,7 @@ jobs:
         env:
           TERM: xterm-256color
         run: |
+          set -x
           cd example_pkg
           spin build
           spin test
@@ -52,7 +53,9 @@ jobs:
           spin example
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
+        shell: bash
         run: |
+          set -x
           cd example_pkg
           spin build
           spin test
