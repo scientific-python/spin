@@ -49,6 +49,7 @@ jobs:
           spin build
           spin test
           spin sdist
+          spin example
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
         run: |
@@ -56,3 +57,4 @@ jobs:
           spin build
           spin test
           spin sdist
+          spin example
