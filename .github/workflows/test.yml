@@ -32,16 +32,6 @@ jobs:
           PYTHONPATH: "."
         run: |
           pytest --pyargs spin
-      - name: Functional tests (linux)
-        if: matrix.os == 'ubuntu-latest'
-        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
-        env:
-          TERM: xterm-256color
-        run: |
-          cd example_pkg
-          ./spin build
-          ./spin test
-          ./spin sdist
       - name: Patch Windows runner
         if: matrix.os == 'windows-latest'
         run: |
@@ -49,10 +39,20 @@ jobs:
           Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
           Remove-Item -Path C:\msys64 -Recurse -Force
           Remove-Item -Path "C:\Program Files\LLVM" -Recurse
+      - name: Functional tests (linux)
+        if: matrix.os == 'ubuntu-latest'
+        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
+        env:
+          TERM: xterm-256color
+        run: |
+          cd example_pkg
+          spin build
+          spin test
+          spin sdist
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
         run: |
           cd example_pkg
-          python spin build
-          python spin test
-          python spin sdist
+          spin build
+          spin test
+          spin sdist
