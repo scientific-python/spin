@@ -1,4 +1,4 @@
-# Release process for `dev.py`
+# Release process for `spin`
 
 ## Introduction
 

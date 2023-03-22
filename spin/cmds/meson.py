@@ -89,14 +89,14 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
 
     MESON_ARGS are passed through e.g.:
 
-    ./dev.py build -- -Dpkg_config_path=/lib64/pkgconfig
+    spin build -- -Dpkg_config_path=/lib64/pkgconfig
 
     The package is installed to build-install
 
     By default builds for release, to be able to use a debugger set CFLAGS
     appropriately. For example, for linux use
 
-    CFLAGS="-O0 -g" ./dev.py build
+    CFLAGS="-O0 -g" spin build
     """
     build_dir = "build"
     setup_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
@@ -113,7 +113,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
         p = run(setup_cmd, sys_exit=False)
         if p.returncode != 0:
             raise RuntimeError(
-                "Meson configuration failed; please try `dev.py build` again with the `--clean` flag."
+                "Meson configuration failed; please try `spin build` again with the `--clean` flag."
             )
     else:
         # Build dir has been configured; check if it was configured by
@@ -147,11 +147,11 @@ def test(ctx, pytest_args):
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
 
-    ./dev.py test -- -v
+    spin test -- -v
 
     By default, runs the full test suite. To skip "slow" tests, run
 
-    ./dev.py test -- -m "not slow"
+    spin test -- -m "not slow"
     """
     cfg = get_config()
 
@@ -190,7 +190,7 @@ def ipython(ipython_args):
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
 
-    ./dev.py ipython -- -i myscript.py
+    spin ipython -- -i myscript.py
     """
     p = _set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
@@ -204,7 +204,7 @@ def shell(shell_args=[]):
 
     SHELL_ARGS are passed through directly to the shell, e.g.:
 
-    ./dev.py shell -- -c 'echo $PYTHONPATH'
+    spin shell -- -c 'echo $PYTHONPATH'
 
     Ensure that your shell init file (e.g., ~/.zshrc) does not override
     the PYTHONPATH.
@@ -225,7 +225,7 @@ def python(python_args):
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
 
-    ./dev.py python -- -c 'import sys; print(sys.path)'
+    spin python -- -c 'import sys; print(sys.path)'
     """
     p = _set_pythonpath()
     v = sys.version_info
