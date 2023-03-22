@@ -7,11 +7,10 @@ from glob import glob
 import click
 import toml
 
-from . import cmds
-from .cmds import util
-from .cmds import *
-from .sectioned_help import SectionedHelpGroup
-from .color_format import ColorHelpFormatter
+from spin import cmds as _cmds
+from spin.cmds import util
+from spin.sectioned_help import SectionedHelpGroup
+from spin.color_format import ColorHelpFormatter
 
 
 click.Context.formatter_class = ColorHelpFormatter
@@ -28,7 +27,7 @@ class DotDict(collections.UserDict):
         return subitem
 
 
-if __name__ == "__main__":
+def main():
     if not os.path.exists("pyproject.toml"):
         print("Error: cannot find [pyproject.toml]")
         sys.exit(1)
@@ -67,11 +66,11 @@ if __name__ == "__main__":
     # Originally, you could specify any of these commands as `spin.cmd`
     # and we'd fetch it from util
     commands = {
-        "spin.build": cmds.meson.build,
-        "spin.test": cmds.meson.test,
-        "spin.ipython": cmds.meson.ipython,
-        "spin.python": cmds.meson.python,
-        "spin.shell": cmds.meson.shell,
+        "spin.build": _cmds.meson.build,
+        "spin.test": _cmds.meson.test,
+        "spin.ipython": _cmds.meson.ipython,
+        "spin.python": _cmds.meson.python,
+        "spin.shell": _cmds.meson.shell,
     }
 
     for section, cmds in config_cmds.items():
@@ -121,3 +120,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"{e}; aborting.")
         sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

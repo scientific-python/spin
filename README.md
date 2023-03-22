@@ -16,12 +16,8 @@ When many of the build and installation commands changed, it made sense to abstr
 
 ## Installation
 
-`spin` is not yet available via PyPi (but soon!).
-
-Meanwhile, please install it directly from GitHub:
-
 ```
-pip install git+https://github.com/scientific-python/spin
+pip install spin
 ```
 
 ## Configuration
@@ -75,13 +71,13 @@ Environments:
 ## Running
 
 ```
+spin
+```
+
+or
+
+```
 python -m spin
-```
-
-On Unix-like systems, you can also copy the [`dev.py` script](https://github.com/scientific-python/spin/blob/main/example_pkg/dev.py) to the root of your project directory, and launch it as:
-
-```
-./dev.py
 ```
 
 ## Built-in commands
