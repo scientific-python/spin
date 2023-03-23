@@ -122,6 +122,7 @@ Custom commands can access the `pyproject.toml` as follows:
 ```python
 from spin import util
 
+
 @click.command()
 def example():
     """Command that accesses `pyproject.toml` configuration"""
