@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.3](https://github.com/scientific-python/spin/tree/v0.3) (2023-3-23)
+
+[Full Changelog](https://github.com/scientific-python/spin/compare/v0.2...v0.3)
+
+**Merged pull requests:**
+
+- Update pre-commit [\#68](https://github.com/scientific-python/spin/pull/68) ([jarrodmillman](https://github.com/jarrodmillman))
+- Cleanup from rename [\#67](https://github.com/scientific-python/spin/pull/67) ([jarrodmillman](https://github.com/jarrodmillman))
+- Launch `spin` via a setuptools script/entrypoint [\#66](https://github.com/scientific-python/spin/pull/66) ([stefanv](https://github.com/stefanv))
+
 ## [v0.2](https://github.com/scientific-python/spin/tree/v0.2) (2023-3-17)
 
 [Full Changelog](https://github.com/scientific-python/spin/compare/v0.1...v0.2)
