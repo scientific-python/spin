@@ -51,6 +51,8 @@ jobs:
           spin test
           spin sdist
           spin example
+          spin run 'echo $PYTHONPATH'
+          spin run python -c 'import sys; del sys.path[0]; import example_pkg'
       - name: Functional tests (other)
         if: matrix.os != 'ubuntu-latest'
         shell: bash
@@ -61,3 +63,5 @@ jobs:
           spin test
           spin sdist
           spin example
+          spin run 'echo $PYTHONPATH'
+          spin run python -c 'import sys; del sys.path[0]; import example_pkg'

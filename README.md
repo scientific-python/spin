@@ -49,9 +49,8 @@ In `pyproject.toml`, instead of specifying the commands as a list, use the follo
   "spin.cmds.meson.test"
 ]
 "Environments" = [
-  "spin.cmds.meson.shell",
   "spin.cmds.meson.ipython",
-  "spin.cmds.meson.python"
+  "spin.cmds.meson.run"
 ]
 ```
 
@@ -63,9 +62,8 @@ Build:
   test   🔧 Run tests
 
 Environments:
-  shell    💻 Launch shell with PYTHONPATH set
   ipython  💻 Launch IPython shell with PYTHONPATH set
-  python   🐍 Launch Python shell with PYTHONPATH set
+  run      🏁 Run a shell command with PYTHONPATH set.
 ```
 
 ## Running
@@ -90,6 +88,8 @@ python -m spin
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
   test     🔧 Run pytest
+  run      🏁 Run a shell command with PYTHONPATH set.
+
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)

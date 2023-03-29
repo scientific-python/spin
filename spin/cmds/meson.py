@@ -2,10 +2,11 @@ import os
 import sys
 import shutil
 import json
+import shlex
 
 import click
 
-from .util import run, get_config, get_commands
+from .util import run as _run, get_config, get_commands
 
 
 install_dir = "build-install"
@@ -62,7 +63,7 @@ def _get_site_packages():
 
 def _meson_version():
     try:
-        p = run(["meson", "--version"], output=False, echo=False)
+        p = _run(["meson", "--version"], output=False, echo=False)
         return p.stdout.decode("ascii").strip()
     except:
         pass
@@ -110,7 +111,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
             shutil.rmtree(install_dir)
 
     if not (os.path.exists(build_dir) and _meson_version_configured()):
-        p = run(setup_cmd, sys_exit=False)
+        p = _run(setup_cmd, sys_exit=False)
         if p.returncode != 0:
             raise RuntimeError(
                 "Meson configuration failed; please try `spin build` again with the `--clean` flag."
@@ -120,12 +121,12 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
         # current version of Meson
 
         if _meson_version() != _meson_version_configured():
-            run(setup_cmd + ["--reconfigure"])
+            _run(setup_cmd + ["--reconfigure"])
 
         # Any other conditions that warrant a reconfigure?
 
-    p = run(["meson", "compile", "-C", build_dir], sys_exit=False)
-    p = run(
+    p = _run(["meson", "compile", "-C", build_dir], sys_exit=False)
+    p = _run(
         [
             "meson",
             "install",
@@ -176,7 +177,7 @@ def test(ctx, pytest_args):
     _set_pythonpath()
 
     print(f'$ export PYTHONPATH="{site_path}"')
-    run(
+    _run(
         [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
         cwd=site_path,
         replace=True,
@@ -194,7 +195,7 @@ def ipython(ipython_args):
     """
     p = _set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
-    run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
+    _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
 @click.command()
@@ -215,7 +216,7 @@ def shell(shell_args=[]):
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
     print(f"⚠  Change directory to avoid importing source instead of built package")
     print(f"⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
-    run(cmd, replace=True)
+    _run(cmd, replace=True)
 
 
 @click.command()
@@ -247,4 +248,23 @@ def python(python_args):
 
     print(f'🐍 Launching Python with PYTHONPATH="{p}"')
 
-    run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+    _run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+
+
+@click.command(context_settings={"ignore_unknown_options": True})
+@click.argument("args", nargs=-1)
+def run(args):
+    """🏁 Run a shell command with PYTHONPATH set.
+
+    \b
+    spin run make
+    spin run 'echo $PYTHONPATH'
+    spin run python -c 'import sys; del sys.path[0]; import mypkg'
+    """
+    if not len(args) > 0:
+        raise RuntimeError("No command given")
+
+    shell = len(args) == 1
+
+    _set_pythonpath()
+    _run(args, echo=False, shell=shell)
