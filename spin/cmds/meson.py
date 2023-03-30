@@ -254,12 +254,15 @@ def python(python_args):
 @click.command(context_settings={"ignore_unknown_options": True})
 @click.argument("args", nargs=-1)
 def run(args):
-    """🏁 Run a shell command with PYTHONPATH set.
+    """🏁 Run a shell command with PYTHONPATH set
 
     \b
     spin run make
     spin run 'echo $PYTHONPATH'
     spin run python -c 'import sys; del sys.path[0]; import mypkg'
+
+    If you'd like to expand a shell variable, like `$PYTHONPATH` in the example
+    above, you need to provide a single, quoted command to `run`.
     """
     if not len(args) > 0:
         raise RuntimeError("No command given")
