@@ -262,12 +262,16 @@ def run(args):
     spin run python -c 'import sys; del sys.path[0]; import mypkg'
 
     If you'd like to expand a shell variable, like `$PYTHONPATH` in the example
-    above, you need to provide a single, quoted command to `run`.
+    above, you need to provide a single, quoted command to `run`:
+
+    spin run 'echo $SHELL && echo $PWD'
     """
     if not len(args) > 0:
         raise RuntimeError("No command given")
 
     shell = len(args) == 1
+    if shell:
+        args = args[0]
 
     _set_pythonpath()
     _run(args, echo=False, shell=shell)
