@@ -68,6 +68,8 @@ jobs:
       - name: Functional tests (Windows)
         if: matrix.os == 'windows-latest'
         shell: bash
+        env:
+          TERM: xterm-256color
         run: |
           set -xe
           cd example_pkg
