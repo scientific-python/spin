@@ -39,7 +39,7 @@ jobs:
           Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
           Remove-Item -Path C:\msys64 -Recurse -Force
           Remove-Item -Path "C:\Program Files\LLVM" -Recurse
-      - name: Functional tests (linux)
+      - name: Functional tests (Linux)
         if: matrix.os == 'ubuntu-latest'
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
