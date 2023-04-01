@@ -39,43 +39,20 @@ jobs:
           Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
           Remove-Item -Path C:\msys64 -Recurse -Force
           Remove-Item -Path "C:\Program Files\LLVM" -Recurse
+
       - name: Functional tests (Linux)
         if: matrix.os == 'ubuntu-latest'
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
           TERM: xterm-256color
-        run: |
-          set -xe
-          cd example_pkg
-          spin build
-          spin test
-          spin sdist
-          spin example
-          spin run 'echo $PYTHONPATH'
-          spin run python -c 'import sys; del sys.path[0]; import example_pkg'
+        run: source .github/workflows/test.sh
+
       - name: Functional tests (MacOS)
         if: matrix.os == 'macos-latest'
         shell: bash
-        run: |
-          set -xe
-          cd example_pkg
-          spin build
-          spin test
-          spin sdist
-          spin example
-          spin run 'echo $PYTHONPATH'
-          spin run python -c 'import sys; del sys.path[0]; import example_pkg'
+        run: source .github/workflows/test.sh
+
       - name: Functional tests (Windows)
         if: matrix.os == 'windows-latest'
         shell: bash
-        env:
-          TERM: xterm-256color
-        run: |
-          set -xe
-          cd example_pkg
-          spin build
-          spin test
-          spin sdist
-          spin example
-          spin run 'echo $PYTHONPATH'
-          spin run python -c 'import sys; del sys.path[0]; import example_pkg'
+        run: source .github/workflows/test.sh
