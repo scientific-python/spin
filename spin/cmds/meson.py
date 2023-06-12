@@ -20,6 +20,8 @@ def _set_pythonpath():
     else:
         env["PYTHONPATH"] = site_packages
 
+    click.secho(f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue")
+
     return env["PYTHONPATH"]
 
 
@@ -164,18 +166,19 @@ def test(ctx, pytest_args):
         )
         ctx.invoke(build_cmd)
 
+    package = cfg.get("tool.spin.package", None)
     if not pytest_args:
-        pytest_args = (cfg.get("tool.spin.package", None),)
+        pytest_args = (package,)
         if pytest_args == (None,):
             print(
                 "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
             )
             sys.exit(1)
 
-    site_path = _get_site_packages()
-    _set_pythonpath()
+    site_path = _set_pythonpath()
 
-    print(f'$ export PYTHONPATH="{site_path}"')
+    # Sanity check that library built properly
+    run([sys.executable, "-c", f"import {package}"])
     run(
         [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
         cwd=site_path,
