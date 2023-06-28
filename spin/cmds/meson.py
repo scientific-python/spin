@@ -178,7 +178,9 @@ def test(ctx, pytest_args):
     site_path = _set_pythonpath()
 
     # Sanity check that library built properly
-    run([sys.executable, "-c", f"import {package}"])
+    if sys.version_info[:2] >= (3, 11):
+        run([sys.executable, "-P", "-c", f"import {package}"])
+
     run(
         [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
         cwd=site_path,
