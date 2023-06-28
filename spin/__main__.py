@@ -26,6 +26,17 @@ class DotDict(collections.UserDict):
                 raise KeyError(f"`{key}` not found in configuration") from None
         return subitem
 
+    # Fix for Python 3.12
+    # See https://github.com/python/cpython/issues/105524
+    def __contains__(self, key):
+        subitem = self.data
+        for subkey in key.split("."):
+            try:
+                subitem = subitem[subkey]
+            except KeyError:
+                return False
+        return True
+
 
 def main():
     if not os.path.exists("pyproject.toml"):
