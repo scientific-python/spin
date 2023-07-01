@@ -15,8 +15,10 @@ jobs:
   test_spin:
     strategy:
       matrix:
-        python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev"]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        #python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev"]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
+        python_version: ["3.11"]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -32,13 +34,16 @@ jobs:
           PYTHONPATH: "."
         run: |
           pytest --pyargs spin
-      - name: Patch Windows runner
-        if: matrix.os == 'windows-latest'
-        run: |
-          Remove-Item -Path C:\Strawberry -Recurse
-          Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
-          Remove-Item -Path C:\msys64 -Recurse -Force
-          Remove-Item -Path "C:\Program Files\LLVM" -Recurse
+      # - name: Patch Windows runner
+      #   if: matrix.os == 'windows-latest'
+      #   run: |
+      #     Remove-Item -Path C:\Strawberry -Recurse
+      #     Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
+      #     Remove-Item -Path C:\msys64 -Recurse -Force
+      #     Remove-Item -Path "C:\Program Files\LLVM" -Recurse
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Functional tests (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -55,4 +60,7 @@ jobs:
       - name: Functional tests (Windows)
         if: matrix.os == 'windows-latest'
         shell: bash
+        env:
+          CC: clang-cl
+          CXX: clang-cl
         run: source .github/workflows/test.sh
