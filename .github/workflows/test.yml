@@ -34,13 +34,6 @@ jobs:
           PYTHONPATH: "."
         run: |
           pytest --pyargs spin
-      # - name: Patch Windows runner
-      #   if: matrix.os == 'windows-latest'
-      #   run: |
-      #     Remove-Item -Path C:\Strawberry -Recurse
-      #     Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
-      #     Remove-Item -Path C:\msys64 -Recurse -Force
-      #     Remove-Item -Path "C:\Program Files\LLVM" -Recurse
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
@@ -60,7 +53,4 @@ jobs:
       - name: Functional tests (Windows)
         if: matrix.os == 'windows-latest'
         shell: bash
-        env:
-          CC: clang-cl
-          CXX: clang-cl
         run: source .github/workflows/test.sh
