@@ -6,6 +6,7 @@ spin build
 spin test
 spin sdist
 spin example
+spin docs
 
 [[ $(spin run 'echo $PYTHONPATH') != '$PYTHONPATH' ]]
 
