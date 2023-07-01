@@ -289,15 +289,16 @@ def run(args):
     if not len(args) > 0:
         raise RuntimeError("No command given")
 
-    shell = len(args) == 1
-    if shell:
-        args = args[0]
-
     is_posix = sys.platform in ("linux", "darwin")
+    shell = len(args) == 1
+
     if not is_posix:
         # On Windows, we're going to try to use bash
         args = ["bash", "-c"] + args
         shell = True
+    else:
+        if shell:
+            args = args[0]
 
     _set_pythonpath(quiet=True)
     _run(args, echo=False, shell=shell)
