@@ -8,6 +8,6 @@ spin sdist
 spin example
 spin docs
 
-[[ $(spin run 'echo $PYTHONPATH') != '$PYTHONPATH' ]]
+[[ $(spin run 'echo $PYTHONPATH') == *"site-packages" ]]
 
 spin run python -c 'import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)'

@@ -12,7 +12,7 @@ from .util import run as _run, get_config, get_commands
 install_dir = "build-install"
 
 
-def _set_pythonpath():
+def _set_pythonpath(quiet=False):
     site_packages = _get_site_packages()
     env = os.environ
 
@@ -21,7 +21,10 @@ def _set_pythonpath():
     else:
         env["PYTHONPATH"] = site_packages
 
-    click.secho(f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue")
+    if not quiet:
+        click.secho(
+            f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue"
+        )
 
     return env["PYTHONPATH"]
 
@@ -283,7 +286,7 @@ def run(args):
     if shell:
         args = args[0]
 
-    _set_pythonpath()
+    _set_pythonpath(quiet=True)
     _run(args, echo=False, shell=shell)
 
 
