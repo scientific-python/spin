@@ -2,16 +2,17 @@ import os
 import sys
 import shutil
 import json
+import shlex
 
 import click
 
-from .util import run, get_config, get_commands
+from .util import run as _run, get_config, get_commands
 
 
 install_dir = "build-install"
 
 
-def _set_pythonpath():
+def _set_pythonpath(quiet=False):
     site_packages = _get_site_packages()
     env = os.environ
 
@@ -20,7 +21,10 @@ def _set_pythonpath():
     else:
         env["PYTHONPATH"] = site_packages
 
-    click.secho(f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue")
+    if not quiet:
+        click.secho(
+            f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue"
+        )
 
     return env["PYTHONPATH"]
 
@@ -64,7 +68,7 @@ def _get_site_packages():
 
 def _meson_version():
     try:
-        p = run(["meson", "--version"], output=False, echo=False)
+        p = _run(["meson", "--version"], output=False, echo=False)
         return p.stdout.decode("ascii").strip()
     except:
         pass
@@ -112,7 +116,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
             shutil.rmtree(install_dir)
 
     if not (os.path.exists(build_dir) and _meson_version_configured()):
-        p = run(setup_cmd, sys_exit=False)
+        p = _run(setup_cmd, sys_exit=False)
         if p.returncode != 0:
             raise RuntimeError(
                 "Meson configuration failed; please try `spin build` again with the `--clean` flag."
@@ -122,12 +126,12 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
         # current version of Meson
 
         if _meson_version() != _meson_version_configured():
-            run(setup_cmd + ["--reconfigure"])
+            _run(setup_cmd + ["--reconfigure"])
 
         # Any other conditions that warrant a reconfigure?
 
-    p = run(["meson", "compile", "-C", build_dir], sys_exit=False)
-    p = run(
+    p = _run(["meson", "compile", "-C", build_dir], sys_exit=False)
+    p = _run(
         [
             "meson",
             "install",
@@ -183,9 +187,14 @@ def test(ctx, pytest_args):
 
     # Sanity check that library built properly
     if sys.version_info[:2] >= (3, 11):
-        run([sys.executable, "-P", "-c", f"import {package}"])
+        p = _run([sys.executable, "-P", "-c", f"import {package}"], sys_exit=False)
+        if p.returncode != 0:
+            print(f"As a sanity check, we tried to import {package}.")
+            print("Stopping. Please investigate the build error.")
+            sys.exit(1)
 
-    run(
+    print(f'$ export PYTHONPATH="{site_path}"')
+    _run(
         [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
         cwd=site_path,
         replace=True,
@@ -203,7 +212,7 @@ def ipython(ipython_args):
     """
     p = _set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
-    run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
+    _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
 @click.command()
@@ -224,7 +233,7 @@ def shell(shell_args=[]):
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
     print(f"⚠  Change directory to avoid importing source instead of built package")
     print(f"⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
-    run(cmd, replace=True)
+    _run(cmd, replace=True)
 
 
 @click.command()
@@ -256,7 +265,41 @@ def python(python_args):
 
     print(f'🐍 Launching Python with PYTHONPATH="{p}"')
 
-    run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+    _run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+
+
+@click.command(context_settings={"ignore_unknown_options": True})
+@click.argument("args", nargs=-1)
+def run(args):
+    """🏁 Run a shell command with PYTHONPATH set
+
+    \b
+    spin run make
+    spin run 'echo $PYTHONPATH'
+    spin run python -c 'import sys; del sys.path[0]; import mypkg'
+
+    If you'd like to expand shell variables, like `$PYTHONPATH` in the example
+    above, you need to provide a single, quoted command to `run`:
+
+    spin run 'echo $SHELL && echo $PWD'
+
+    On Windows, all shell commands are run via Bash.
+    Install Git for Windows if you don't have Bash already.
+    """
+    if not len(args) > 0:
+        raise RuntimeError("No command given")
+
+    is_posix = sys.platform in ("linux", "darwin")
+    shell = len(args) == 1
+    if shell:
+        args = args[0]
+
+    if shell and not is_posix:
+        # On Windows, we're going to try to use bash
+        args = ["bash", "-c", args]
+
+    _set_pythonpath(quiet=True)
+    _run(args, echo=False, shell=shell)
 
 
 @click.command()
@@ -342,4 +385,4 @@ def docs(ctx, sphinx_target, clean, first_build, jobs):
     click.secho(
         f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
     )
-    run(["make", "-C", "doc", sphinx_target], replace=True)
+    _run(["make", "-C", "doc", sphinx_target], replace=True)

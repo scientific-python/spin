@@ -19,6 +19,7 @@ def run(
         Change to this directory before execution.
     replace : bool
         Whether to replace the current process.
+        Note that this has no effect on Windows.
     sys_exit : bool
         Whether to exit if the shell command returns with error != 0.
     output : bool
@@ -46,7 +47,7 @@ def run(
         output_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT}
         kwargs = {**output_kwargs, **kwargs}
 
-    if replace:
+    if replace and (sys.platform in ("linux", "darwin")):
         os.execvp(cmd[0], cmd)
         print(f"Failed to launch `{cmd}`")
         sys.exit(-1)

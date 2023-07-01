@@ -32,34 +32,20 @@ jobs:
           PYTHONPATH: "."
         run: |
           pytest --pyargs spin
-      - name: Patch Windows runner
-        if: matrix.os == 'windows-latest'
-        run: |
-          Remove-Item -Path C:\Strawberry -Recurse
-          Remove-Item -Path C:\ProgramData\Chocolatey\bin\gcc.exe
-          Remove-Item -Path C:\msys64 -Recurse -Force
-          Remove-Item -Path "C:\Program Files\LLVM" -Recurse
-      - name: Functional tests (linux)
+
+      - name: Functional tests (Linux)
         if: matrix.os == 'ubuntu-latest'
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
           TERM: xterm-256color
-        run: |
-          set -x
-          cd example_pkg
-          spin build
-          spin test
-          spin sdist
-          spin example
-          spin docs
-      - name: Functional tests (other)
-        if: matrix.os != 'ubuntu-latest'
+        run: source .github/workflows/test.sh
+
+      - name: Functional tests (MacOS)
+        if: matrix.os == 'macos-latest'
         shell: bash
-        run: |
-          set -x
-          cd example_pkg
-          spin build
-          spin test
-          spin sdist
-          spin example
-          spin docs
+        run: source .github/workflows/test.sh
+
+      - name: Functional tests (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: source .github/workflows/test.sh

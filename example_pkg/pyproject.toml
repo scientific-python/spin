@@ -36,6 +36,7 @@ package = 'example_pkg'
 "Environments" = [
   "spin.cmds.meson.shell",
   "spin.cmds.meson.ipython",
-  "spin.cmds.meson.python"
+  "spin.cmds.meson.python",
+  "spin.cmds.meson.run"
 ]
 "Extensions" = [".spin/cmds.py:example"]
