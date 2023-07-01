@@ -14,8 +14,9 @@ Example `version`
 
 - Update and review `CHANGELOG.md`:
 
-      gem install github_changelog_generator
-      github_changelog_generator -u scientific-python -p spin --since-tag=<last tag>
+      changelist scientific-python/spin  <v0.0> main --version <0.1> >> CHANGELOG.md
+
+  where <v0.0> is the last release and <0.1> is the new one.
 
 - Update `version` in `pyproject.toml`.
 
