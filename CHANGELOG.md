@@ -1,5 +1,29 @@
 # Changelog
 
+## [v0.4](https://github.com/scientific-python/spin/tree/v0.4) (2023-7-1)
+
+[Full Changelog](https://github.com/scientific-python/spin/compare/v0.3...v0.4)
+
+**Closed issues:**
+
+- `spin test` usage in numpy is broken [\#74](https://github.com/scientific-python/spin/issues/74)
+- How can I override the `build` command? [\#72](https://github.com/scientific-python/spin/issues/72)
+- Run a command in the shell without invoking the shell [\#69](https://github.com/scientific-python/spin/issues/69)
+- DEV: Can `pydevtool.cli` be used to create a unified context? [\#45](https://github.com/scientific-python/spin/issues/45)
+
+**Merged pull requests:**
+
+- Fix rendering of `test` docs [\#83](https://github.com/scientific-python/spin/pull/83) ([stefanv](https://github.com/stefanv))
+- Add @WarrenWeckesser's test primer as docstring [\#82](https://github.com/scientific-python/spin/pull/82) ([stefanv](https://github.com/stefanv))
+- Use ruff [\#81](https://github.com/scientific-python/spin/pull/81) ([jarrodmillman](https://github.com/jarrodmillman))
+- Docs cmd ci [\#80](https://github.com/scientific-python/spin/pull/80) ([stefanv](https://github.com/stefanv))
+- Add docs to CI tests [\#79](https://github.com/scientific-python/spin/pull/79) ([stefanv](https://github.com/stefanv))
+- Add command to build Sphinx docs [\#78](https://github.com/scientific-python/spin/pull/78) ([stefanv](https://github.com/stefanv))
+- Import importlib.util explicitly [\#76](https://github.com/scientific-python/spin/pull/76) ([stefanv](https://github.com/stefanv))
+- As a build check, import the library before running tests [\#75](https://github.com/scientific-python/spin/pull/75) ([stefanv](https://github.com/stefanv))
+- Test on Python 3.12.0-beta.2 [\#73](https://github.com/scientific-python/spin/pull/73) ([jarrodmillman](https://github.com/jarrodmillman))
+- Add meson.run command [\#70](https://github.com/scientific-python/spin/pull/70) ([stefanv](https://github.com/stefanv))
+
 ## [v0.3](https://github.com/scientific-python/spin/tree/v0.3) (2023-3-23)
 
 [Full Changelog](https://github.com/scientific-python/spin/compare/v0.2...v0.3)
