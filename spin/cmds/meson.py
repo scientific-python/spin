@@ -162,15 +162,17 @@ def test(ctx, pytest_args):
 
     To run tests on a directory or file:
 
-      spin test numpy/linalg
-      spin test numpy/linalg/tests/test_linalg.py
+     \b
+     spin test numpy/linalg
+     spin test numpy/linalg/tests/test_linalg.py
 
     To run specific tests, by module, function, class, or method:
 
-      spin test -- --pyargs numpy.random
-      spin test -- --pyargs numpy.random.tests.test_generator_mt19937
-      spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric
-      spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric::test_edge_cases
+     \b
+     spin test -- --pyargs numpy.random
+     spin test -- --pyargs numpy.random.tests.test_generator_mt19937
+     spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric
+     spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric::test_edge_cases
 
     To report the durations of the N slowest tests:
 
@@ -178,8 +180,9 @@ def test(ctx, pytest_args):
 
     To run tests that match a given pattern:
 
-      spin test -- -k "geometric"
-      spin test -- -k "geometric and not rgeometric"
+     \b
+     spin test -- -k "geometric"
+     spin test -- -k "geometric and not rgeometric"
 
     To skip tests with a given marker:
 
