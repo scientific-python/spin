@@ -283,7 +283,7 @@ def run(args):
 
     spin run 'echo $SHELL && echo $PWD'
 
-    On Windows, all commands are run via Bash.
+    On Windows, all shell commands are run via Bash.
     Install Git for Windows if you don't have Bash already.
     """
     if not len(args) > 0:
@@ -291,14 +291,12 @@ def run(args):
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
+    if shell:
+        args = args[0]
 
-    if not is_posix:
+    if shell and not is_posix:
         # On Windows, we're going to try to use bash
-        args = ["bash", "-c"] + args
-        shell = True
-    else:
-        if shell:
-            args = args[0]
+        args = ["bash", "-c", args]
 
     _set_pythonpath(quiet=True)
     _run(args, echo=False, shell=shell)
