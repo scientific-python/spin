@@ -278,10 +278,13 @@ def run(args):
     spin run 'echo $PYTHONPATH'
     spin run python -c 'import sys; del sys.path[0]; import mypkg'
 
-    If you'd like to expand a shell variable, like `$PYTHONPATH` in the example
+    If you'd like to expand shell variables, like `$PYTHONPATH` in the example
     above, you need to provide a single, quoted command to `run`:
 
     spin run 'echo $SHELL && echo $PWD'
+
+    On Windows, all commands are run via Bash.
+    Install Git for Windows if you don't have Bash already.
     """
     if not len(args) > 0:
         raise RuntimeError("No command given")
@@ -289,6 +292,12 @@ def run(args):
     shell = len(args) == 1
     if shell:
         args = args[0]
+
+    is_posix = sys.platform in ("linux", "darwin")
+    if not is_posix:
+        # On Windows, we're going to try to use bash
+        args = ["bash", "-c"] + args
+        shell = True
 
     _set_pythonpath(quiet=True)
     _run(args, echo=False, shell=shell)
