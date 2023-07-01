@@ -159,11 +159,39 @@ def test(ctx, pytest_args):
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
 
-    spin test -- -v
+      spin test -- -v
 
-    By default, runs the full test suite. To skip "slow" tests, run
+    To run tests on a directory or file:
 
-    spin test -- -m "not slow"
+      spin test numpy/linalg
+      spin test numpy/linalg/tests/test_linalg.py
+
+    To run specific tests, by module, function, class, or method:
+
+      spin test -- --pyargs numpy.random
+      spin test -- --pyargs numpy.random.tests.test_generator_mt19937
+      spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric
+      spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric::test_edge_cases
+
+    To report the durations of the N slowest tests:
+
+      spin test -- --durations=N
+
+    To run tests that match a given pattern:
+
+      spin test -- -k "geometric"
+      spin test -- -k "geometric and not rgeometric"
+
+    To skip tests with a given marker:
+
+      spin test -- -m "not slow"
+
+    To parallelize test runs (requires `pytest-xdist`):
+
+      spin test -- -n NUM_JOBS
+
+    For more, see `pytest --help`.
+
     """
     cfg = get_config()
 
