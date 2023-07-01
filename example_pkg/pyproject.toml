@@ -30,6 +30,9 @@ package = 'example_pkg'
   "spin.cmds.meson.test",
   "spin.cmds.build.sdist"
 ]
+"Documentation" = [
+  "spin.cmds.meson.docs"
+]
 "Environments" = [
   "spin.cmds.meson.shell",
   "spin.cmds.meson.ipython",
