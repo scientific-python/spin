@@ -7,3 +7,5 @@ Read more at https://github.com/scientific-python/spin
 """
 
 from .cmds import util
+
+__all__ = ["util"]

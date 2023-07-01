@@ -1,9 +1,7 @@
 import os
-import sys
-import subprocess
 import shlex
-import sysconfig
-from pathlib import Path
+import subprocess
+import sys
 
 import click
 

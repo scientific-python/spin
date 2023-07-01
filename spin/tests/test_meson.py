@@ -1,7 +1,8 @@
-import tempfile
-import sys
 import os
-from os.path import join as pjoin, normpath
+import sys
+import tempfile
+from os.path import join as pjoin
+from os.path import normpath
 
 import pytest
 
@@ -78,7 +79,7 @@ def test_path_discovery(monkeypatch):
     with tempfile.TemporaryDirectory() as d:
         install_dir = pjoin(d, "build-install")
         make_paths(
-            install_dir, [f"/Python3/x/site-packages", f"/Python3/y/site-packages"]
+            install_dir, ["/Python3/x/site-packages", "/Python3/y/site-packages"]
         )
         with pytest.raises(FileNotFoundError):
             meson._get_site_packages()

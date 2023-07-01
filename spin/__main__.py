@@ -1,18 +1,15 @@
 import collections
-import os
-import sys
 import importlib
 import importlib.util
-from glob import glob
+import os
+import sys
 
 import click
 import toml
 
 from spin import cmds as _cmds
-from spin.cmds import util
-from spin.sectioned_help import SectionedHelpGroup
 from spin.color_format import ColorHelpFormatter
-
+from spin.sectioned_help import SectionedHelpGroup
 
 click.Context.formatter_class = ColorHelpFormatter
 
@@ -89,7 +86,7 @@ def main():
         for cmd in cmds:
             if cmd not in commands:
                 # First, see if we can directly import the command
-                if not ":" in cmd:
+                if ":" not in cmd:
                     path, func = cmd.rsplit(".", maxsplit=1)
                     try:
                         mod = importlib.import_module(path)

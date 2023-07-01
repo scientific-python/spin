@@ -1,13 +1,12 @@
-import os
-import sys
-import shutil
 import json
-import shlex
+import os
+import shutil
+import sys
 
 import click
 
-from .util import run as _run, get_config, get_commands
-
+from .util import get_commands, get_config
+from .util import run as _run
 
 install_dir = "build-install"
 
@@ -31,7 +30,7 @@ def _set_pythonpath(quiet=False):
 
 def _get_site_packages():
     candidate_paths = []
-    for root, dirs, files in os.walk(install_dir):
+    for root, dirs, _files in os.walk(install_dir):
         for subdir in dirs:
             if subdir == "site-packages" or subdir == "dist-packages":
                 candidate_paths.append(os.path.abspath(os.path.join(root, subdir)))
@@ -198,7 +197,7 @@ def test(ctx, pytest_args):
     build_cmd = _get_configured_command("build")
     if build_cmd:
         click.secho(
-            f"Invoking `build` prior to running tests:", bold=True, fg="bright_green"
+            "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
         ctx.invoke(build_cmd)
 
@@ -259,8 +258,8 @@ def shell(shell_args=[]):
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
     print(f'💻 Launching shell with PYTHONPATH="{p}"')
-    print(f"⚠  Change directory to avoid importing source instead of built package")
-    print(f"⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
+    print("⚠  Change directory to avoid importing source instead of built package")
+    print("⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
     _run(cmd, replace=True)
 
 
