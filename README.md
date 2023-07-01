@@ -63,7 +63,7 @@ Build:
 
 Environments:
   ipython  💻 Launch IPython shell with PYTHONPATH set
-  run      🏁 Run a shell command with PYTHONPATH set.
+  run      🏁 Run a shell command with PYTHONPATH set
 ```
 
 ## Running
@@ -88,7 +88,7 @@ python -m spin
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
   test     🔧 Run pytest
-  run      🏁 Run a shell command with PYTHONPATH set.
+  run      🏁 Run a shell command with PYTHONPATH set
   docs     📖 Build Sphinx documentation
 ```
 
@@ -97,7 +97,7 @@ python -m spin
 `spin` was started with Meson in mind, but we're working on expanding commands for PEP 517 `build`.
 
 ```
-  sdist    📦 Build a source distribution in `dist/`.
+  sdist    📦 Build a source distribution in `dist/`
 ```
 
 ## 🧪 Custom commands
