@@ -187,7 +187,11 @@ def test(ctx, pytest_args):
 
     # Sanity check that library built properly
     if sys.version_info[:2] >= (3, 11):
-        run([sys.executable, "-P", "-c", f"import {package}"])
+        p = _run([sys.executable, "-P", "-c", f"import {package}"], sys_exit=False)
+        if p.returncode != 0:
+            print(f"As a sanity check, we tried to import {package}.")
+            print("Stopping. Please investigate the build error.")
+            sys.exit(1)
 
     print(f'$ export PYTHONPATH="{site_path}"')
     _run(
