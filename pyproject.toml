@@ -21,7 +21,7 @@ dependencies = [
 spin = "spin.__main__:main"
 
 [project.optional-dependencies]
-lint = ["pre-commit >= 3.2"]
+lint = ["pre-commit >= 3.3"]
 
 [project.urls]
 homepage = "https://github.com/scientific-python/spin"
@@ -33,3 +33,17 @@ include = ["spin*"]
 filterwarnings = [
   "ignore:cannot collect 'test' because it is not a function:",
 ]
+
+[tool.ruff]
+line-length = 88
+target-version = "py37"
+select = [
+    "C",
+    "E",
+    "F",
+    "W",
+    "B",
+    "I",
+    "UP",
+]
+ignore = ["B006", "C901", "E501", "E722"]
