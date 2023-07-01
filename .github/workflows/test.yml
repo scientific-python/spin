@@ -15,10 +15,8 @@ jobs:
   test_spin:
     strategy:
       matrix:
-        #python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev"]
-        #os: [ubuntu-latest, windows-latest, macos-latest]
-        python_version: ["3.11"]
-        os: [windows-latest]
+        python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -34,9 +32,6 @@ jobs:
           PYTHONPATH: "."
         run: |
           pytest --pyargs spin
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Functional tests (Linux)
         if: matrix.os == 'ubuntu-latest'
