@@ -31,7 +31,7 @@ class ColorHelpFormatter(click.formatting.HelpFormatter):
         """Print definition list"""
         key_fmt = RegexpFormatter(
             {
-                " [A-Z]+": {"bold": True, "fg": "yellow"},
+                " [A-Z_]+": {"bold": True, "fg": "yellow"},
                 r"\-[a-z]{1}(?=[ ,]{1})": {"fg": "green"},
             },
             default={"bold": True, "fg": "cyan"},
