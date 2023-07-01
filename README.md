@@ -90,6 +90,7 @@ python -m spin
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
   test     🔧 Run pytest
+  docs     📖 Build Sphinx documentation
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
