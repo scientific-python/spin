@@ -1,5 +1,6 @@
-import click
 import collections
+
+import click
 
 
 class SectionedHelpGroup(click.Group):

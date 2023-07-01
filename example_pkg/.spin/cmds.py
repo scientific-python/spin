@@ -1,5 +1,7 @@
 import json
+
 import click
+
 from spin import util
 
 
@@ -14,7 +16,7 @@ def example(flag):
     click.secho("Running example custom command", bold=True, fg="bright_blue")
     print()
     config = util.get_config()
-    commands = util.get_commands()
+    util.get_commands()
     click.secho("Flag provided with --flag is: ", fg="yellow", nl=False)
     print(flag or None)
 
