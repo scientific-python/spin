@@ -141,6 +141,12 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
     )
 
 
+def _get_configured_command(command_name):
+    command_groups = get_commands()
+    commands = [cmd for section in command_groups for cmd in command_groups[section]]
+    return next((cmd for cmd in commands if cmd.name == command_name), None)
+
+
 @click.command()
 @click.argument("pytest_args", nargs=-1)
 @click.pass_context
@@ -157,9 +163,7 @@ def test(ctx, pytest_args):
     """
     cfg = get_config()
 
-    command_groups = get_commands()
-    commands = [cmd for section in command_groups for cmd in command_groups[section]]
-    build_cmd = next((cmd for cmd in commands if cmd.name == "build"), None)
+    build_cmd = _get_configured_command("build")
     if build_cmd:
         click.secho(
             f"Invoking `build` prior to running tests:", bold=True, fg="bright_green"
@@ -253,3 +257,89 @@ def python(python_args):
     print(f'🐍 Launching Python with PYTHONPATH="{p}"')
 
     run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+
+
+@click.command()
+@click.argument("sphinx_target", default="html")
+@click.option(
+    "--clean",
+    is_flag=True,
+    default=False,
+    help="Clean previously built docs before building",
+)
+@click.option(
+    "--build/--no-build",
+    "first_build",
+    default=True,
+    help="Build numpy before generating docs",
+)
+@click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
+@click.pass_context
+def docs(ctx, sphinx_target, clean, first_build, jobs):
+    """📖 Build Sphinx documentation
+
+    By default, SPHINXOPTS="-W", raising errors on warnings.
+    To build without raising on warnings:
+
+      SPHINXOPTS="" spin docs
+
+    To list all Sphinx targets:
+
+      spin docs targets
+
+    To build another Sphinx target:
+
+      spin docs TARGET
+
+    """
+    # Detect docs dir
+    doc_dir_candidates = ("doc", "docs")
+    doc_dir = next((d for d in doc_dir_candidates if os.path.exists(d)), None)
+    if doc_dir is None:
+        print(
+            f"No documentation folder found; one of {', '.join(doc_dir_candidates)} must exist"
+        )
+        sys.exit(1)
+
+    if sphinx_target in ("targets", "help"):
+        clean = False
+        first_build = False
+        sphinx_target = "help"
+
+    if clean:
+        doc_dirs = [
+            "./doc/build/",
+            "./doc/source/api/",
+            "./doc/source/auto_examples/",
+            "./doc/source/jupyterlite_contents/",
+        ]
+        for doc_dir in doc_dirs:
+            if os.path.isdir(doc_dir):
+                print(f"Removing {doc_dir!r}")
+                shutil.rmtree(doc_dir)
+
+    build_cmd = _get_configured_command("build")
+
+    if build_cmd and first_build:
+        click.secho(
+            "Invoking `build` prior to building docs:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
+    try:
+        site_path = _get_site_packages()
+    except FileNotFoundError:
+        print("No built numpy found; run `spin build` first.")
+        sys.exit(1)
+
+    opts = os.environ.get("SPHINXOPTS", "-W")
+    os.environ["SPHINXOPTS"] = f"{opts} -j {jobs}"
+    click.secho(
+        f"$ export SPHINXOPTS={os.environ['SPHINXOPTS']}", bold=True, fg="bright_blue"
+    )
+
+    os.environ["PYTHONPATH"] = f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+    click.secho(
+        f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
+    )
+    run(["make", "-C", "doc", sphinx_target], replace=True)
