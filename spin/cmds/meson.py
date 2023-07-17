@@ -98,10 +98,10 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
 
     The package is installed to build-install
 
-    By default builds for release, to be able to use a debugger set CFLAGS
-    appropriately. For example, for linux use
+    By default meson-python does release builds, to be able to use a debugger, tell
+    meson to build in debug mode:
 
-    CFLAGS="-O0 -g" spin build
+    spin build -- -Dbuildtype=debug
     """
     build_dir = "build"
     setup_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
