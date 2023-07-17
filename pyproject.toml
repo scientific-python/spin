@@ -14,7 +14,7 @@ classifiers = [
 ]
 dependencies = [
   "click",
-  "toml",
+  "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'"
 ]
 

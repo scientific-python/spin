@@ -5,11 +5,15 @@ import os
 import sys
 
 import click
-import toml
 
 from spin import cmds as _cmds
 from spin.color_format import ColorHelpFormatter
 from spin.sectioned_help import SectionedHelpGroup
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 click.Context.formatter_class = ColorHelpFormatter
 
@@ -41,10 +45,10 @@ def main():
         print("Error: cannot find [pyproject.toml]")
         sys.exit(1)
 
-    with open("pyproject.toml") as f:
+    with open("pyproject.toml", "rb") as f:
         try:
-            toml_config = toml.load(f)
-        except:
+            toml_config = tomllib.load(f)
+        except tomllib.TOMLDecodeError:
             print("Cannot parse [pyproject.toml]")
             sys.exit(1)
 
