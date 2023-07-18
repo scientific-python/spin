@@ -130,6 +130,55 @@ def example():
     print(config["tool.spin"])
 ```
 
+### Advanced: adding arguments to built-in commands
+
+Instead of rewriting a command from scratch, a project may want to add a flag to a built-in `spin` command, or perhaps do some pre- or post-processing.
+For this, we have to use an internal Click concept called a [context](https://click.palletsprojects.com/en/8.1.x/complex/#contexts).
+Fortunately, we don't need to know anything about contexts other than that they allow us to execute commands within commands.
+
+We proceed by duplicating the function header of the existing command, and adding our own flag:
+
+```python
+from spin.cmds import meson
+
+# Take this from the built-in implementation, in `spin.cmds.meson.build`:
+
+
+@click.command()
+@click.argument("meson_args", nargs=-1)
+@click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
+@click.option("--clean", is_flag=True, help="Clean build directory before build")
+@click.option(
+    "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
+)
+
+# This is our new option
+@click.option("--custom-arg/--no-custom-arg")
+
+# This tells spin that we will need a context, which we
+# can use to invoke the built-in command
+@click.pass_context
+
+# This is the original function signature, plus our new flag
+def build(ctx, meson_args, jobs=None, clean=False, verbose=False, custom_arg=False):
+    """Docstring goes here. You may want to copy and customize the original."""
+
+    # Do something with the new option
+    print("The value of custom arg is:", custom_arg)
+
+    # The spin `build` command doesn't know anything about `custom_arg`,
+    # so don't send it on.
+    del ctx.params["custom_arg"]
+
+    # Call the built-in `build` command, passing along
+    # all arguments and options.
+    ctx.forward(meson.build)
+
+    # Also see:
+    # - https://click.palletsprojects.com/en/8.1.x/api/#click.Context.forward
+    # - https://click.palletsprojects.com/en/8.1.x/api/#click.Context.invoke
+```
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
