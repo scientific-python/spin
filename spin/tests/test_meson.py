@@ -103,8 +103,14 @@ def test_path_discovery(monkeypatch):
 
 
 def test_meson_cli_discovery(monkeypatch):
-    config = DotDict({"tool": {"spin": {"meson": {"cli": "~/envs/py311/bin/meson"}}}})
+    config0 = DotDict({"tool": {"spin": {"meson": {"cli": "~/envs/py311/bin/meson"}}}})
+    config1 = DotDict(
+        {"tool": {"spin": {"meson": {"cli": "~/envs/py311/bin/meson.py"}}}}
+    )
 
     with monkeypatch.context() as m:
-        m.setattr(meson, "get_config", lambda: config)
-        assert meson._meson_cli() == os.path.expanduser("~/envs/py311/bin/meson")
+        m.setattr(meson, "get_config", lambda: config0)
+        assert meson._meson_cli()[0] == os.path.expanduser("~/envs/py311/bin/meson")
+
+        m.setattr(meson, "get_config", lambda: config1)
+        assert meson._meson_cli()[0] == sys.executable
