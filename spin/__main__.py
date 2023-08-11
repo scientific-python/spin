@@ -1,4 +1,3 @@
-import collections
 import importlib
 import importlib.util
 import os
@@ -8,6 +7,7 @@ import click
 
 from spin import cmds as _cmds
 from spin.color_format import ColorHelpFormatter
+from spin.containers import DotDict
 from spin.sectioned_help import SectionedHelpGroup
 
 if sys.version_info >= (3, 11):
@@ -16,28 +16,6 @@ else:
     import tomli as tomllib
 
 click.Context.formatter_class = ColorHelpFormatter
-
-
-class DotDict(collections.UserDict):
-    def __getitem__(self, key):
-        subitem = self.data
-        for subkey in key.split("."):
-            try:
-                subitem = subitem[subkey]
-            except KeyError:
-                raise KeyError(f"`{key}` not found in configuration") from None
-        return subitem
-
-    # Fix for Python 3.12
-    # See https://github.com/python/cpython/issues/105524
-    def __contains__(self, key):
-        subitem = self.data
-        for subkey in key.split("."):
-            try:
-                subitem = subitem[subkey]
-            except KeyError:
-                return False
-        return True
 
 
 def main():

@@ -7,6 +7,7 @@ from os.path import normpath
 import pytest
 
 from spin.cmds import meson
+from spin.containers import DotDict
 
 
 def make_paths(root, paths):
@@ -99,3 +100,11 @@ def test_path_discovery(monkeypatch):
             )
             with pytest.raises(FileNotFoundError):
                 meson._get_site_packages()
+
+
+def test_meson_cli_discovery(monkeypatch):
+    config = DotDict({"tool": {"spin": {"meson": {"cli": "~/envs/py311/bin/meson"}}}})
+
+    with monkeypatch.context() as m:
+        m.setattr(meson, "get_config", lambda: config)
+        assert meson._meson_cli() == os.path.expanduser("~/envs/py311/bin/meson")
