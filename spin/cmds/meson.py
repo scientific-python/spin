@@ -165,8 +165,13 @@ def _get_configured_command(command_name):
 
 @click.command()
 @click.argument("pytest_args", nargs=-1)
+@click.option(
+    "--coverage",
+    is_flag=True,
+    help="Report coverage of project code. HTML output goes under build/coverage",
+)
 @click.pass_context
-def test(ctx, pytest_args):
+def test(ctx, pytest_args, coverage=False):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -235,6 +240,18 @@ def test(ctx, pytest_args):
             print(f"As a sanity check, we tried to import {package}.")
             print("Stopping. Please investigate the build error.")
             sys.exit(1)
+
+    if coverage:
+        coverage_dir = os.path.join(os.getcwd(), "build/coverage/")
+        print(f"Removing `{coverage_dir}`")
+        if os.path.isdir(coverage_dir):
+            shutil.rmtree(coverage_dir)
+        os.makedirs(coverage_dir)
+        pytest_args = [
+            *pytest_args,
+            f"--cov-report=html:{coverage_dir}",
+            f"--cov={package}",
+        ]
 
     print(f'$ export PYTHONPATH="{site_path}"')
     _run(
