@@ -5,14 +5,17 @@
 We're happy to announce the release of spin 0.5!
 
 ### Enhancements
+
 - Allow custom Meson CLI path
   ([#97](https://github.com/scientific-python/spin/pull/97)).
 
 ### Bug Fixes
+
 - Correctly highlight parameter names with underscores
   ([#84](https://github.com/scientific-python/spin/pull/84)).
 
 ### Maintenance
+
 - Use label-check and attach-next-milestone-action
   ([#85](https://github.com/scientific-python/spin/pull/85)).
 - Use changelist
@@ -29,6 +32,7 @@ We're happy to announce the release of spin 0.5!
   ([#99](https://github.com/scientific-python/spin/pull/99)).
 
 ### Documentation
+
 - Improve release process
   ([#87](https://github.com/scientific-python/spin/pull/87)).
 - Add readme to pyproject
