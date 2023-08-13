@@ -19,24 +19,24 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: 39f806769667765a1d55ea736d62bb8f72993e01  # frozen: v3.0.1
+    rev: 39f806769667765a1d55ea736d62bb8f72993e01 # frozen: v3.0.1
     hooks:
       - id: prettier
         files: \.(css|html|md|yml|yaml|toml)
         args: [--prose-wrap=preserve]
 
   - repo: https://github.com/psf/black
-    rev: 193ee766ca496871f93621d6b58d57a6564ff81b  # frozen: 23.7.0
+    rev: 193ee766ca496871f93621d6b58d57a6564ff81b # frozen: 23.7.0
     hooks:
       - id: black
 
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: 2e74dc4c30c336176e76e0426c66f09a4e79df9c  # frozen: 1.15.0
+    rev: 2e74dc4c30c336176e76e0426c66f09a4e79df9c # frozen: 1.15.0
     hooks:
       - id: blacken-docs
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: b9a5dc23ed421f99c0fe14b9ace2cbc7fbf710bd  # frozen: v0.0.284
+    rev: b9a5dc23ed421f99c0fe14b9ace2cbc7fbf710bd # frozen: v0.0.284
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
