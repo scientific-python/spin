@@ -11,6 +11,19 @@ from .util import run as _run
 install_dir = "build-install"
 
 
+# Allow specification of meson binary in configuration
+# This is necessary for packages like NumPy that vendor meson
+def _meson_cli():
+    cfg = get_config()
+    meson_cli = os.path.expanduser(cfg.get("tool.spin.meson.cli", "meson"))
+
+    # Handle Python runner, mainly for Windows
+    if meson_cli.endswith(".py"):
+        return [sys.executable, meson_cli]
+    else:
+        return [meson_cli]
+
+
 def _set_pythonpath(quiet=False):
     site_packages = _get_site_packages()
     env = os.environ
@@ -67,7 +80,7 @@ def _get_site_packages():
 
 def _meson_version():
     try:
-        p = _run(["meson", "--version"], output=False, echo=False)
+        p = _run(_meson_cli() + ["--version"], output=False, echo=False)
         return p.stdout.decode("ascii").strip()
     except:
         pass
@@ -104,7 +117,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
     spin build -- -Dbuildtype=debug
     """
     build_dir = "build"
-    setup_cmd = ["meson", "setup", build_dir, "--prefix=/usr"] + list(meson_args)
+    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -129,10 +142,10 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
 
         # Any other conditions that warrant a reconfigure?
 
-    p = _run(["meson", "compile", "-C", build_dir], sys_exit=False)
+    p = _run(_meson_cli() + ["compile", "-C", build_dir], sys_exit=False)
     p = _run(
-        [
-            "meson",
+        _meson_cli()
+        + [
             "install",
             "--only-changed",
             "-C",

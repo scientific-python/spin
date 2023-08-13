@@ -13,6 +13,8 @@ def run(
 
     Parameters
     ----------
+    cmd : list of str
+        Command to execute.
     cwd : str
         Change to this directory before execution.
     replace : bool

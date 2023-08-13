@@ -179,6 +179,16 @@ def build(ctx, meson_args, jobs=None, clean=False, verbose=False, custom_arg=Fal
     # - https://click.palletsprojects.com/en/8.1.x/api/#click.Context.invoke
 ```
 
+### Advanced: override Meson CLI
+
+Some packages use a vendored version of Meson. The path to a custom
+Meson CLI can be set in `pyproject.toml`:
+
+```
+[tool.spin.meson]
+cli = 'path/to/custom/meson'
+```
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).

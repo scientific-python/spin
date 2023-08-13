@@ -2,3 +2,4 @@ build
 build-install
 .mesonpy-native-file.ini
 dist/
+doc/_build
