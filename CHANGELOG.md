@@ -1,5 +1,56 @@
 # Changelog
 
+## spin 0.5rc0
+
+We're happy to announce the release of spin 0.5rc0!
+
+### Enhancements
+- Allow custom Meson CLI path
+  ([#97](https://github.com/scientific-python/spin/pull/97)).
+
+### Bug Fixes
+- Correctly highlight parameter names with underscores
+  ([#84](https://github.com/scientific-python/spin/pull/84)).
+
+### Maintenance
+- Use label-check and attach-next-milestone-action
+  ([#85](https://github.com/scientific-python/spin/pull/85)).
+- Use changelist
+  ([#86](https://github.com/scientific-python/spin/pull/86)).
+- Use dependabot
+  ([#88](https://github.com/scientific-python/spin/pull/88)).
+- Bump pre-commit from 3.3 to 3.3.3
+  ([#89](https://github.com/scientific-python/spin/pull/89)).
+- DEP: migrate from toml package to tomllib
+  ([#93](https://github.com/scientific-python/spin/pull/93)).
+- Bump scientific-python/attach-next-milestone-action from f94a5235518d4d34911c41e19d780b8e79d42238 to bc07be829f693829263e57d5e8489f4e57d3d420
+  ([#96](https://github.com/scientific-python/spin/pull/96)).
+
+### Documentation
+- Improve release process
+  ([#87](https://github.com/scientific-python/spin/pull/87)).
+- Add readme to pyproject
+  ([#91](https://github.com/scientific-python/spin/pull/91)).
+- Suggest setting meson buildtype for a debug build
+  ([#92](https://github.com/scientific-python/spin/pull/92)).
+- Document command wrapping
+  ([#94](https://github.com/scientific-python/spin/pull/94)).
+
+### Contributors
+
+5 authors added to this release (alphabetically):
+[@dependabot[bot]](https://github.com/apps/dependabot),
+Clément Robert ([@neutrinoceros](https://github.com/neutrinoceros)),
+Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman)),
+Nathan Goldbaum ([@ngoldbaum](https://github.com/ngoldbaum)),
+Stefan van der Walt ([@stefanv](https://github.com/stefanv)),
+
+2 reviewers added to this release (alphabetically):
+Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman)),
+Stefan van der Walt ([@stefanv](https://github.com/stefanv)),
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 ## [v0.4](https://github.com/scientific-python/spin/tree/v0.4) (2023-7-1)
 
 [Full Changelog](https://github.com/scientific-python/spin/compare/v0.3...v0.4)
