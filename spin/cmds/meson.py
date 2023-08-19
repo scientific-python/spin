@@ -166,9 +166,10 @@ def _get_configured_command(command_name):
 @click.command()
 @click.argument("pytest_args", nargs=-1)
 @click.option(
+    "-c",
     "--coverage",
     is_flag=True,
-    help="Report coverage of project code. HTML output goes under build/coverage",
+    help="Generate a coverage report of executed tests. An HTML copy of the report is written to `build/coverage`.",
 )
 @click.pass_context
 def test(ctx, pytest_args, coverage=False):
@@ -243,12 +244,13 @@ def test(ctx, pytest_args, coverage=False):
 
     if coverage:
         coverage_dir = os.path.join(os.getcwd(), "build/coverage/")
-        print(f"Removing `{coverage_dir}`")
         if os.path.isdir(coverage_dir):
+            print(f"Removing `{coverage_dir}`")
             shutil.rmtree(coverage_dir)
         os.makedirs(coverage_dir)
         pytest_args = [
             *pytest_args,
+            "--cov-report=term",
             f"--cov-report=html:{coverage_dir}",
             f"--cov={package}",
         ]
