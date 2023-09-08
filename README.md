@@ -90,6 +90,7 @@ python -m spin
   test     🔧 Run pytest
   run      🏁 Run a shell command with PYTHONPATH set
   docs     📖 Build Sphinx documentation
+  gdb  👾 Execute a Python snippet with GDB
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
