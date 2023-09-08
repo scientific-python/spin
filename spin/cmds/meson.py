@@ -264,6 +264,51 @@ def test(ctx, pytest_args, coverage=False):
 
 
 @click.command()
+@click.option("--code", "-c", help="Python program passed in as a string")
+@click.argument("gdb_args", nargs=-1)
+def gdb(code, gdb_args):
+    """👾 Execute a Python snippet with GDB
+
+      spin gdb -c 'import numpy as np; print(np.__version__)'
+
+    Or pass arguments to gdb:
+
+      spin gdb -c 'import numpy as np; print(np.__version__)' -- --fullname
+
+    Or run another program, they way you normally would with gdb:
+
+     \b
+     spin gdb ls
+     spin gdb -- --args ls -al
+
+    You can also run Python programs:
+
+     \b
+     spin gdb my_tests.py
+     spin gdb -- my_tests.py --mytest-flag
+    """
+    _set_pythonpath()
+    gdb_args = list(gdb_args)
+
+    if gdb_args and gdb_args[0].endswith(".py"):
+        gdb_args = ["--args", sys.executable] + gdb_args
+
+    if sys.version_info[:2] >= (3, 11):
+        PYTHON_FLAGS = ["-P"]
+        code_prefix = ""
+    else:
+        PYTHON_FLAGS = []
+        code_prefix = "import sys; sys.path.pop(0); "
+
+    if code:
+        PYTHON_ARGS = ["-c", code_prefix + code]
+        gdb_args += ["--args", sys.executable] + PYTHON_FLAGS + PYTHON_ARGS
+
+    gdb_cmd = ["gdb", "-ex", "set detach-on-fork on"] + gdb_args
+    _run(gdb_cmd, replace=True)
+
+
+@click.command()
 @click.argument("ipython_args", nargs=-1)
 def ipython(ipython_args):
     """💻 Launch IPython shell with PYTHONPATH set

@@ -20,3 +20,4 @@ prun spin test
 prun spin sdist
 prun spin example
 prun spin docs
+prun spin gdb -c 'import example_pkg; example_pkg.echo("hi")' -- --eval "run" --batch
