@@ -23,6 +23,10 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python_version }}
+      - name: Install system dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get install -y gdb
       - name: Install
         run: |
           pip install -e .
@@ -38,7 +42,9 @@ jobs:
         shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         env:
           TERM: xterm-256color
-        run: source .github/workflows/test.sh
+        run: |
+          source .github/workflows/test.sh
+          spin gdb -c 'import example_pkg; example_pkg.echo("hi")' -- --eval "run" --batch
 
       - name: Functional tests (MacOS)
         if: matrix.os == 'macos-latest'
