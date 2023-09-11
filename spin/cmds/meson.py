@@ -332,7 +332,8 @@ def python(python_args):
 
 @click.command(context_settings={"ignore_unknown_options": True})
 @click.argument("args", nargs=-1)
-def run(args):
+@click.pass_context
+def run(ctx, args):
     """🏁 Run a shell command with PYTHONPATH set
 
     \b
@@ -350,6 +351,8 @@ def run(args):
     """
     if not len(args) > 0:
         raise RuntimeError("No command given")
+
+    ctx.invoke(build)
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
