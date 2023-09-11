@@ -166,18 +166,45 @@ def _get_configured_command(command_name):
 @click.command()
 @click.argument("pytest_args", nargs=-1)
 @click.option(
+    "-j",
+    "n_jobs",
+    metavar="N_JOBS",
+    default="1",
+    help=(
+        "Number of parallel jobs for testing. " "Can be set to `auto` to use all cores."
+    ),
+)
+@click.option(
+    "--tests",
+    "-t",
+    metavar="TESTS",
+    help=(
+        """
+Which tests to run. Can be a module, function, class, or method:
+
+ \b
+ numpy.random
+ numpy.random.tests.test_generator_mt19937
+ numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric
+ numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric::test_edge_cases
+ \b
+"""
+    ),
+)
+@click.option("--verbose", "-v", is_flag=True, default=False)
+@click.option(
     "-c",
     "--coverage",
     is_flag=True,
     help="Generate a coverage report of executed tests. An HTML copy of the report is written to `build/coverage`.",
 )
 @click.pass_context
-def test(ctx, pytest_args, coverage=False):
+def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
 
-      spin test -- -v
+      spin test -- --pdb
 
     To run tests on a directory or file:
 
@@ -185,13 +212,9 @@ def test(ctx, pytest_args, coverage=False):
      spin test numpy/linalg
      spin test numpy/linalg/tests/test_linalg.py
 
-    To run specific tests, by module, function, class, or method:
+    To run test modules, functions, classes, or methods:
 
-     \b
-     spin test -- --pyargs numpy.random
-     spin test -- --pyargs numpy.random.tests.test_generator_mt19937
-     spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric
-     spin test -- --pyargs numpy.random.tests.test_generator_mt19937::TestMultivariateHypergeometric::test_edge_cases
+      spin -t numpy.random
 
     To report the durations of the N slowest tests:
 
@@ -203,17 +226,18 @@ def test(ctx, pytest_args, coverage=False):
      spin test -- -k "geometric"
      spin test -- -k "geometric and not rgeometric"
 
-    To skip tests with a given marker:
+    To run tests with a given marker:
 
+      \b
+      spin test -- -m slow
       spin test -- -m "not slow"
 
-    To parallelize test runs (requires `pytest-xdist`):
+    If python-xdist is installed, you can run tests in parallel:
 
-      spin test -- -n NUM_JOBS
+      spin test -j auto
 
     For more, see `pytest --help`.
-
-    """
+    """  # noqa: E501
     cfg = get_config()
 
     build_cmd = _get_configured_command("build")
@@ -224,7 +248,7 @@ def test(ctx, pytest_args, coverage=False):
         ctx.invoke(build_cmd)
 
     package = cfg.get("tool.spin.package", None)
-    if not pytest_args:
+    if (not pytest_args) and (not tests):
         pytest_args = (package,)
         if pytest_args == (None,):
             print(
@@ -241,6 +265,15 @@ def test(ctx, pytest_args, coverage=False):
             print(f"As a sanity check, we tried to import {package}.")
             print("Stopping. Please investigate the build error.")
             sys.exit(1)
+
+    if (n_jobs != "1") and ("-n" not in pytest_args):
+        pytest_args = ("-n", str(n_jobs)) + pytest_args
+
+    if tests and "--pyargs" not in pytest_args:
+        pytest_args = ("--pyargs", tests) + pytest_args
+
+    if verbose:
+        pytest_args = ("-v",) + pytest_args
 
     if coverage:
         coverage_dir = os.path.join(os.getcwd(), "build/coverage/")
@@ -379,7 +412,7 @@ def run(ctx, args):
     "--build/--no-build",
     "first_build",
     default=True,
-    help="Build numpy before generating docs",
+    help="Build project before generating docs",
 )
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
