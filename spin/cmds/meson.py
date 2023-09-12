@@ -299,7 +299,8 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
 @click.command()
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("gdb_args", nargs=-1)
-def gdb(code, gdb_args):
+@click.pass_context
+def gdb(ctx, code, gdb_args):
     """👾 Execute a Python snippet with GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
@@ -320,6 +321,13 @@ def gdb(code, gdb_args):
      spin gdb my_tests.py
      spin gdb -- my_tests.py --mytest-flag
     """
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        click.secho(
+            "Invoking `build` prior to invoking gdb:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
     _set_pythonpath()
     gdb_args = list(gdb_args)
 
@@ -343,13 +351,21 @@ def gdb(code, gdb_args):
 
 @click.command()
 @click.argument("ipython_args", nargs=-1)
-def ipython(ipython_args):
+@click.pass_context
+def ipython(ctx, ipython_args):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
 
     spin ipython -- -i myscript.py
     """
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        click.secho(
+            "Invoking `build` prior to invoking ipython:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
     p = _set_pythonpath()
     print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
@@ -357,7 +373,8 @@ def ipython(ipython_args):
 
 @click.command()
 @click.argument("shell_args", nargs=-1)
-def shell(shell_args=[]):
+@click.pass_context
+def shell(ctx, shell_args=[]):
     """💻 Launch shell with PYTHONPATH set
 
     SHELL_ARGS are passed through directly to the shell, e.g.:
@@ -367,6 +384,13 @@ def shell(shell_args=[]):
     Ensure that your shell init file (e.g., ~/.zshrc) does not override
     the PYTHONPATH.
     """
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        click.secho(
+            "Invoking `build` prior to invoking shell:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
     p = _set_pythonpath()
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
@@ -378,13 +402,21 @@ def shell(shell_args=[]):
 
 @click.command()
 @click.argument("python_args", nargs=-1)
-def python(python_args):
+@click.pass_context
+def python(ctx, python_args):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
 
     spin python -- -c 'import sys; print(sys.path)'
     """
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        click.secho(
+            "Invoking `build` prior to invoking Python:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
     p = _set_pythonpath()
     v = sys.version_info
     if (v.major < 3) or (v.major == 3 and v.minor < 11):
@@ -430,7 +462,9 @@ def run(ctx, args):
     if not len(args) > 0:
         raise RuntimeError("No command given")
 
-    ctx.invoke(build)
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        ctx.invoke(build_cmd)
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
