@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 import shutil
@@ -102,7 +103,7 @@ def _meson_version_configured():
     "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
 )
 @click.argument("meson_args", nargs=-1)
-def build(meson_args, jobs=None, clean=False, verbose=False):
+def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -128,7 +129,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
             shutil.rmtree(install_dir)
 
     if not (os.path.exists(build_dir) and _meson_version_configured()):
-        p = _run(setup_cmd, sys_exit=False)
+        p = _run(setup_cmd, sys_exit=False, output=not quiet)
         if p.returncode != 0:
             raise RuntimeError(
                 "Meson configuration failed; please try `spin build` again with the `--clean` flag."
@@ -138,11 +139,13 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
         # current version of Meson
 
         if _meson_version() != _meson_version_configured():
-            _run(setup_cmd + ["--reconfigure"])
+            _run(setup_cmd + ["--reconfigure"], output=not quiet)
 
         # Any other conditions that warrant a reconfigure?
 
-    p = _run(_meson_cli() + ["compile", "-C", build_dir], sys_exit=False)
+    p = _run(
+        _meson_cli() + ["compile", "-C", build_dir], sys_exit=False, output=not quiet
+    )
     p = _run(
         _meson_cli()
         + [
@@ -153,7 +156,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False):
             "--destdir",
             f"../{install_dir}",
         ],
-        output=verbose,
+        output=(not quiet) and verbose,
     )
 
 
@@ -464,7 +467,10 @@ def run(ctx, args):
 
     build_cmd = _get_configured_command("build")
     if build_cmd:
-        ctx.invoke(build_cmd)
+        # Redirect spin generated output
+        with contextlib.redirect_stdout(sys.stderr):
+            # Also ask build to be quiet
+            ctx.invoke(build_cmd, quiet=True)
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
