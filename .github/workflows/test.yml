@@ -15,7 +15,7 @@ jobs:
   test_spin:
     strategy:
       matrix:
-        python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev"]
+        python_version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -23,6 +23,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python_version }}
+          allow-prereleases: true
       - name: Install system dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
