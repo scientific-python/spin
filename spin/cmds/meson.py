@@ -499,9 +499,15 @@ def run(ctx, args):
     default=True,
     help="Build project before generating docs",
 )
+@click.option(
+    "--plot/--no-plot",
+    "sphinx_gallery_plot",
+    default=True,
+    help="Sphinx gallery: enable/disable plots",
+)
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
-def docs(ctx, sphinx_target, clean, first_build, jobs):
+def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
     """📖 Build Sphinx documentation
 
     By default, SPHINXOPTS="-W", raising errors on warnings.
@@ -559,7 +565,11 @@ def docs(ctx, sphinx_target, clean, first_build, jobs):
         sys.exit(1)
 
     opts = os.environ.get("SPHINXOPTS", "-W")
+    if not sphinx_gallery_plot:
+        opts = f"{opts} -D plot_gallery=0"
+
     os.environ["SPHINXOPTS"] = f"{opts} -j {jobs}"
+
     click.secho(
         f"$ export SPHINXOPTS={os.environ['SPHINXOPTS']}", bold=True, fg="bright_blue"
     )
