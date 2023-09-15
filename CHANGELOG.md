@@ -1,5 +1,54 @@
 # Changelog
 
+# spin 0.6rc0
+
+We're happy to announce the release of spin 0.6rc0!
+
+## Enhancements
+- ENH: Added coverage option for `test` command
+  ([#100](https://github.com/scientific-python/spin/pull/100)).
+- Build as part of run cmd
+  ([#103](https://github.com/scientific-python/spin/pull/103)).
+- Port improvements to test cmd from numpy
+  ([#101](https://github.com/scientific-python/spin/pull/101)).
+- Add gdb command from numpy
+  ([#102](https://github.com/scientific-python/spin/pull/102)).
+- Throughout, invoke build before commands
+  ([#107](https://github.com/scientific-python/spin/pull/107)).
+- Allow disabling Sphinx Gallery plots
+  ([#111](https://github.com/scientific-python/spin/pull/111)).
+
+## Maintenance
+- Bump pre-commit from 3.3.3 to 3.4.0
+  ([#104](https://github.com/scientific-python/spin/pull/104)).
+- Bump actions/checkout from 3 to 4
+  ([#105](https://github.com/scientific-python/spin/pull/105)).
+- Update pre-commit revisions
+  ([#106](https://github.com/scientific-python/spin/pull/106)).
+- Update classifiers
+  ([#108](https://github.com/scientific-python/spin/pull/108)).
+- Ensure `spin run` echoes only command output to stdout
+  ([#109](https://github.com/scientific-python/spin/pull/109)).
+- Update supported Python versions
+  ([#110](https://github.com/scientific-python/spin/pull/110)).
+- Update label check
+  ([#112](https://github.com/scientific-python/spin/pull/112)).
+
+## Contributors
+
+4 authors added to this release (alphabetically):
+[@dependabot[bot]](https://github.com/apps/dependabot),
+Ganesh Kathiresan ([@ganesh-k13](https://github.com/ganesh-k13)),
+Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman)),
+Stefan van der Walt ([@stefanv](https://github.com/stefanv)),
+
+3 reviewers added to this release (alphabetically):
+Brigitta Sipőcz ([@bsipocz](https://github.com/bsipocz)),
+Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman)),
+Stefan van der Walt ([@stefanv](https://github.com/stefanv)),
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 ## spin 0.5
 
 We're happy to announce the release of spin 0.5!
