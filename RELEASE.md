@@ -55,7 +55,7 @@ Example `version number`
       git clean -fxd
       pip install -U build twine wheel
       python -m build --sdist --wheel
-      twine upload -s dist/*
+      twine upload dist/*
 
 - Update `version` in `pyproject.toml`.
 
