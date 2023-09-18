@@ -26,6 +26,12 @@ def _meson_cli():
 
 
 def _set_pythonpath(quiet=False):
+    """Set first entry of PYTHONPATH to site packages directory.
+
+    Returns
+    -------
+    site_packages
+    """
     site_packages = _get_site_packages()
     env = os.environ
 
@@ -36,10 +42,10 @@ def _set_pythonpath(quiet=False):
 
     if not quiet:
         click.secho(
-            f'$ export PYTHONPATH="{site_packages}"', bold=True, fg="bright_blue"
+            f'$ export PYTHONPATH="{env["PYTHONPATH"]}"', bold=True, fg="bright_blue"
         )
 
-    return env["PYTHONPATH"]
+    return site_packages
 
 
 def _get_site_packages():

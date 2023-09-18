@@ -34,6 +34,9 @@ else
 fi
 
 prun spin test
+echo -e "${MAGENTA}Running \`spin test\`, but with PYTHONPATH set${NORMAL}"
+PYTHONPATH=./tmp spin test
+
 prun spin sdist
 prun spin example
 prun spin docs
