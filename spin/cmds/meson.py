@@ -100,7 +100,7 @@ def _meson_version_configured():
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
 @click.option(
-    "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
+    "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
 )
 @click.argument("meson_args", nargs=-1)
 def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
@@ -143,8 +143,11 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
 
         # Any other conditions that warrant a reconfigure?
 
+    compile_flags = ["-v"] if verbose else []
     p = _run(
-        _meson_cli() + ["compile", "-C", build_dir], sys_exit=False, output=not quiet
+        _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
+        sys_exit=False,
+        output=not quiet,
     )
     p = _run(
         _meson_cli()
