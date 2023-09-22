@@ -1,11 +1,11 @@
 # Changelog
 
-# spin 0.6rc0
 
-We're happy to announce the release of spin 0.6rc0!
+# spin 0.6
+
+We're happy to announce the release of spin 0.6!
 
 ## Enhancements
-
 - ENH: Added coverage option for `test` command
   ([#100](https://github.com/scientific-python/spin/pull/100)).
 - Build as part of run cmd
@@ -18,9 +18,14 @@ We're happy to announce the release of spin 0.6rc0!
   ([#107](https://github.com/scientific-python/spin/pull/107)).
 - Allow disabling Sphinx Gallery plots
   ([#111](https://github.com/scientific-python/spin/pull/111)).
+- Make verbose build also show compiler calls
+  ([#117](https://github.com/scientific-python/spin/pull/117)).
+
+## Bug Fixes
+- Return single path from _get_site_packages
+  ([#114](https://github.com/scientific-python/spin/pull/114)).
 
 ## Maintenance
-
 - Bump pre-commit from 3.3.3 to 3.4.0
   ([#104](https://github.com/scientific-python/spin/pull/104)).
 - Bump actions/checkout from 3 to 4
@@ -35,6 +40,10 @@ We're happy to announce the release of spin 0.6rc0!
   ([#110](https://github.com/scientific-python/spin/pull/110)).
 - Update label check
   ([#112](https://github.com/scientific-python/spin/pull/112)).
+
+## Documentation
+- Document alternative way of getting debug build
+  ([#115](https://github.com/scientific-python/spin/pull/115)).
 
 ## Contributors
 
