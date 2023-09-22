@@ -108,14 +108,18 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
 
     MESON_ARGS are passed through e.g.:
 
-    spin build -- -Dpkg_config_path=/lib64/pkgconfig
+      spin build -- -Dpkg_config_path=/lib64/pkgconfig
 
     The package is installed to build-install
 
-    By default meson-python does release builds, to be able to use a debugger, tell
-    meson to build in debug mode:
+    By default meson-python does release builds. To be able to use a debugger,
+    tell meson to build in debug mode:
 
-    spin build -- -Dbuildtype=debug
+      spin build -- -Dbuildtype=debug
+
+    or set CFLAGS appropriately:
+
+      CFLAGS="-O0 -g" spin build
     """
     build_dir = "build"
     setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
