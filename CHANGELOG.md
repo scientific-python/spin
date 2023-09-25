@@ -1,4 +1,28 @@
-# Changelog
+# spin 0.7
+
+We're happy to announce the release of spin 0.7!
+
+## Bug Fixes
+
+- Exit on failed build ([#118](https://github.com/scientific-python/spin/pull/118)).
+
+## Maintenance
+
+- Update ruff ([#119](https://github.com/scientific-python/spin/pull/119)).
+- Update changelist ([#120](https://github.com/scientific-python/spin/pull/120)).
+
+## Contributors
+
+2 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+1 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
 
 # spin 0.6
 
