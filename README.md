@@ -2,9 +2,6 @@
 
 ## A developer tool for scientific Python libraries
 
-**NOTE:** If you are looking for `devpy`, this is it! We had to rename
-the package to publish it on PyPi.
-
 Developers need to memorize a whole bunch of magic command-line incantations.
 And these incantations change from time to time!
 Typically, their lives are made simpler by a Makefile, but Makefiles can be convoluted, are not written in Python, and are hard to extend.
