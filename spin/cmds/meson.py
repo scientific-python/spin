@@ -156,7 +156,7 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
     compile_flags = ["-v"] if verbose else []
     p = _run(
         _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
-        sys_exit=False,
+        sys_exit=True,
         output=not quiet,
     )
     p = _run(
