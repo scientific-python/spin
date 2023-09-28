@@ -277,10 +277,15 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
     # Sanity check that library built properly
     if sys.version_info[:2] >= (3, 11):
         p = _run([sys.executable, "-P", "-c", f"import {package}"], sys_exit=False)
-        if p.returncode != 0:
-            print(f"As a sanity check, we tried to import {package}.")
-            print("Stopping. Please investigate the build error.")
-            sys.exit(1)
+    else:
+        p = _run(
+            [sys.executable, "-c", f"import sys; del sys.path[0]; import {package}"],
+            sys_exit=False,
+        )
+    if p.returncode != 0:
+        print(f"As a sanity check, we tried to import {package}.")
+        print("Stopping. Please investigate the build error.")
+        sys.exit(1)
 
     if (n_jobs != "1") and ("-n" not in pytest_args):
         pytest_args = ("-n", str(n_jobs)) + pytest_args
