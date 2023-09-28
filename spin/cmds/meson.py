@@ -275,6 +275,9 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
     site_path = _set_pythonpath()
 
     # Sanity check that library built properly
+    #
+    # We do this because `pytest` swallows exception messages originating from `conftest.py`.
+    # This can sometimes suppress useful information raised by the package on init.
     if sys.version_info[:2] >= (3, 11):
         p = _run([sys.executable, "-P", "-c", f"import {package}"], sys_exit=False)
     else:
