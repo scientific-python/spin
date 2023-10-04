@@ -1,4 +1,4 @@
-# Release process for `spin`
+tgit g# Release process for `spin`
 
 ## Introduction
 
@@ -49,13 +49,6 @@ Example `version number`
 - Review the github release page:
 
       https://github.com/scientific-python/spin/tags
-
-- Publish on PyPi:
-
-      git clean -fxd
-      pip install -U build twine wheel
-      python -m build --sdist --wheel
-      twine upload dist/*
 
 - Update `version` in `pyproject.toml`.
 
