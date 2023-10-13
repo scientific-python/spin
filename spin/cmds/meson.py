@@ -96,7 +96,8 @@ def _meson_version():
 def _meson_version_configured():
     try:
         meson_info_fn = os.path.join("build", "meson-info", "meson-info.json")
-        meson_info = json.load(open(meson_info_fn))
+        with open(meson_info_fn) as f:
+            meson_info = json.load(f)
         return meson_info["meson_version"]["full"]
     except:
         pass
