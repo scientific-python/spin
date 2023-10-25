@@ -1,3 +1,4 @@
+import collections
 import importlib
 import importlib.util
 import os
@@ -19,35 +20,53 @@ click.Context.formatter_class = ColorHelpFormatter
 
 
 def main():
-    if not os.path.exists("pyproject.toml"):
-        print("Error: cannot find [pyproject.toml]")
+    def error(message):
+        print(f"Error: {message}", file=sys.stderr)
         sys.exit(1)
 
-    with open("pyproject.toml", "rb") as f:
-        try:
-            toml_config = tomllib.load(f)
-        except tomllib.TOMLDecodeError:
-            print("Cannot parse [pyproject.toml]")
-            sys.exit(1)
+    def load_toml(filename):
+        if not os.path.exists(filename):
+            return None
+        with open(filename, "rb") as f:
+            try:
+                return tomllib.load(f)
+            except tomllib.TOMLDecodeError:
+                error("cannot parse [{filename}]")
 
-    project_config = toml_config.get("project", {})
+    toml_config = collections.ChainMap()
+    toml_config.maps.extend(
+        DotDict(cfg)
+        for filename in (
+            ".spin.toml",
+            "spin.toml",
+            "pyproject.toml",
+        )
+        if (cfg := load_toml(filename))
+    )
 
-    try:
-        config = toml_config["tool"]["spin"]
-    except KeyError:
-        print("No configuration found in [pyproject.toml] for [tool.spin]")
-        sys.exit(1)
+    # Basic configuration validation
+    if "tool.spin" not in toml_config:
+        error(
+            "needs valid configuration in [.spin.toml], [spin.toml] or [pyproject.toml]"
+        )
+    if "tool.spin.commands" not in toml_config:
+        error("configuration is missing section [tool.spin.commands]")
 
-    proj_name = project_config.get("name", config["package"])
+    spin_config = toml_config["tool.spin"]
+    proj_name = (
+        toml_config.get("project.name")
+        or spin_config.get("package")
+        or "unknown project"
+    )
 
     @click.group(help=f"Developer tool for {proj_name}", cls=SectionedHelpGroup)
     @click.pass_context
     def group(ctx):
-        ctx.meta["config"] = DotDict(toml_config)
+        ctx.meta["config"] = toml_config
         ctx.meta["commands"] = ctx.command.section_commands
         ctx.show_default = True
 
-    config_cmds = config["commands"]
+    config_cmds = spin_config["commands"]
     # Commands can be provided as a list, or as a dictionary
     # so that they can be sorted into sections
     if isinstance(config_cmds, list):
@@ -109,8 +128,7 @@ def main():
     try:
         group()
     except Exception as e:
-        print(f"{e}; aborting.")
-        sys.exit(1)
+        error(f"{e}; aborting.")
 
 
 if __name__ == "__main__":
