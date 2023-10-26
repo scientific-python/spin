@@ -19,9 +19,10 @@ pip install spin
 
 ## Configuration
 
-Settings are in your project's `pyproject.toml`.
+Settings are stored in `.spin.toml`, `spin.toml`, or your project's `pyproject.toml`.
 As an example, see the `[tool.spin]` section of [an example `pyproject.toml`](https://github.com/scientific-python/spin/blob/main/example_pkg/pyproject.toml).
 
+The `[project]` section should contain `name`.
 The `[tool.spin]` section should contain:
 
 ```
