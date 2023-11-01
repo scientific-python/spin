@@ -33,7 +33,7 @@ dependencies = [
 spin = "spin.__main__:main"
 
 [project.optional-dependencies]
-lint = ["pre-commit == 3.4.0"]
+lint = ["pre-commit == 3.5.0"]
 dev = ["changelist == 0.3"]
 
 [project.urls]
