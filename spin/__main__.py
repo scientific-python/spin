@@ -20,6 +20,10 @@ click.Context.formatter_class = ColorHelpFormatter
 
 
 def main():
+    # Alias `spin help` to `spin --help`
+    if (len(sys.argv) == 2) and (sys.argv[1] == "help"):
+        sys.argv[1] = "--help"
+
     def error(message):
         print(f"Error: {message}", file=sys.stderr)
         sys.exit(1)
