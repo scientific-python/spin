@@ -8,6 +8,7 @@ prun() { echo -e "\n$RED\$ $@ $NORMAL\n" ; "$@" ; }
 
 prun cd example_pkg
 
+prun spin --version
 prun spin build
 
 # Test spin run

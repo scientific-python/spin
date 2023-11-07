@@ -6,6 +6,7 @@ import sys
 
 import click
 
+from spin import __version__
 from spin import cmds as _cmds
 from spin.color_format import ColorHelpFormatter
 from spin.containers import DotDict
@@ -60,6 +61,7 @@ def main():
     )
 
     @click.group(help=f"Developer tool for {proj_name}", cls=SectionedHelpGroup)
+    @click.version_option(__version__, message="%(prog)s %(version)s")
     @click.pass_context
     def group(ctx):
         ctx.meta["config"] = toml_config
