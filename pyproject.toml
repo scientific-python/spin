@@ -1,6 +1,5 @@
 [project]
 name = "spin"
-version = "0.8rc0.dev0"
 requires-python = ">=3.8"
 description = "Developer tool for scientific Python libraries"
 readme = "README.md"
@@ -28,6 +27,7 @@ dependencies = [
   "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'"
 ]
+dynamic = ['version']
 
 [project.scripts]
 spin = "spin.__main__:main"
@@ -38,6 +38,9 @@ dev = ["changelist == 0.4"]
 
 [project.urls]
 homepage = "https://github.com/scientific-python/spin"
+
+[tool.setuptools.dynamic.version]
+attr = 'spin.__version__'
 
 [tool.setuptools.packages.find]
 include = ["spin*"]
