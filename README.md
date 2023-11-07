@@ -188,6 +188,18 @@ Meson CLI can be set in `pyproject.toml`:
 cli = 'path/to/custom/meson'
 ```
 
+## FAQ
+
+- Running `spin`, the emojis in the command list don't show up.
+
+Your terminal font may not include emoji characters. E.g., if you use
+noto on Arch Linux the emojis are installed separately:
+
+```sh
+sudo pacman -S noto-fonts-emoji
+fc-cache -f -v
+```
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
