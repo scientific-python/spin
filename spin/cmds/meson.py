@@ -326,7 +326,7 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
 @click.argument("gdb_args", nargs=-1)
 @click.pass_context
 def gdb(ctx, code, gdb_args):
-    """👾 Execute a Python snippet with GDB
+    """👾 Execute code through GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
 
@@ -601,3 +601,69 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
         f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
     )
     _run(["make", "-C", "doc", sphinx_target], replace=True)
+
+
+@click.command()
+@click.option("--code", "-c", help="Python program passed in as a string")
+@click.argument("lldb_args", nargs=-1)
+@click.pass_context
+def lldb(ctx, code, lldb_args):
+    """👾 Execute code through LLDB
+
+      spin lldb -c 'import numpy as np; print(np.__version__)'
+
+    Or run another program, they way you normally would with LLDB:
+
+     \b
+     spin lldb -- ls -al
+
+    You can also run Python programs:
+
+     \b
+     spin lldb -- my_tests.py
+     spin lldb -- my_tests.py --mytest-flag
+
+    And specify LLDB-specific flags:
+
+     \b
+     spin lldb -- --arch x86_64 -- ls -al
+     spin lldb -- --arch x86_64 -- my_tests.py
+     spin lldb -c 'import numpy as np; print(np.__version__)' -- --arch x86_64
+    """
+    build_cmd = _get_configured_command("build")
+    if build_cmd:
+        click.secho(
+            "Invoking `build` prior to invoking lldb:", bold=True, fg="bright_green"
+        )
+        ctx.invoke(build_cmd)
+
+    _set_pythonpath()
+    lldb_args = list(lldb_args)
+
+    if code:
+        if sys.version_info[:2] >= (3, 11):
+            PYTHON_FLAGS = ["-P"]
+            code_prefix = ""
+        else:
+            PYTHON_FLAGS = []
+            code_prefix = "import sys; sys.path.pop(0); "
+
+        PYTHON_ARGS = ["-c", code_prefix + code]
+        program = [sys.executable] + PYTHON_FLAGS + PYTHON_ARGS
+    else:
+        if "--" in lldb_args:
+            ix = lldb_args.index("--")
+            lldb_args, program = lldb_args[:ix], lldb_args[ix + 1 :]
+        else:
+            program, lldb_args = lldb_args, []
+
+    if program and program[0].endswith(".py"):
+        program = [sys.executable] + program
+
+    lldb_cmd = (
+        ["lldb", "-O", "settings set target.process.follow-fork-mode child"]
+        + lldb_args
+        + ["--"]
+        + program
+    )
+    _run(lldb_cmd, replace=True)
