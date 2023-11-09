@@ -80,6 +80,8 @@ python -m spin
 
 ### [Meson](https://meson-python.readthedocs.io)
 
+Available as `spin.cmds.meson.*`.
+
 ```
   build    🔧 Build package with Meson/ninja and install to `build-install`
   ipython  💻 Launch IPython shell with PYTHONPATH set
@@ -88,7 +90,8 @@ python -m spin
   test     🔧 Run pytest
   run      🏁 Run a shell command with PYTHONPATH set
   docs     📖 Build Sphinx documentation
-  gdb  👾 Execute a Python snippet with GDB
+  gdb      👾 Execute a Python snippet with GDB
+  lldb     👾 Execute a Python snippet with LLDB
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
