@@ -45,3 +45,6 @@ package = 'example_pkg'
   "spin.cmds.meson.lldb"
 ]
 "Extensions" = [".spin/cmds.py:example"]
+"Install" = [
+  "spin.cmds.pip.install"
+]

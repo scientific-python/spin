@@ -5,30 +5,38 @@ from .util import run as _run
 
 @click.command()
 @click.option(
-    "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
+    "-v",
+    "--verbose",
+    is_flag=True,
+    default=False,
+    help="Print detailed build and installation output",
 )
-@click.argument("-e", "--editable", is_flag=True, help="Install in editable mode")
+@click.option(
+    "--editable/--no-editable",
+    is_flag=True,
+    default=True,
+    help="Install in editable mode",
+)
 @click.argument("pip_args", nargs=-1)
-def install(pip_args, verbose=False, editable=True):
-    """💽 Install package and also build.
+def install(pip_args, verbose, editable):
+    """💽 Build and install package using pip.
 
-    pip arguments are passed through in the same manner as you would pip e.g.:
+    By default, the package is installed in editable mode.
 
-        spin install -- --no-clean
+    Arguments after `--` are passed through to pip, e.g.:
 
-    which would be translated to the following pip command:
+      spin install -- --no-clean
 
-        pip install . --no-build-isolation --editable --no-clean
+    would translated to:
 
-    The package is by default installed in editable mode, but you can disable this
-    by passing the `--editable` flag and setting it to ``false``.
+      pip install . --no-build-isolation --editable --no-clean
     """
     pip_args = list(pip_args)
-    pip_cmd = ["pip", "install", ".", "--no-build-isolation"]
+    pip_cmd = ["pip", "install"]
+    pip_args += ["--no-build-isolation"]
     if editable:
         pip_args += ["--editable"]
 
-    pip_cmd += pip_args
-    pip_cmd += ["-v"] if verbose else []
+    pip_args = (["-v"] if verbose else []) + pip_args
 
-    _run(pip_cmd, sys_exit=False, replace=True)
+    _run(pip_cmd + pip_args + ["."], sys_exit=False, replace=True)
