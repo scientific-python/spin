@@ -203,6 +203,15 @@ sudo pacman -S noto-fonts-emoji
 fc-cache -f -v
 ```
 
+## For contributors
+
+`spin` development happens on GitHub at [scientific-python/spin](https://github.com/scientific-python/spin).
+`spin` tests are invoked using:
+
+```
+nox -s tests
+```
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
