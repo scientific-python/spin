@@ -48,6 +48,7 @@ prun spin example
 pip install sphinx
 prun spin docs
 
+
 ## Platform specialized tests
 
 if [[ $PLATFORM == linux ]]; then
@@ -57,3 +58,8 @@ fi
 # if [[ $PLATFORM == darwin ]]; then
 
 # if [[ $PLATFORM =~ ^win.* ]]; then
+
+
+prun spin install
+cd /tmp
+python -c 'import example_pkg; print(example_pkg.__version__)'
