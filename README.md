@@ -97,15 +97,21 @@ Available as `spin.cmds.meson.*`.
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
 
-`spin` was started with Meson in mind, but we're working on expanding commands for PEP 517 `build`.
+Available as `spin.cmds.build.*`:
 
 ```
   sdist    📦 Build a source distribution in `dist/`
 ```
 
-### [Install](https://pip.pypa.io/en/stable/installation/) (Pip Editable Installers)
+### [pip](https://pip.pypa.io) (Package Installer for Python)
 
-`spin` was started with Meson in mind, but we're working on expanding commands for editable `install`.
+`pip` allows for editable installs, another common
+development workflow.
+
+Note that, for now, the meson commands above do not work with an
+editable install of the package. We're [working on changing that](https://github.com/scientific-python/spin/pull/141).
+
+Available as `spin.cmds.pip.*`:
 
 ```
   install  💽 Build and install package using pip.
