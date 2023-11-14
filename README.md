@@ -92,6 +92,7 @@ Available as `spin.cmds.meson.*`.
   docs     📖 Build Sphinx documentation
   gdb      👾 Execute a Python snippet with GDB
   lldb     👾 Execute a Python snippet with LLDB
+  install  💽 Build and install package using pip.
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
@@ -100,6 +101,14 @@ Available as `spin.cmds.meson.*`.
 
 ```
   sdist    📦 Build a source distribution in `dist/`
+```
+
+### [Install](https://pip.pypa.io/en/stable/installation/) (Pip Editable Installers)
+
+`spin` was started with Meson in mind, but we're working on expanding commands for editable `install`.
+
+```
+  install  💽 Build and install package using pip.
 ```
 
 ## 🧪 Custom commands
