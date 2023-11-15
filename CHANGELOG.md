@@ -1,3 +1,58 @@
+# spin 0.8
+
+We're happy to announce the release of spin 0.8!
+
+## Enhancements
+
+- Also support build sanity check on <3.11 ([#124](https://github.com/scientific-python/spin/pull/124)).
+- Support .spin.toml/spin.toml as an alternate configuration files ([#129](https://github.com/scientific-python/spin/pull/129)).
+- Add --version ([#134](https://github.com/scientific-python/spin/pull/134)).
+- Add alias for help ([#135](https://github.com/scientific-python/spin/pull/135)).
+- Add LLDB (debug) command ([#137](https://github.com/scientific-python/spin/pull/137)).
+- Add pip install with editable mode ([#139](https://github.com/scientific-python/spin/pull/139)).
+
+## Bug Fixes
+
+- Fix unclosed file warning on debug python ([#127](https://github.com/scientific-python/spin/pull/127)).
+
+## Documentation
+
+- Drop mention of old devpy name ([#121](https://github.com/scientific-python/spin/pull/121)).
+- [DOC] Add install to readme ([#142](https://github.com/scientific-python/spin/pull/142)).
+
+## Maintenance
+
+- Drop support for Python 3.7 ([#122](https://github.com/scientific-python/spin/pull/122)).
+- Use trusted publisher ([#126](https://github.com/scientific-python/spin/pull/126)).
+- Bump actions/checkout from 3 to 4 ([#130](https://github.com/scientific-python/spin/pull/130)).
+- Bump pre-commit from 3.4.0 to 3.5.0 ([#132](https://github.com/scientific-python/spin/pull/132)).
+- Bump changelist from 0.3 to 0.4 ([#131](https://github.com/scientific-python/spin/pull/131)).
+- Add nox for running tests in an isolated environment ([#140](https://github.com/scientific-python/spin/pull/140)).
+
+## Other
+
+- Add note on missing emojis to README ([#136](https://github.com/scientific-python/spin/pull/136)).
+
+## Contributors
+
+5 authors added to this release (alphabetically):
+
+- Adam Li ([@adam2392](https://github.com/adam2392))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lisandro Dalcin ([@dalcinl](https://github.com/dalcinl))
+- Nathan Goldbaum ([@ngoldbaum](https://github.com/ngoldbaum))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+5 reviewers added to this release (alphabetically):
+
+- Adam Li ([@adam2392](https://github.com/adam2392))
+- Brigitta Sipőcz ([@bsipocz](https://github.com/bsipocz))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lisandro Dalcin ([@dalcinl](https://github.com/dalcinl))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 # spin 0.7
 
 We're happy to announce the release of spin 0.7!
