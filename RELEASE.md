@@ -18,18 +18,21 @@ Example `version number`
       export PREVIOUS=<previous version number>
       export ORG="scientific-python"
       export REPO="spin"
+      export LOG="CHANGELOG.md"
 
 - Autogenerate release notes
 
-      changelist ${ORG}/${REPO} v${PREVIOUS} main --version ${VERSION}
+      changelist ${ORG}/${REPO} v${PREVIOUS} main --version ${VERSION} --out ${VERSION}.md
 
 - Put the output of the above command at the top of `CHANGELOG.md`
 
-- Update `version` in `pyproject.toml`.
+      cat ${VERSION}.md | cat - ${LOG} > temp && mv temp ${LOG}
+
+- Update `version` in `spin/__init__.py`.
 
 - Commit changes:
 
-      git add pyproject.toml CHANGELOG.md
+      git add spin/__init__.py CHANGELOG.md
       git commit -m "Designate ${VERSION} release"
 
 - Tag the release in git:
@@ -50,10 +53,10 @@ Example `version number`
 
       https://github.com/scientific-python/spin/tags
 
-- Update `version` in `pyproject.toml`.
+- Update `version` in `spin/__init__.py`.
 
 - Commit changes:
 
-      git add pyproject.toml
+      git add spin/__init__.py
       git commit -m 'Bump version'
       git push origin main
