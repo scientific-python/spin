@@ -130,8 +130,15 @@ def _meson_version_configured():
 @click.option(
     "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
 )
+@click.option(
+    "--gcov-build",
+    is_flag=True,
+    help="Enable C code coverage via gcov (requires GCC)",
+)
 @click.argument("meson_args", nargs=-1)
-def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
+def build(
+    meson_args, jobs=None, clean=False, verbose=False, gcov_build=False, quiet=False
+):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -150,6 +157,10 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
       CFLAGS="-O0 -g" spin build
     """
     build_dir = "build"
+
+    if gcov_build:
+        meson_args = list(meson_args) + ["-Db_coverage=true"]
+
     setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
 
     if clean:
@@ -236,8 +247,13 @@ Which tests to run. Can be a module, function, class, or method:
     is_flag=True,
     help="Generate a coverage report of executed tests. An HTML copy of the report is written to `build/coverage`.",
 )
+@click.option(
+    "--gcov",
+    is_flag=True,
+    help="Enable C code coverage via gcov (requires GCC). gcov output goes to build/**/*.gc*",
+)
 @click.pass_context
-def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
+def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -283,7 +299,7 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
         click.secho(
             "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, gcov_build=gcov)
 
     package = cfg.get("tool.spin.package", None)
     if (not pytest_args) and (not tests):
