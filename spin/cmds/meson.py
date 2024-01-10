@@ -500,10 +500,9 @@ def run(ctx, args):
     cmd_args = copy.copy(args)
     if shell:
         cmd_args = args[0]
-
-    if shell and not is_posix:
-        # On Windows, we're going to try to use bash
-        cmd_args = ["bash", "-c", args]
+        if not is_posix:
+            # On Windows, we're going to try to use bash
+            cmd_args = ["bash", "-c", cmd_args]
 
     _set_pythonpath(quiet=True)
     p = _run(cmd_args, echo=False, shell=shell, sys_exit=False)
