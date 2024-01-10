@@ -1,4 +1,5 @@
 import contextlib
+import copy
 import json
 import os
 import shutil
@@ -496,15 +497,29 @@ def run(ctx, args):
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
+    cmd_args = copy.copy(args)
     if shell:
-        args = args[0]
+        cmd_args = args[0]
 
     if shell and not is_posix:
         # On Windows, we're going to try to use bash
-        args = ["bash", "-c", args]
+        cmd_args = ["bash", "-c", args]
 
     _set_pythonpath(quiet=True)
-    _run(args, echo=False, shell=shell)
+    p = _run(cmd_args, echo=False, shell=shell, sys_exit=False)
+
+    # Is the user trying to run a Python script, without calling the Python interpreter?
+    executable = args[0]
+    if (
+        (p.returncode != 0)
+        and args[0].endswith(".py")
+        and os.path.exists(executable)
+        and (not os.access(executable, os.X_OK))
+    ):
+        click.secho(
+            f"Did you mean to call `spin run python {' '.join(args)}`?", fg="bright_red"
+        )
+    sys.exit(p.returncode)
 
 
 @click.command()
