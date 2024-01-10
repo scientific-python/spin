@@ -40,14 +40,18 @@ else
     exit 1
 fi
 
-echo -e "${MAGENTA}Does \`spin run foo.py\` warn that \`spin run python foo.py\` is correct?${NORMAL}"
-OUT=$( touch __foo.py && spin run __foo.py || true )
-rm __foo.py
-if [[ $OUT == *"Did you mean to call"* ]]; then
-    echo "Yes"
-else
-    echo "No, output is: $OUT"
-    exit 1
+if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
+    # Detecting whether a file is executable is not that easy on Windows,
+    # as it seems to take into consideration whether that file is associated as an executable.
+    echo -e "${MAGENTA}Does \`spin run foo.py\` warn that \`spin run python foo.py\` is correct?${NORMAL}"
+    OUT=$( touch __foo.py && spin run __foo.py || true )
+    rm __foo.py
+    if [[ $OUT == *"Did you mean to call"* ]]; then
+        echo "Yes"
+    else
+        echo "No, output is: $OUT"
+        exit 1
+    fi
 fi
 
 prun spin test
