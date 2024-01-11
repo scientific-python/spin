@@ -36,6 +36,26 @@ def _set_pythonpath(quiet=False):
     site_packages = _get_site_packages()
     env = os.environ
 
+    cfg = get_config()
+    package = cfg.get("tool.spin.package", None)
+    if package:
+        import importlib_metadata
+
+        try:
+            dist = importlib_metadata.Distribution.from_name(package)
+            if dist.origin.dir_info.editable:
+                click.secho(
+                    f"Warning! An editable installation of `{package}` was detected.",
+                    fg="bright_red",
+                )
+                click.secho("Spin commands will pick up that version.", fg="bright_red")
+                click.secho(
+                    f"Try removing the other installation with `pip uninstall {package}`.",
+                    fg="bright_red",
+                )
+        except importlib_metadata.PackageNotFoundError:
+            pass
+
     if "PYTHONPATH" in env:
         env["PYTHONPATH"] = f"{site_packages}{os.pathsep}{env['PYTHONPATH']}"
     else:
