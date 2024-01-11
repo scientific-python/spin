@@ -22,12 +22,14 @@ if [[ ${SPIN_PYTHONPATH} == "\$PYTHONPATH" ]]; then
     echo "Expected Python path, but got $SPIN_PYTHONPATH instead"
     exit 1
 fi
+
 echo -e "${MAGENTA}Does \$PYTHONPATH contains site-packages?${NORMAL}"
 if [[ ${SPIN_PYTHONPATH} == *"site-packages" ]]; then
     echo "Yes"
 else
     echo "No; it is $SPIN_PYTHONPATH"
 fi
+
 echo -e "${MAGENTA}Does \`spin run\` redirect only command output to stdout?${NORMAL}"
 # Once we're on Python >3.11, can replace syspath manipulation below with -P flag to Python
 VERSION=$(spin run python -c 'import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)')
@@ -36,6 +38,20 @@ if [[ $VERSION == "0.0.0dev0" ]]; then
 else
     echo "No, output is $VERSION"
     exit 1
+fi
+
+if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
+    # Detecting whether a file is executable is not that easy on Windows,
+    # as it seems to take into consideration whether that file is associated as an executable.
+    echo -e "${MAGENTA}Does \`spin run foo.py\` warn that \`spin run python foo.py\` is correct?${NORMAL}"
+    OUT=$( touch __foo.py && spin run __foo.py || true )
+    rm __foo.py
+    if [[ $OUT == *"Did you mean to call"* ]]; then
+        echo "Yes"
+    else
+        echo "No, output is: $OUT"
+        exit 1
+    fi
 fi
 
 prun spin test
