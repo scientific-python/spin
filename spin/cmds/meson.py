@@ -43,7 +43,7 @@ def _set_pythonpath(quiet=False):
 
         try:
             dist = importlib_metadata.Distribution.from_name(package)
-            if dist.origin.dir_info.editable:
+            if getattr(dist.origin.dir_info, "editable", False):
                 click.secho(
                     f"Warning! An editable installation of `{package}` was detected.",
                     fg="bright_red",
