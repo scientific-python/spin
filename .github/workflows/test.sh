@@ -6,16 +6,19 @@ RED="\033[31;1m"
 MAGENTA="\033[35m"
 NORMAL="\033[0m"
 
-prun() { echo -e "\n$RED\$ $@ $NORMAL\n" ; "$@" ; }
+ptest() { echo -e "\n${MAGENTA}[TEST] $@${NORMAL}\n" ; }
+prun() { echo -e "$RED\$ $@ $NORMAL" ; "$@" ; }
 
 prun cd example_pkg
 
+ptest version command runs
 prun spin --version
 
+ptest build command runs
 pip install meson-python ninja
 prun spin build
 
-# Test spin run
+ptest Does spin expand \$PYTHONPATH?
 SPIN_PYTHONPATH=$(spin run 'echo $PYTHONPATH')
 echo spin sees PYTHONPATH=\"${SPIN_PYTHONPATH}\"
 if [[ ${SPIN_PYTHONPATH} == "\$PYTHONPATH" ]]; then
@@ -23,14 +26,14 @@ if [[ ${SPIN_PYTHONPATH} == "\$PYTHONPATH" ]]; then
     exit 1
 fi
 
-echo -e "${MAGENTA}Does \$PYTHONPATH contains site-packages?${NORMAL}"
+ptest Does \$PYTHONPATH contains site-packages?
 if [[ ${SPIN_PYTHONPATH} == *"site-packages" ]]; then
     echo "Yes"
 else
     echo "No; it is $SPIN_PYTHONPATH"
 fi
 
-echo -e "${MAGENTA}Does \`spin run\` redirect only command output to stdout?${NORMAL}"
+ptest Does \`spin run\` redirect only command output to stdout?
 # Once we're on Python >3.11, can replace syspath manipulation below with -P flag to Python
 VERSION=$(spin run python -c 'import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)')
 if [[ $VERSION == "0.0.0dev0" ]]; then
@@ -40,10 +43,21 @@ else
     exit 1
 fi
 
+ptest Does spin detect conflict with editable install?
+prun pip install --quiet -e .
+OUT=$(spin run ls)
+if [[ $OUT == *"Warning! An editable installation"* ]]; then
+    echo "Yes"
+else
+    echo "No"
+    exit 1
+fi
+prun pip uninstall --quiet -y example_pkg
+
 if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
     # Detecting whether a file is executable is not that easy on Windows,
     # as it seems to take into consideration whether that file is associated as an executable.
-    echo -e "${MAGENTA}Does \`spin run foo.py\` warn that \`spin run python foo.py\` is correct?${NORMAL}"
+    ptest Does \`spin run foo.py\` warn that \`spin run python foo.py\` is likely intended?
     OUT=$( touch __foo.py && spin run __foo.py || true )
     rm __foo.py
     if [[ $OUT == *"Did you mean to call"* ]]; then
@@ -54,28 +68,34 @@ if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
     fi
 fi
 
+ptest test command runs
 prun spin test
-echo -e "${MAGENTA}Running \`spin test\`, but with PYTHONPATH set${NORMAL}"
+
+ptest Does \`spin test\` work when PYTHONPATH is set?
 PYTHONPATH=./tmp spin test
 
+ptest sdist command runs
 prun spin sdist
+
+ptest example command runs
 prun spin example
 
-pip install sphinx
+ptest docs command runs
+pip install --quiet sphinx
 prun spin docs
 
+ptest install command works
+prun spin install
+(cd /tmp ; [[ $(python -c 'import example_pkg; print(example_pkg.__version__)') == "0.0.0dev0" ]])
+prun pip uninstall -y --quiet example_pkg
 
 ## Platform specialized tests
 
 if [[ $PLATFORM == linux ]]; then
+    ptest gdb command runs on linux
     prun spin gdb -c 'import example_pkg; example_pkg.echo("hi")' -- --eval "run" --batch
 fi
 
 # if [[ $PLATFORM == darwin ]]; then
 
 # if [[ $PLATFORM =~ ^win.* ]]; then
-
-
-prun spin install
-cd /tmp
-python -c 'import example_pkg; print(example_pkg.__version__)'

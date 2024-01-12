@@ -25,7 +25,8 @@ classifiers = [
 dependencies = [
   "click",
   "tomli; python_version < '3.11'",
-  "colorama; platform_system == 'Windows'"
+  "colorama; platform_system == 'Windows'",
+  "importlib_metadata >= 7"
 ]
 dynamic = ['version']
 
