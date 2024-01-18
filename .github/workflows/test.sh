@@ -16,7 +16,26 @@ prun spin --version
 
 ptest build command runs
 pip install meson-python ninja
-prun spin build
+
+
+# Test spin build + debug builds
+echo -e "${MAGENTA}Creating debug builds${NORMAL}"
+prun spin build --gcov
+echo -e "${MAGENTA}Did the build folder get generated?${NORMAL}"
+if [ ! -d "build" ] || [ ! -d "build-install" ]; then
+    echo -e "${RED}build and/or build-install folders did not get generated${NORMAL}"
+    exit 1
+else
+    echo "Yes"
+fi
+echo -e "${MAGENTA}Does the debug build contain gcov files?${NORMAL}"
+matching_files=$(find . -type f -name "*.gc*")
+if [ -z "$matching_files" ]; then
+    echo -e "${RED}Debug files did not get generated${NORMAL}"
+    exit 1
+else
+    echo "Yes"
+fi
 
 ptest Does spin expand \$PYTHONPATH?
 SPIN_PYTHONPATH=$(spin run 'echo $PYTHONPATH')
