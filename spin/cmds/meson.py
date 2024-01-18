@@ -131,14 +131,12 @@ def _meson_version_configured():
     "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
 )
 @click.option(
-    "--gcov-build",
+    "--gcov",
     is_flag=True,
     help="Enable C code coverage via gcov (requires GCC)",
 )
 @click.argument("meson_args", nargs=-1)
-def build(
-    meson_args, jobs=None, clean=False, verbose=False, gcov_build=False, quiet=False
-):
+def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -158,7 +156,7 @@ def build(
     """
     build_dir = "build"
 
-    if gcov_build:
+    if gcov:
         meson_args = list(meson_args) + ["-Db_coverage=true"]
 
     setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
@@ -299,7 +297,7 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
         click.secho(
             "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd, gcov_build=gcov)
+        ctx.invoke(build_cmd, gcov=gcov)
 
     package = cfg.get("tool.spin.package", None)
     if (not pytest_args) and (not tests):
