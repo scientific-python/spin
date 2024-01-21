@@ -133,7 +133,9 @@ def _meson_version_configured():
 @click.option(
     "--gcov",
     is_flag=True,
-    help="Enable C code coverage via gcov (requires GCC)",
+    help="Enable C code coverage via `gcov`. "
+    "Reports can be generated using `ninja coverage*` commands. "
+    "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
 )
 @click.argument("meson_args", nargs=-1)
 def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
@@ -248,7 +250,9 @@ Which tests to run. Can be a module, function, class, or method:
 @click.option(
     "--gcov",
     is_flag=True,
-    help="Enable C code coverage via gcov (requires GCC). gcov output goes to build/**/*.gc*",
+    help="Enable C code coverage via `gcov`. `gcov` output goes to `build/**/*.gc*`. "
+    "Reports can be generated using `ninja coverage*` commands. "
+    "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
 )
 @click.pass_context
 def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
