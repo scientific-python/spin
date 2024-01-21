@@ -3,11 +3,13 @@ set -e
 PLATFORM=$(python -c 'import sys; print(sys.platform)')
 
 RED="\033[31;1m"
+BLUE="\033[34m"
 MAGENTA="\033[35m"
 NORMAL="\033[0m"
 
 ptest() { echo -e "\n${MAGENTA}[TEST] $@${NORMAL}\n" ; }
-prun() { echo -e "$RED\$ $@ $NORMAL" ; "$@" ; }
+perror() { echo -e "\n${RED}[ERROR] $@${NORMAL}\n" ; }
+prun() { echo -e "${BLUE}\$ $@ ${NORMAL}" ; "$@" ; }
 
 prun cd example_pkg
 
@@ -19,19 +21,19 @@ pip install meson-python ninja
 
 
 # Test spin build + debug builds
-echo -e "${MAGENTA}Creating debug builds${NORMAL}"
+echo "Creating debug builds"
 prun spin build --gcov
-echo -e "${MAGENTA}Did the build folder get generated?${NORMAL}"
+ptest Did the build folder get generated?
 if [ ! -d "build" ] || [ ! -d "build-install" ]; then
-    echo -e "${RED}build and/or build-install folders did not get generated${NORMAL}"
+    perror build and/or build-install folders did not get generated
     exit 1
 else
     echo "Yes"
 fi
-echo -e "${MAGENTA}Does the debug build contain gcov files?${NORMAL}"
+ptest Does the debug build contain gcov files?
 matching_files=$(find . -type f -name "*.gc*")
 if [ -z "$matching_files" ]; then
-    echo -e "${RED}Debug files did not get generated${NORMAL}"
+    perror Debug files did not get generated
     exit 1
 else
     echo "Yes"
@@ -41,7 +43,7 @@ ptest Does spin expand \$PYTHONPATH?
 SPIN_PYTHONPATH=$(spin run 'echo $PYTHONPATH')
 echo spin sees PYTHONPATH=\"${SPIN_PYTHONPATH}\"
 if [[ ${SPIN_PYTHONPATH} == "\$PYTHONPATH" ]]; then
-    echo "Expected Python path, but got $SPIN_PYTHONPATH instead"
+    perror Expected Python path, but got $SPIN_PYTHONPATH instead
     exit 1
 fi
 
@@ -58,7 +60,7 @@ VERSION=$(spin run python -c 'import sys; del sys.path[0]; import example_pkg; p
 if [[ $VERSION == "0.0.0dev0" ]]; then
     echo "Yes"
 else
-    echo "No, output is $VERSION"
+    perror No, output is $VERSION
     exit 1
 fi
 
@@ -68,7 +70,7 @@ OUT=$(spin run ls)
 if [[ $OUT == *"Warning! An editable installation"* ]]; then
     echo "Yes"
 else
-    echo "No"
+    perror No
     exit 1
 fi
 prun pip uninstall --quiet -y example_pkg
@@ -82,7 +84,7 @@ if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
     if [[ $OUT == *"Did you mean to call"* ]]; then
         echo "Yes"
     else
-        echo "No, output is: $OUT"
+        perror No, output is: $OUT
         exit 1
     fi
 fi
