@@ -55,6 +55,11 @@ def _is_editable_install(package):
     return _editable_install_path(package) is not None
 
 
+def _is_editable_install_of_same_source(package):
+    editable_path = _editable_install_path(package)
+    return editable_path and os.path.samefile(_editable_install_path(package), ".")
+
+
 def _set_pythonpath(quiet=False):
     """Set first entry of PYTHONPATH to site packages directory.
 
@@ -67,16 +72,26 @@ def _set_pythonpath(quiet=False):
 
     cfg = get_config()
     package = cfg.get("tool.spin.package", None)
-    if package and _is_editable_install(package):
-        click.secho(
-            f"Warning! An editable installation of `{package}` was detected.",
-            fg="bright_red",
-        )
-        click.secho("Spin commands will pick up that version.", fg="bright_red")
-        click.secho(
-            f"Try removing the other installation with `pip uninstall {package}`.",
-            fg="bright_red",
-        )
+    if package:
+        if _is_editable_install(package):
+            if _is_editable_install_of_same_source(package):
+                if not (quiet):
+                    click.secho(
+                        "Editable install of same source directory detected; not setting PYTHONPATH",
+                        fg="bright_red",
+                    )
+                return ""
+            else:
+                # Ignoring the quiet flag, because picking up the wrong package is problematic
+                click.secho(
+                    f"Warning! Editable install of `{package}`, from a different source location, detected.",
+                    fg="bright_red",
+                )
+                click.secho("Spin commands will pick up that version.", fg="bright_red")
+                click.secho(
+                    f"Try removing the other installation by switching to its source and running `pip uninstall {package}`.",
+                    fg="bright_red",
+                )
 
     if "PYTHONPATH" in env:
         env["PYTHONPATH"] = f"{site_packages}{os.pathsep}{env['PYTHONPATH']}"
@@ -92,6 +107,15 @@ def _set_pythonpath(quiet=False):
 
 
 def _get_site_packages():
+    try:
+        cfg = get_config()
+        package = cfg.get("tool.spin.package", None)
+        if _is_editable_install_of_same_source(package):
+            return ""
+    except RuntimeError:
+        # Probably not running in click
+        pass
+
     candidate_paths = []
     for root, dirs, _files in os.walk(install_dir):
         for subdir in dirs:
@@ -224,6 +248,16 @@ def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=F
 
       CFLAGS="-O0 -g" spin build
     """
+    cfg = get_config()
+    package = cfg.get("tool.spin.package", None)
+    if package and _is_editable_install_of_same_source(package):
+        if not quiet:
+            click.secho(
+                "Editable install of same source detected; skipping build",
+                fg="bright_red",
+            )
+        return
+
     meson_args = list(meson_args)
 
     if gcov:
@@ -400,6 +434,8 @@ def test(
             sys.exit(1)
 
     site_path = _set_pythonpath()
+    if site_path:
+        print(f'$ export PYTHONPATH="{site_path}"')
 
     # Sanity check that library built properly
     #
@@ -439,13 +475,18 @@ def test(
             f"--cov={package}",
         ]
 
-    print(f'$ export PYTHONPATH="{site_path}"')
-
     if sys.version_info[:2] >= (3, 11):
         cmd = [sys.executable, "-P", "-m", "pytest"]
     else:
         cmd = ["pytest"]
-    p = _run(cmd + list(pytest_args))
+
+    p = _run(
+        cmd
+        + ([f"--rootdir={site_path}"] if site_path else [])
+        + list(pytest_args),
+        cwd=site_path,
+        replace=True,
+    )
 
     if gcov:
         # Verify the tools are present
@@ -462,7 +503,7 @@ def test(
             bold=True,
             fg="bright_yellow",
         )
-        p = _run(
+        _run(
             [
                 "ninja",
                 "-C",
@@ -482,7 +523,7 @@ def test(
             fg="bright_green",
         )
 
-        raise SystemExit(p.returncode)
+    raise SystemExit(p.returncode)
 
 
 @click.command()
@@ -556,7 +597,8 @@ def ipython(ctx, ipython_args):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
-    print(f'💻 Launching IPython with PYTHONPATH="{p}"')
+    if p:
+        print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
@@ -581,9 +623,11 @@ def shell(ctx, shell_args=[]):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
+    if p:
+        print(f'💻 Launching shell with PYTHONPATH="{p}"')
+
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
-    print(f'💻 Launching shell with PYTHONPATH="{p}"')
     print("⚠  Change directory to avoid importing source instead of built package")
     print("⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
     _run(cmd, replace=True)
@@ -607,6 +651,9 @@ def python(ctx, python_args):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
+    if p:
+        print(f'🐍 Launching Python with PYTHONPATH="{p}"')
+
     v = sys.version_info
     if (v.major < 3) or (v.major == 3 and v.minor < 11):
         print("We're sorry, but this feature only works on Python 3.11 and greater 😢")
@@ -623,8 +670,6 @@ def python(ctx, python_args):
         print()
         print("import sys; del(sys.path[0])")
         sys.exit(-1)
-
-    print(f'🐍 Launching Python with PYTHONPATH="{p}"')
 
     _run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
 
@@ -773,10 +818,15 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
         f"$ export SPHINXOPTS={os.environ['SPHINXOPTS']}", bold=True, fg="bright_blue"
     )
 
-    os.environ["PYTHONPATH"] = f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
-    click.secho(
-        f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
-    )
+    if site_path:
+        os.environ[
+            "PYTHONPATH"
+        ] = f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+        click.secho(
+            f"$ export PYTHONPATH={os.environ['PYTHONPATH']}",
+            bold=True,
+            fg="bright_blue",
+        )
     _run(["make", "-C", doc_dir, sphinx_target], replace=True)
 
 

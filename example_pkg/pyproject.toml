@@ -29,7 +29,6 @@ package = 'example_pkg'
   "spin.cmds.meson.build",
   "spin.cmds.meson.test",
   "spin.cmds.build.sdist",
-  "spin.cmds.pip.install",
 ]
 "Documentation" = [
   "spin.cmds.meson.docs"
@@ -45,7 +44,7 @@ package = 'example_pkg'
   "spin.cmds.meson.lldb"
 ]
 "Extensions" = [".spin/cmds.py:example"]
-"Install" = [
+"Pip" = [
   "spin.cmds.pip.install"
 ]
 
