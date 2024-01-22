@@ -37,6 +37,24 @@ def _meson_cli():
         return [meson_cli]
 
 
+def _editable_install_path(package):
+    import importlib_metadata
+
+    try:
+        dist = importlib_metadata.Distribution.from_name(package)
+    except importlib_metadata.PackageNotFoundError:
+        return None
+
+    if getattr(dist.origin.dir_info, "editable", False):
+        return dist.origin.url.removeprefix("file://")
+    else:
+        return None
+
+
+def _is_editable_install(package):
+    return _editable_install_path(package) is not None
+
+
 def _set_pythonpath(quiet=False):
     """Set first entry of PYTHONPATH to site packages directory.
 
@@ -49,23 +67,16 @@ def _set_pythonpath(quiet=False):
 
     cfg = get_config()
     package = cfg.get("tool.spin.package", None)
-    if package:
-        import importlib_metadata
-
-        try:
-            dist = importlib_metadata.Distribution.from_name(package)
-            if getattr(dist.origin.dir_info, "editable", False):
-                click.secho(
-                    f"Warning! An editable installation of `{package}` was detected.",
-                    fg="bright_red",
-                )
-                click.secho("Spin commands will pick up that version.", fg="bright_red")
-                click.secho(
-                    f"Try removing the other installation with `pip uninstall {package}`.",
-                    fg="bright_red",
-                )
-        except importlib_metadata.PackageNotFoundError:
-            pass
+    if package and _is_editable_install(package):
+        click.secho(
+            f"Warning! An editable installation of `{package}` was detected.",
+            fg="bright_red",
+        )
+        click.secho("Spin commands will pick up that version.", fg="bright_red")
+        click.secho(
+            f"Try removing the other installation with `pip uninstall {package}`.",
+            fg="bright_red",
+        )
 
     if "PYTHONPATH" in env:
         env["PYTHONPATH"] = f"{site_packages}{os.pathsep}{env['PYTHONPATH']}"
