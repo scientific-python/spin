@@ -133,9 +133,18 @@ def _meson_version_configured():
 @click.option(
     "--gcov",
     is_flag=True,
-    help="Enable C code coverage via `gcov`. "
-    "Reports can be generated using `ninja coverage*` commands. "
-    "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
+    help="""Enable C code coverage via `gcov`.
+
+    The meson-generated `build/build.ninja` has targets for compiling
+    coverage reports.
+
+    E.g., to build an HTML report, in the `build` directory run
+     `ninja coverage-html`.
+
+    To see a list all supported formats, run
+    `ninja -t targets | grep coverage-`.
+
+    Also see https://mesonbuild.com/howtox.html#producing-a-coverage-report.""",
 )
 @click.argument("meson_args", nargs=-1)
 def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
