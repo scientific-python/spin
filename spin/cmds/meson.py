@@ -130,8 +130,24 @@ def _meson_version_configured():
 @click.option(
     "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
 )
+@click.option(
+    "--gcov",
+    is_flag=True,
+    help="""Enable C code coverage via `gcov`.
+
+    The meson-generated `build/build.ninja` has targets for compiling
+    coverage reports.
+
+    E.g., to build an HTML report, in the `build` directory run
+     `ninja coverage-html`.
+
+    To see a list all supported formats, run
+    `ninja -t targets | grep coverage-`.
+
+    Also see https://mesonbuild.com/howtox.html#producing-a-coverage-report.""",
+)
 @click.argument("meson_args", nargs=-1)
-def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
+def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
     """🔧 Build package with Meson/ninja and install
 
     MESON_ARGS are passed through e.g.:
@@ -150,7 +166,12 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
       CFLAGS="-O0 -g" spin build
     """
     build_dir = "build"
-    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
+    meson_args = list(meson_args)
+
+    if gcov:
+        meson_args = meson_args + ["-Db_coverage=true"]
+
+    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + meson_args
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -236,8 +257,15 @@ Which tests to run. Can be a module, function, class, or method:
     is_flag=True,
     help="Generate a coverage report of executed tests. An HTML copy of the report is written to `build/coverage`.",
 )
+@click.option(
+    "--gcov",
+    is_flag=True,
+    help="Enable C code coverage via `gcov`. `gcov` output goes to `build/**/*.gc*`. "
+    "Reports can be generated using `ninja coverage*` commands. "
+    "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
+)
 @click.pass_context
-def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
+def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -283,7 +311,7 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False):
         click.secho(
             "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, gcov=gcov)
 
     package = cfg.get("tool.spin.package", None)
     if (not pytest_args) and (not tests):
