@@ -46,7 +46,10 @@ def _editable_install_path(package):
         return None
 
     if getattr(dist.origin.dir_info, "editable", False):
-        return dist.origin.url.removeprefix("file://")
+        if sys.platform == "win32":
+            return dist.origin.url.removeprefix("file:///")
+        else:
+            return dist.origin.url.removeprefix("file://")
     else:
         return None
 
