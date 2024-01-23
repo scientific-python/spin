@@ -674,7 +674,7 @@ def python(ctx, python_args):
         print("import sys; del(sys.path[0])")
         sys.exit(-1)
 
-    _run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+    _run([sys.executable, "-P"] + list(python_args), replace=True)
 
 
 @click.command(context_settings={"ignore_unknown_options": True})
