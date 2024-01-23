@@ -166,11 +166,12 @@ def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=F
       CFLAGS="-O0 -g" spin build
     """
     build_dir = "build"
+    meson_args = list(meson_args)
 
     if gcov:
-        meson_args = list(meson_args) + ["-Db_coverage=true"]
+        meson_args = meson_args + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + list(meson_args)
+    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + meson_args
 
     if clean:
         print(f"Removing `{build_dir}`")
