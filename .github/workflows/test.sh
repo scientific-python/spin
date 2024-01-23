@@ -43,6 +43,19 @@ else
     exit 1
 fi
 
+ptest Does spin detect conflict with editable install?
+prun pip install --quiet --no-build-isolation -e .
+OUT=$(spin build)
+if [[ $OUT == *"Editable install of same source detected"* ]]; then
+    echo "Yes"
+else
+    echo "No"
+    exit 1
+fi
+ptest Do commands work with editable install?
+prun spin test
+prun pip uninstall --quiet -y example_pkg
+
 if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
     # Detecting whether a file is executable is not that easy on Windows,
     # as it seems to take into consideration whether that file is associated as an executable.
@@ -55,20 +68,6 @@ if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
         echo "No, output is: $OUT"
         exit 1
     fi
-
-    # Editable installs do not seem to work correctly under Windows at the moment
-    ptest Does spin detect conflict with editable install?
-    prun pip install --quiet --no-build-isolation -e .
-    OUT=$(spin build)
-    if [[ $OUT == *"Editable install of same source detected"* ]]; then
-        echo "Yes"
-    else
-        echo "No"
-        exit 1
-    fi
-    ptest Do commands work with editable install?
-    prun spin test
-    prun pip uninstall --quiet -y example_pkg
 fi
 
 ptest test command runs
