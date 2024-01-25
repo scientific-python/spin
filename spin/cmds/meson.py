@@ -26,11 +26,11 @@ def _meson_cli():
         return [meson_cli]
 
 
-def _editable_install_path(package):
+def _editable_install_path(distname):
     import importlib_metadata
 
     try:
-        dist = importlib_metadata.Distribution.from_name(package)
+        dist = importlib_metadata.Distribution.from_name(distname)
     except importlib_metadata.PackageNotFoundError:
         return None
 
@@ -43,13 +43,13 @@ def _editable_install_path(package):
         return None
 
 
-def _is_editable_install(package):
-    return _editable_install_path(package) is not None
+def _is_editable_install(distname):
+    return _editable_install_path(distname) is not None
 
 
-def _is_editable_install_of_same_source(package):
-    editable_path = _editable_install_path(package)
-    return editable_path and os.path.samefile(_editable_install_path(package), ".")
+def _is_editable_install_of_same_source(distname):
+    editable_path = _editable_install_path(distname)
+    return editable_path and os.path.samefile(_editable_install_path(distname), ".")
 
 
 def _set_pythonpath(quiet=False):
@@ -63,10 +63,10 @@ def _set_pythonpath(quiet=False):
     env = os.environ
 
     cfg = get_config()
-    package = cfg.get("tool.spin.package", None)
-    if package:
-        if _is_editable_install(package):
-            if _is_editable_install_of_same_source(package):
+    distname = cfg.get("project.name", None)
+    if distname:
+        if _is_editable_install(distname):
+            if _is_editable_install_of_same_source(distname):
                 if not (quiet):
                     click.secho(
                         "Editable install of same source directory detected; not setting PYTHONPATH",
@@ -76,12 +76,12 @@ def _set_pythonpath(quiet=False):
             else:
                 # Ignoring the quiet flag, because picking up the wrong package is problematic
                 click.secho(
-                    f"Warning! Editable install of `{package}`, from a different source location, detected.",
+                    f"Warning! Editable install of `{distname}`, from a different source location, detected.",
                     fg="bright_red",
                 )
                 click.secho("Spin commands will pick up that version.", fg="bright_red")
                 click.secho(
-                    f"Try removing the other installation by switching to its source and running `pip uninstall {package}`.",
+                    f"Try removing the other installation by switching to its source and running `pip uninstall {distname}`.",
                     fg="bright_red",
                 )
 
@@ -101,8 +101,8 @@ def _set_pythonpath(quiet=False):
 def _get_site_packages():
     try:
         cfg = get_config()
-        package = cfg.get("tool.spin.package", None)
-        if _is_editable_install_of_same_source(package):
+        distname = cfg.get("project.name", None)
+        if _is_editable_install_of_same_source(distname):
             return ""
     except RuntimeError:
         # Probably not running in click
@@ -188,8 +188,8 @@ def build(meson_args, jobs=None, clean=False, verbose=False, quiet=False):
       CFLAGS="-O0 -g" spin build
     """
     cfg = get_config()
-    package = cfg.get("tool.spin.package", None)
-    if package and _is_editable_install_of_same_source(package):
+    distname = cfg.get("project.name", None)
+    if distname and _is_editable_install_of_same_source(distname):
         if not quiet:
             click.secho(
                 "Editable install of same source detected; skipping build",
