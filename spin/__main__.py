@@ -36,7 +36,7 @@ def main():
             try:
                 return tomllib.load(f)
             except tomllib.TOMLDecodeError:
-                error("cannot parse [{filename}]")
+                error(f"cannot parse [{filename}]")
 
     toml_config = collections.ChainMap()
     toml_config.maps.extend(
