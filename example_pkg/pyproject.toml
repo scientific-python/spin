@@ -48,3 +48,6 @@ package = 'example_pkg'
 "Install" = [
   "spin.cmds.pip.install"
 ]
+
+[tool.spin.kwargs]
+".spin/cmds.py:example" = {"test" = "default override", "default_kwd" = 3}
