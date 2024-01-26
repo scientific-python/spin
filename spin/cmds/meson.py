@@ -1,7 +1,9 @@
 import contextlib
 import copy
+import enum
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -11,6 +13,14 @@ from .util import get_commands, get_config
 from .util import run as _run
 
 install_dir = "build-install"
+build_dir = "build"
+
+
+class GcovReports(str, enum.Enum):
+    html = "html"
+    xml = "xml"
+    text = "text"
+    sonarqube = "sonarqube"
 
 
 # Allow specification of meson binary in configuration
@@ -124,6 +134,31 @@ def _meson_version_configured():
         pass
 
 
+def _check_coverage_tool_installation(coverage_type: GcovReports):
+    requirements = {  # https://github.com/mesonbuild/meson/blob/6e381714c7cb15877e2bcaa304b93c212252ada3/docs/markdown/Unit-tests.md?plain=1#L49-L62
+        GcovReports.html: ["Gcovr/GenHTML", "lcov"],
+        GcovReports.xml: ["Gcovr (version 3.3 or higher)"],
+        GcovReports.text: ["Gcovr (version 3.3 or higher)"],
+        GcovReports.sonarqube: ["Gcovr (version 4.2 or higher)"],
+    }
+
+    # First check the presence of a valid build
+    if not (os.path.exists(build_dir)):
+        raise click.ClickException(
+            "`build` folder not found, cannot generate coverage reports. "
+            "Generate coverage artefacts by running `spin test --gcov`"
+        )
+
+    # Verify the tools are installed prior to the build
+    p = _run(["ninja", "-C", build_dir, "-t", "targets", "all"], output=False)
+    if f"coverage-{coverage_type.value}" not in p.stdout.decode("ascii"):
+        raise click.ClickException(
+            f"coverage-{coverage_type.value} is not supported... "
+            f"Ensure the following are installed: {', '.join(requirements[coverage_type])} "
+            "and rerun `spin test --gcov`"
+        )
+
+
 @click.command()
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
@@ -165,7 +200,6 @@ def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=F
 
       CFLAGS="-O0 -g" spin build
     """
-    build_dir = "build"
     meson_args = list(meson_args)
 
     if gcov:
@@ -252,6 +286,11 @@ Which tests to run. Can be a module, function, class, or method:
 )
 @click.option("--verbose", "-v", is_flag=True, default=False)
 @click.option(
+    "--generate-gcov-report",
+    type=click.Choice(GcovReports),
+    help="Generate a coverage report for C Code and exit",
+)
+@click.option(
     "-c",
     "--coverage",
     is_flag=True,
@@ -261,11 +300,20 @@ Which tests to run. Can be a module, function, class, or method:
     "--gcov",
     is_flag=True,
     help="Enable C code coverage via `gcov`. `gcov` output goes to `build/**/*.gc*`. "
-    "Reports can be generated using `ninja coverage*` commands. "
+    "Reports can be generated using `spin test --generate-gcov-report *` command. "
     "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
 )
 @click.pass_context
-def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
+def test(
+    ctx,
+    pytest_args,
+    n_jobs,
+    tests,
+    verbose,
+    generate_gcov_report,
+    coverage=False,
+    gcov=False,
+):
     """🔧 Run tests
 
     PYTEST_ARGS are passed through directly to pytest, e.g.:
@@ -308,6 +356,42 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
 
     For more, see `pytest --help`.
     """  # noqa: E501
+    if generate_gcov_report:
+        # Verify the tools are present
+        click.secho(
+            "Verifying installed packages for generating coverage reports...",
+            bold=True,
+            fg="bright_yellow",
+        )
+        _check_coverage_tool_installation(generate_gcov_report)
+
+        # Generate report
+        click.secho(
+            f"Generating {generate_gcov_report.value} coverage report...",
+            bold=True,
+            fg="bright_yellow",
+        )
+        p = _run(
+            [
+                "ninja",
+                "-C",
+                build_dir,
+                f"coverage-{generate_gcov_report.value.lower()}",
+            ],
+            output=False,
+        )
+        coverage_folder = click.style(
+            re.search(r"file://(.*)", p.stdout.decode("utf-8")).group(1),
+            bold=True,
+            fg="bright_yellow",
+        )
+        click.secho(
+            f"Coverage report generated successfully and written to {coverage_folder}",
+            bold=True,
+            fg="bright_green",
+        )
+        exit(0)
+
     cfg = get_config()
 
     build_cmd = _get_configured_command("build")
