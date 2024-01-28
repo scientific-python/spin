@@ -286,7 +286,7 @@ Which tests to run. Can be a module, function, class, or method:
 )
 @click.option("--verbose", "-v", is_flag=True, default=False)
 @click.option(
-    "--generate-gcov-report",
+    "--gcov-report",
     type=click.Choice(GcovReports),
     help="Generate a coverage report for C Code and exit",
 )
@@ -310,7 +310,7 @@ def test(
     n_jobs,
     tests,
     verbose,
-    generate_gcov_report,
+    gcov_report,
     coverage=False,
     gcov=False,
 ):
@@ -356,18 +356,18 @@ def test(
 
     For more, see `pytest --help`.
     """  # noqa: E501
-    if generate_gcov_report:
+    if gcov_report:
         # Verify the tools are present
         click.secho(
             "Verifying installed packages for generating coverage reports...",
             bold=True,
             fg="bright_yellow",
         )
-        _check_coverage_tool_installation(generate_gcov_report)
+        _check_coverage_tool_installation(gcov_report)
 
         # Generate report
         click.secho(
-            f"Generating {generate_gcov_report.value} coverage report...",
+            f"Generating {gcov_report.value} coverage report...",
             bold=True,
             fg="bright_yellow",
         )
@@ -376,7 +376,7 @@ def test(
                 "ninja",
                 "-C",
                 build_dir,
-                f"coverage-{generate_gcov_report.value.lower()}",
+                f"coverage-{gcov_report.value.lower()}",
             ],
             output=False,
         )
