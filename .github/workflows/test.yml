@@ -29,6 +29,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y gdb
-      - name: Tests
+     # - name: Tests Old
+     #   run: |
+     #     pipx run nox --forcecolor -s tests_old_sh
+      - name: Tests PyTest
         run: |
-          pipx run nox --forcecolor -s tests
+          pipx run nox --forcecolor -s tests_pytest

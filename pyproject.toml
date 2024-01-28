@@ -24,6 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "click",
+  "meson",
   "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'",
   "importlib_metadata >= 7"
