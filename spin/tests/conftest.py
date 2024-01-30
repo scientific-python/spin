@@ -11,8 +11,10 @@ def pre_post_test():
     # Pre-test code
     cwd = os.getcwd()
 
-    yield
+    try:
+        yield
 
-    # Post test code
-    util.run(["git", "clean", "-xdf"], cwd=PKG_NAME)
-    os.chdir(cwd)
+        # Post test code
+        util.run(["git", "clean", "-xdf"], cwd=PKG_NAME)
+    finally:
+        os.chdir(cwd)
