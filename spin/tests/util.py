@@ -17,8 +17,9 @@ def assert_cmd(cmd, *args, **kwargs) -> str:
         echo=True,
         **kwargs,
     )
-    assert (
-        p.returncode == 0
-    ), f"{cmd} failed with non-zero exit status with error: {p.stderr}"
     os.chdir(cwd)
-    return p.stdout.decode("utf-8").strip()
+    stdout = p.stdout.decode("utf-8").strip()
+    if not p.returncode == 0:
+        print(stdout)
+        raise AssertionError(f"[{cmd}] failed with exit code {p.returncode}")
+    return stdout
