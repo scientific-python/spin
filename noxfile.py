@@ -15,5 +15,5 @@ def tests_pytest(session: nox.Session) -> None:
     """
     [TBD DEPCRECATED]Run the unit and regular tests.
     """
-    session.install(".", "pytest", "build", "meson-python")
+    session.install(".", "pytest", "build", "meson-python", "ninja")
     session.run("pytest", "spin", *session.posargs)
