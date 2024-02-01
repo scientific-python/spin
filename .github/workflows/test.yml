@@ -24,6 +24,7 @@ jobs:
         with:
           python-version: ${{ matrix.python_version }}
           allow-prereleases: true
+          cache: "pip"
       - name: Install system dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
