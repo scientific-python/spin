@@ -65,14 +65,16 @@ else
 fi
 
 ptest Does spin detect conflict with editable install?
-prun pip install --quiet -e .
-OUT=$(spin run ls)
-if [[ $OUT == *"Warning! An editable installation"* ]]; then
+prun pip install --quiet --no-build-isolation -e .
+OUT=$(spin build)
+if [[ $OUT == *"Editable install of same source detected"* ]]; then
     echo "Yes"
 else
     perror No
     exit 1
 fi
+ptest Do commands work with editable install?
+prun spin test
 prun pip uninstall --quiet -y example_pkg
 
 if [[ $PLATFORM == linux || $PLATFORM == darwin ]]; then
