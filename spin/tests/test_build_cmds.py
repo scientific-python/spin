@@ -6,7 +6,7 @@ import spin
 
 
 def stdout(p):
-    return p.stdout.decode("utf-8")
+    return p.stdout.decode("utf-8").strip()
 
 
 def test_get_version():
@@ -34,6 +34,21 @@ def test_debug_builds():
 
 def test_expand_pythonpath():
     output = assert_cmd(["spin", "run", "echo $PYTHONPATH"])
-    assert "build-install" in stdout(
+    assert "site-packages" in stdout(
         output
     ), f"Expected value of $PYTHONPATH, got {output} instead"
+
+
+def test_run_stdout():
+    p = assert_cmd(
+        [
+            "spin",
+            "run",
+            "python",
+            "-c",
+            "import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)",
+        ]
+    )
+    assert (
+        stdout(p) == "0.0.0dev0"
+    ), f"`spin run` stdout did not yield version, but {stdout(p)}"
