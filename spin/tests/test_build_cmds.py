@@ -5,9 +5,13 @@ from util import PKG_NAME, assert_cmd
 import spin
 
 
+def stdout(p):
+    return p.stdout.decode("utf-8")
+
+
 def test_get_version():
-    output = assert_cmd(["spin", "--version"])
-    assert output == f"spin {spin.__version__}"
+    p = assert_cmd(["spin", "--version"])
+    assert stdout(p) == f"spin {spin.__version__}"
 
 
 def test_basic_build():
@@ -26,3 +30,10 @@ def test_debug_builds():
 
     debug_files = Path(PKG_NAME).rglob("*.gcno")
     assert len(list(debug_files)) != 0, "debug files not generated for gcov build"
+
+
+def test_expand_pythonpath():
+    output = assert_cmd(["spin", "run", "echo $PYTHONPATH"])
+    assert "build-install" in stdout(
+        output
+    ), f"Expected value of $PYTHONPATH, got {output} instead"
