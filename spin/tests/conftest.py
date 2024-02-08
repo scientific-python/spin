@@ -1,7 +1,6 @@
 import os
 
 import pytest
-from util import PKG_NAME
 
 from spin import util
 
@@ -10,11 +9,12 @@ from spin import util
 def pre_post_test():
     # Pre-test code
     cwd = os.getcwd()
+    os.chdir("example_pkg")
 
     try:
         yield
-
-        # Post test code
-        util.run(["git", "clean", "-xdf"], cwd=PKG_NAME)
     finally:
+        # Post test code
+        os.chdir(cwd)
+        util.run(["git", "clean", "-xdf"], cwd="example_pkg")
         os.chdir(cwd)
