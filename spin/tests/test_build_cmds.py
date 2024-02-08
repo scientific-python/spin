@@ -34,9 +34,9 @@ def test_debug_builds():
 
 def test_expand_pythonpath():
     output = assert_cmd(["spin", "run", "echo $PYTHONPATH"])
-    assert "site-packages" in stdout(
-        output
-    ), f"Expected value of $PYTHONPATH, got {output} instead"
+    assert any(
+        p in stdout(output) for p in ("site-packages", "dist-packages")
+    ), f"Expected value of $PYTHONPATH, got {stdout(output)} instead"
 
 
 def test_run_stdout():
