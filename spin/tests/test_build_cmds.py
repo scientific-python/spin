@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import tempfile
@@ -9,17 +10,21 @@ import spin as libspin
 from spin.cmds.util import run
 
 skip_on_windows = pytest.mark.skipif(
-    sys.platform.startswith("win"), reason="Skipped on Windows"
+    sys.platform.startswith("win"), reason="Skipped; platform is Windows"
+)
+
+on_linux = pytest.mark.skipif(
+    not sys.platform.startswith("linux"), reason="Skipped; platform not Linux"
 )
 
 
-def spin(*args):
-    return run(
-        ["spin"] + list(args),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        sys_exit=False,
-    )
+def spin(*args, **user_kwargs):
+    default_kwargs = {
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "sys_exit": True,
+    }
+    return run(["spin"] + list(args), **{**default_kwargs, **user_kwargs})
 
 
 def stdout(p):
@@ -91,7 +96,60 @@ def test_editable_conflict():
 def test_recommend_run_python():
     """If `spin run file.py` is called, is `spin run python file.py` recommended?"""
     with tempfile.NamedTemporaryFile(suffix=".py") as f:
-        p = spin("run", f.name)
+        p = spin("run", f.name, sys_exit=False)
         assert "Did you mean to call" in stdout(
             p
         ), "Failed to recommend `python run python file.py`"
+
+
+def test_test():
+    """Does the test command run?"""
+    spin("test")
+
+
+def test_test_with_pythonpath():
+    """Does `spin test` work when PYTHONPATH is set?"""
+    spin("test", env={**os.environ, "PYTHONPATH": "/tmp"})
+
+
+def test_sdist():
+    spin("sdist")
+
+
+def test_example():
+    spin("example")
+
+
+def test_docs():
+    run(["pip", "install", "--quiet", "sphinx"])
+    spin("docs")
+
+
+def test_spin_install():
+    cwd = os.getcwd()
+    spin("install")
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            os.chdir(d)
+            p = run(
+                ["python", "-c", "import example_pkg; print(example_pkg.__version__)"],
+                stdout=subprocess.PIPE,
+            )
+            assert stdout(p) == "0.0.0dev0"
+    finally:
+        os.chdir(cwd)
+        run(["pip", "uninstall", "-y", "--quiet", "example_pkg"])
+
+
+@on_linux
+def test_gdb():
+    p = spin(
+        "gdb",
+        "-c",
+        'import example_pkg; example_pkg.echo("hi")',
+        "--",
+        "--eval",
+        "run",
+        "--batch",
+    )
+    assert "hi" in stdout(p)
