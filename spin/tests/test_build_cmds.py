@@ -70,7 +70,7 @@ def test_run_stdout():
     """Ensure `spin run` only includes command output on stdout."""
     p = spin(
         "run",
-        "python",
+        sys.executable,
         "-c",
         "import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)",
     )
@@ -132,7 +132,11 @@ def test_spin_install():
         with tempfile.TemporaryDirectory() as d:
             os.chdir(d)
             p = run(
-                ["python", "-c", "import example_pkg; print(example_pkg.__version__)"],
+                [
+                    sys.executable,
+                    "-c",
+                    "import example_pkg; print(example_pkg.__version__)",
+                ],
                 stdout=subprocess.PIPE,
             )
             assert stdout(p) == "0.0.0dev0"
