@@ -128,8 +128,8 @@ def test_docs():
 def test_spin_install():
     cwd = os.getcwd()
     spin("install")
-    try:
-        with tempfile.TemporaryDirectory() as d:
+    with tempfile.TemporaryDirectory() as d:
+        try:
             os.chdir(d)
             p = run(
                 [
@@ -140,9 +140,9 @@ def test_spin_install():
                 stdout=subprocess.PIPE,
             )
             assert stdout(p) == "0.0.0dev0"
-    finally:
-        os.chdir(cwd)
-        run(["pip", "uninstall", "-y", "--quiet", "example_pkg"])
+        finally:
+            os.chdir(cwd)
+            run(["pip", "uninstall", "-y", "--quiet", "example_pkg"])
 
 
 @on_linux
