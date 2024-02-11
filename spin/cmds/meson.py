@@ -363,9 +363,13 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
         ]
 
     print(f'$ export PYTHONPATH="{site_path}"')
+
+    if sys.version_info[:2] >= (3, 11):
+        cmd = [sys.executable, "-P", "-m", "pytest"]
+    else:
+        cmd = ["pytest"]
     _run(
-        [sys.executable, "-m", "pytest", f"--rootdir={site_path}"] + list(pytest_args),
-        cwd=site_path,
+        cmd + list(pytest_args),
         replace=True,
     )
 
