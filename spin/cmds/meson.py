@@ -300,7 +300,7 @@ Which tests to run. Can be a module, function, class, or method:
     "--gcov",
     is_flag=True,
     help="Enable C code coverage via `gcov`. `gcov` output goes to `build/**/*.gc*`. "
-    "Reports can be generated using `spin test --generate-gcov-report *` command. "
+    "Reports can be generated using `spin test --gcov-report *` command. "
     "See https://mesonbuild.com/howtox.html#producing-a-coverage-report",
 )
 @click.pass_context
