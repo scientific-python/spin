@@ -35,7 +35,7 @@ spin = "spin.__main__:main"
 
 [project.optional-dependencies]
 lint = ["pre-commit == 3.6.0"]
-dev = ["changelist == 0.4"]
+dev = ["changelist == 0.5"]
 
 [project.urls]
 homepage = "https://github.com/scientific-python/spin"
