@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import sys
+from pathlib import Path
 
 import click
 
@@ -146,6 +147,13 @@ def _check_coverage_tool_installation(coverage_type: GcovReports):
     if not (os.path.exists(build_dir)):
         raise click.ClickException(
             "`build` folder not found, cannot generate coverage reports. "
+            "Generate coverage artefacts by running `spin test --gcov`"
+        )
+
+    debug_files = Path(build_dir).rglob("*.gcno")
+    if len(list(debug_files)) == 0:
+        raise click.ClickException(
+            "debug build not found, cannot generate coverage reports. "
             "Generate coverage artefacts by running `spin test --gcov`"
         )
 
