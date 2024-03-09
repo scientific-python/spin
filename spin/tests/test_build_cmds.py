@@ -55,6 +55,21 @@ def test_coverage_reports(report_type, output_file):
     ), f"coverage report not generated for gcov build ({report_type})"
 
 
+@pytest.mark.parametrize(
+    "command,error_message",
+    [
+        ("", "`build` folder not found"),
+        ("build", "debug build not found"),
+        ("test", "debug build not found"),
+    ],
+)
+def test_no_debug_coverage_attempt(command, error_message):
+    """Does gcov report throw error in case of missing debug files"""
+    spin(command) if command else None
+    output = spin("test", "--gcov-report", "html", sys_exit=False)
+    assert error_message in stderr(output)
+
+
 def test_expand_pythonpath():
     """Does an $ENV_VAR get expanded in `spin run`?"""
     output = spin("run", "echo $PYTHONPATH")
