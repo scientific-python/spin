@@ -302,6 +302,10 @@ def test(ctx, pytest_args, n_jobs, tests, verbose, coverage=False, gcov=False):
 
       spin test -j auto
 
+    To run a test inside of LLDB:
+
+      spin lldb -- python -mspin test ...
+
     For more, see `pytest --help`.
     """  # noqa: E501
     cfg = get_config()
