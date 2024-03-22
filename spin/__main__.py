@@ -25,10 +25,6 @@ def main():
     if (len(sys.argv) == 2) and (sys.argv[1] == "help"):
         sys.argv[1] = "--help"
 
-    def error(message):
-        print(f"Error: {message}", file=sys.stderr)
-        sys.exit(1)
-
     def load_toml(filename):
         if not os.path.exists(filename):
             return None
@@ -36,7 +32,7 @@ def main():
             try:
                 return tomllib.load(f)
             except tomllib.TOMLDecodeError:
-                error("cannot parse [{filename}]")
+                print(f"Error: cannot parse [{filename}]", file=sys.stderr)
 
     toml_config = collections.ChainMap()
     toml_config.maps.extend(
@@ -50,18 +46,28 @@ def main():
     )
 
     # Basic configuration validation
-    if "tool.spin" not in toml_config:
-        error(
-            "needs valid configuration in [.spin.toml], [spin.toml] or [pyproject.toml]"
-        )
-    if "tool.spin.commands" not in toml_config:
-        error("configuration is missing section [tool.spin.commands]")
+    version_query = len(sys.argv) == 2 and (sys.argv[1] == "--version")
 
-    spin_config = toml_config["tool.spin"]
+    spin_config = {}
+    if not version_query:
+        if "tool.spin" in toml_config:
+            spin_config = toml_config["tool.spin"]
+            if "tool.spin.commands" not in toml_config:
+                print(
+                    "Error: configuration is missing section [tool.spin.commands]\n",
+                    file=sys.stderr,
+                )
+        else:
+            print(
+                "Error: need valid configuration in [.spin.toml], [spin.toml], or [pyproject.toml]\n"
+                "See https://github.com/scientific-python/spin/blob/main/README.md\n",
+                file=sys.stderr,
+            )
+
     proj_name = (
         toml_config.get("project.name")
         or spin_config.get("package")
-        or "unknown project"
+        or "[unknown project]"
     )
 
     @click.group(help=f"Developer tool for {proj_name}", cls=SectionedHelpGroup)
@@ -72,7 +78,7 @@ def main():
         ctx.meta["commands"] = ctx.command.section_commands
         ctx.show_default = True
 
-    config_cmds = spin_config["commands"]
+    config_cmds = spin_config.get("commands", [])
     # Commands can be provided as a list, or as a dictionary
     # so that they can be sorted into sections
     if isinstance(config_cmds, list):
@@ -134,7 +140,8 @@ def main():
     try:
         group()
     except Exception as e:
-        error(f"{e}; aborting.")
+        print(f"Error: {e}; aborting.", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
