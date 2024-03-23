@@ -29,7 +29,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y gdb
+          sudo apt-get install -y gdb lcov
       - name: Tests PyTest
         run: |
           pipx run nox --forcecolor -s test

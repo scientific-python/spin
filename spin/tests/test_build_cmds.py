@@ -58,6 +58,49 @@ def test_debug_builds():
     assert len(list(debug_files)) != 0, "debug files not generated for gcov build"
 
 
+def test_coverage_builds():
+    """Does gcov test generate coverage files?"""
+    spin("test", "--gcov")
+
+    coverage_files = Path(".").rglob("*.gcda")
+    assert len(list(coverage_files)) != 0, "coverage files not generated for gcov build"
+
+
+@pytest.mark.parametrize(
+    "report_type,output_file",
+    [
+        ("html", Path("coveragereport/index.html")),
+        ("xml", Path("coverage.xml")),
+        ("text", Path("coverage.txt")),
+        ("sonarqube", Path("sonarqube.xml")),
+    ],
+)
+def test_coverage_reports(report_type, output_file):
+    """Does gcov test generate coverage reports?"""
+    spin("test", "--gcov")
+    spin("test", "--gcov-report", report_type)
+
+    coverage_report = Path("./build/meson-logs", output_file)
+    assert (
+        coverage_report.exists()
+    ), f"coverage report not generated for gcov build ({report_type})"
+
+
+@pytest.mark.parametrize(
+    "command,error_message",
+    [
+        ("", "`build` folder not found"),
+        ("build", "debug build not found"),
+        ("test", "debug build not found"),
+    ],
+)
+def test_no_debug_coverage_attempt(command, error_message):
+    """Does gcov report throw error in case of missing debug files"""
+    spin(command) if command else None
+    output = spin("test", "--gcov-report", "html", sys_exit=False)
+    assert error_message in stderr(output)
+
+
 def test_expand_pythonpath():
     """Does an $ENV_VAR get expanded in `spin run`?"""
     output = spin("run", "echo $PYTHONPATH")
