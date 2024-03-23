@@ -7,7 +7,8 @@ from spin import util
 
 @click.command()
 @click.option("-f", "--flag")
-def example(flag):
+@click.option("-t", "--test", default="not set")
+def example(flag, test, default_kwd=None):
     """🧪 Example custom command.
 
     Accepts arbitrary flags, and shows how to access `pyproject.toml`
@@ -19,6 +20,11 @@ def example(flag):
     commands = util.get_commands()
     click.secho("Flag provided with --flag is: ", fg="yellow", nl=False)
     print(flag or None)
+
+    click.secho("Flag provided with --test is: ", fg="yellow", nl=False)
+    print(test or None)
+
+    click.secho(f"Default kwd is: {default_kwd}")
 
     click.secho("\nDefined commands:", fg="yellow")
     for section in commands:

@@ -36,7 +36,7 @@ def main():
             try:
                 return tomllib.load(f)
             except tomllib.TOMLDecodeError:
-                error("cannot parse [{filename}]")
+                error(f"cannot parse [{filename}]")
 
     toml_config = collections.ChainMap()
     toml_config.maps.extend(
@@ -88,6 +88,7 @@ def main():
         "spin.python": _cmds.meson.python,
         "spin.shell": _cmds.meson.shell,
     }
+    cmd_default_kwargs = toml_config.get("tool.spin.kwargs", {})
 
     for section, cmds in config_cmds.items():
         for cmd in cmds:
@@ -126,6 +127,18 @@ def main():
                 except AttributeError:
                     print(f"!! Could not load command `{func}` from file `{path}`.\n")
                     continue
+
+                default_kwargs = cmd_default_kwargs.get(cmd)
+                import functools
+
+                if default_kwargs:
+                    callback = cmd_func.callback
+                    cmd_func.callback = functools.partial(callback, **default_kwargs)
+
+                    # Also override option defaults
+                    for option in cmd_func.params:
+                        if option.name in default_kwargs:
+                            option.default = default_kwargs[option.name]
 
                 commands[cmd] = cmd_func
 
