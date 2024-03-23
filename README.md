@@ -163,7 +163,7 @@ def example(flag, test, default_kwd=None):
 ```
 
 Use the `[tool.spin.kwargs]` section to override default values for
-both click options and keywords:
+click options or function keywords:
 
 ```toml
 [tool.spin.kwargs]
