@@ -632,15 +632,15 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
 
     if clean:
         doc_dirs = [
-            "./doc/build/",
-            "./doc/source/api/",
-            "./doc/source/auto_examples/",
-            "./doc/source/jupyterlite_contents/",
+            f"./{doc_dir}/build/",
+            f"./{doc_dir}/source/api/",
+            f"./{doc_dir}/source/auto_examples/",
+            f"./{doc_dir}/source/jupyterlite_contents/",
         ]
-        for doc_dir in doc_dirs:
-            if os.path.isdir(doc_dir):
-                print(f"Removing {doc_dir!r}")
-                shutil.rmtree(doc_dir)
+        for target_dir in doc_dirs:
+            if os.path.isdir(target_dir):
+                print(f"Removing {target_dir!r}")
+                shutil.rmtree(target_dir)
 
     build_cmd = _get_configured_command("build")
 
@@ -670,7 +670,7 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
     click.secho(
         f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
     )
-    _run(["make", "-C", "doc", sphinx_target], replace=True)
+    _run(["make", "-C", doc_dir, sphinx_target], replace=True)
 
 
 @click.command()
