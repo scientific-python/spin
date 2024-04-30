@@ -247,7 +247,7 @@ fc-cache -f -v
 `spin` tests are invoked using:
 
 ```
-nox -s tests
+nox -s test
 ```
 
 ## History
