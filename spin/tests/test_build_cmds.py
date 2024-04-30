@@ -4,40 +4,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-import pytest
+from testutil import skip_on_windows, skip_unless_linux, spin, stdout
 
-import spin as libspin
 from spin.cmds.util import run
-
-skip_on_windows = pytest.mark.skipif(
-    sys.platform.startswith("win"), reason="Skipped; platform is Windows"
-)
-
-on_linux = pytest.mark.skipif(
-    not sys.platform.startswith("linux"), reason="Skipped; platform not Linux"
-)
-
-
-def spin(*args, **user_kwargs):
-    default_kwargs = {
-        "stdout": subprocess.PIPE,
-        "stderr": subprocess.PIPE,
-        "sys_exit": True,
-    }
-    return run(["spin"] + list(args), **{**default_kwargs, **user_kwargs})
-
-
-def stdout(p):
-    return p.stdout.decode("utf-8").strip()
-
-
-def stderr(p):
-    return p.stderr.decode("utf-8").strip()
-
-
-def test_get_version():
-    p = spin("--version")
-    assert stdout(p) == f"spin {libspin.__version__}"
 
 
 def test_basic_build():
@@ -145,7 +114,7 @@ def test_spin_install():
             run(["pip", "uninstall", "-y", "--quiet", "example_pkg"])
 
 
-@on_linux
+@skip_unless_linux
 def test_gdb():
     p = spin(
         "gdb",

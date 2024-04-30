@@ -147,6 +147,29 @@ def example():
     print(config["tool.spin"])
 ```
 
+### Argument overrides
+
+Default arguments can be overridden for any command.
+The custom command above, e.g., has the following signature:
+
+```python
+@click.command()
+@click.option("-f", "--flag")
+@click.option("-t", "--test", default="not set")
+def example(flag, test, default_kwd=None):
+    """🧪 Example custom command.
+    ...
+    """
+```
+
+Use the `[tool.spin.kwargs]` section to override default values for
+click options or function keywords:
+
+```toml
+[tool.spin.kwargs]
+".spin/cmds.py:example" = {"test" = "default override", "default_kwd" = 3}
+```
+
 ### Advanced: adding arguments to built-in commands
 
 Instead of rewriting a command from scratch, a project may want to add a flag to a built-in `spin` command, or perhaps do some pre- or post-processing.
