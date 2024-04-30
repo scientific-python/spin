@@ -4,7 +4,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-from testutil import skip_on_windows, skip_unless_linux, spin, stdout
+import pytest
+from testutil import skip_on_windows, skip_unless_linux, spin, stderr, stdout
 
 from spin.cmds.util import run
 
