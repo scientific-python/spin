@@ -200,7 +200,7 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
     # First check the presence of a valid build
     if not (os.path.exists(build_dir)):
         raise click.ClickException(
-            "`build` folder not found, cannot generate coverage reports. "
+            f"`{build_dir}` folder not found, cannot generate coverage reports. "
             "Generate coverage artefacts by running `spin test --gcov`"
         )
 
@@ -491,10 +491,12 @@ def test(
     else:
         cmd = ["pytest"]
 
-    p = _run(
+    cwd = os.getcwd()
+    pytest_p = _run(
         cmd + ([f"--rootdir={site_path}"] if site_path else []) + list(pytest_args),
         cwd=site_path,
     )
+    os.chdir(cwd)
 
     if gcov:
         # Verify the tools are present
@@ -511,7 +513,7 @@ def test(
             bold=True,
             fg="bright_yellow",
         )
-        _run(
+        p = _run(
             [
                 "ninja",
                 "-C",
@@ -531,7 +533,7 @@ def test(
             fg="bright_green",
         )
 
-    raise SystemExit(p.returncode)
+    raise SystemExit(pytest_p.returncode)
 
 
 @click.command()
