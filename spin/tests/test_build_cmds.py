@@ -4,6 +4,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pytest
 from testutil import skip_on_windows, skip_unless_linux, spin, stdout
 
 from spin.cmds.util import run
@@ -25,6 +26,33 @@ def test_debug_builds():
 
     debug_files = Path(".").rglob("*.gcno")
     assert len(list(debug_files)) != 0, "debug files not generated for gcov build"
+
+
+def test_coverage_builds():
+    """Does gcov test generate coverage files?"""
+    spin("test", "--gcov")
+
+    coverage_files = Path(".").rglob("*.gcda")
+    assert len(list(coverage_files)) != 0, "coverage files not generated for gcov build"
+
+
+@pytest.mark.parametrize(
+    "report_type,output_file",
+    [
+        ("html", Path("coveragereport/index.html")),
+        ("xml", Path("coverage.xml")),
+        ("text", Path("coverage.txt")),
+        ("sonarqube", Path("sonarqube.xml")),
+    ],
+)
+def test_coverage_reports(report_type, output_file):
+    """Does gcov test generate coverage reports?"""
+    spin("test", "--gcov", f"--gcov-format={report_type}")
+
+    coverage_report = Path("./build/meson-logs", output_file)
+    assert (
+        coverage_report.exists()
+    ), f"coverage report not generated for gcov build ({report_type})"
 
 
 def test_expand_pythonpath():
