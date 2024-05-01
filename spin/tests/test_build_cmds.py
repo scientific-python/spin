@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from testutil import skip_on_windows, skip_unless_linux, spin, stderr, stdout
+from testutil import skip_on_windows, skip_unless_linux, spin, stdout
 
 from spin.cmds.util import run
 
@@ -47,28 +47,12 @@ def test_coverage_builds():
 )
 def test_coverage_reports(report_type, output_file):
     """Does gcov test generate coverage reports?"""
-    spin("test", "--gcov")
-    spin("test", "--gcov-report", report_type)
+    spin("test", "--gcov", f"--gcov-format={report_type}")
 
     coverage_report = Path("./build/meson-logs", output_file)
     assert (
         coverage_report.exists()
     ), f"coverage report not generated for gcov build ({report_type})"
-
-
-@pytest.mark.parametrize(
-    "command,error_message",
-    [
-        ("", "`build` folder not found"),
-        ("build", "debug build not found"),
-        ("test", "debug build not found"),
-    ],
-)
-def test_no_debug_coverage_attempt(command, error_message):
-    """Does gcov report throw error in case of missing debug files"""
-    spin(command) if command else None
-    output = spin("test", "--gcov-report", "html", sys_exit=False)
-    assert error_message in stderr(output)
 
 
 def test_expand_pythonpath():
