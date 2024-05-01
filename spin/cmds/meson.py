@@ -484,9 +484,7 @@ def test(
         cmd = ["pytest"]
 
     p = _run(
-        cmd
-        + ([f"--rootdir={site_path}"] if site_path else [])
-        + list(pytest_args),
+        cmd + ([f"--rootdir={site_path}"] if site_path else []) + list(pytest_args),
         cwd=site_path,
         replace=True,
     )
@@ -822,9 +820,9 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
     )
 
     if site_path:
-        os.environ[
-            "PYTHONPATH"
-        ] = f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+        os.environ["PYTHONPATH"] = (
+            f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+        )
         click.secho(
             f"$ export PYTHONPATH={os.environ['PYTHONPATH']}",
             bold=True,
