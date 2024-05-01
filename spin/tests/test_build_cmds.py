@@ -76,17 +76,6 @@ def test_run_stdout():
     ), f"`spin run` stdout did not yield version, but {stdout(p)}"
 
 
-def test_editable_conflict():
-    """Do we warn when a conflicting editable install is present?"""
-    try:
-        run(["pip", "install", "--quiet", "-e", "."])
-        assert "Warning! An editable installation" in stdout(
-            spin("run", "ls")
-        ), "Failed to detect and warn about editable install"
-    finally:
-        run(["pip", "uninstall", "--quiet", "-y", "example_pkg"])
-
-
 # Detecting whether a file is executable is not that easy on Windows,
 # as it seems to take into consideration whether that file is associated as an executable.
 @skip_on_windows

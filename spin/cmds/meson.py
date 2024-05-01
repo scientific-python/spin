@@ -37,6 +37,32 @@ def _meson_cli():
         return [meson_cli]
 
 
+def _editable_install_path(distname):
+    import importlib_metadata
+
+    try:
+        dist = importlib_metadata.Distribution.from_name(distname)
+    except importlib_metadata.PackageNotFoundError:
+        return None
+
+    if getattr(dist.origin.dir_info, "editable", False):
+        if sys.platform == "win32":
+            return dist.origin.url.removeprefix("file:///")
+        else:
+            return dist.origin.url.removeprefix("file://")
+    else:
+        return None
+
+
+def _is_editable_install(distname):
+    return _editable_install_path(distname) is not None
+
+
+def _is_editable_install_of_same_source(distname):
+    editable_path = _editable_install_path(distname)
+    return editable_path and os.path.samefile(_editable_install_path(distname), ".")
+
+
 def _set_pythonpath(quiet=False):
     """Set first entry of PYTHONPATH to site packages directory.
 
@@ -48,24 +74,27 @@ def _set_pythonpath(quiet=False):
     env = os.environ
 
     cfg = get_config()
-    package = cfg.get("tool.spin.package", None)
-    if package:
-        import importlib_metadata
-
-        try:
-            dist = importlib_metadata.Distribution.from_name(package)
-            if getattr(dist.origin.dir_info, "editable", False):
+    distname = cfg.get("project.name", None)
+    if distname:
+        if _is_editable_install(distname):
+            if _is_editable_install_of_same_source(distname):
+                if not (quiet):
+                    click.secho(
+                        "Editable install of same source directory detected; not setting PYTHONPATH",
+                        fg="bright_red",
+                    )
+                return ""
+            else:
+                # Ignoring the quiet flag, because picking up the wrong package is problematic
                 click.secho(
-                    f"Warning! An editable installation of `{package}` was detected.",
+                    f"Warning! Editable install of `{distname}`, from a different source location, detected.",
                     fg="bright_red",
                 )
                 click.secho("Spin commands will pick up that version.", fg="bright_red")
                 click.secho(
-                    f"Try removing the other installation with `pip uninstall {package}`.",
+                    f"Try removing the other installation by switching to its source and running `pip uninstall {distname}`.",
                     fg="bright_red",
                 )
-        except importlib_metadata.PackageNotFoundError:
-            pass
 
     if "PYTHONPATH" in env:
         env["PYTHONPATH"] = f"{site_packages}{os.pathsep}{env['PYTHONPATH']}"
@@ -81,6 +110,15 @@ def _set_pythonpath(quiet=False):
 
 
 def _get_site_packages():
+    try:
+        cfg = get_config()
+        distname = cfg.get("project.name", None)
+        if _is_editable_install_of_same_source(distname):
+            return ""
+    except RuntimeError:
+        # Probably not running in click
+        pass
+
     candidate_paths = []
     for root, dirs, _files in os.walk(install_dir):
         for subdir in dirs:
@@ -162,7 +200,7 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
     # First check the presence of a valid build
     if not (os.path.exists(build_dir)):
         raise click.ClickException(
-            "`build` folder not found, cannot generate coverage reports. "
+            f"`{build_dir}` folder not found, cannot generate coverage reports. "
             "Generate coverage artefacts by running `spin test --gcov`"
         )
 
@@ -213,6 +251,16 @@ def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=F
 
       CFLAGS="-O0 -g" spin build
     """
+    cfg = get_config()
+    distname = cfg.get("project.name", None)
+    if distname and _is_editable_install_of_same_source(distname):
+        if not quiet:
+            click.secho(
+                "Editable install of same source detected; skipping build",
+                fg="bright_red",
+            )
+        return
+
     meson_args = list(meson_args)
 
     if gcov:
@@ -371,6 +419,14 @@ def test(
     For more, see `pytest --help`.
     """  # noqa: E501
     cfg = get_config()
+    distname = cfg.get("project.name", None)
+
+    if gcov and distname and _is_editable_install_of_same_source(distname):
+        click.secho(
+            "Error: cannot generate coverage report for editable installs",
+            fg="bright_red",
+        )
+        raise SystemExit(-1)
 
     build_cmd = _get_configured_command("build")
     if build_cmd:
@@ -389,6 +445,8 @@ def test(
             sys.exit(1)
 
     site_path = _set_pythonpath()
+    if site_path:
+        print(f'$ export PYTHONPATH="{site_path}"')
 
     # Sanity check that library built properly
     #
@@ -428,13 +486,17 @@ def test(
             f"--cov={package}",
         ]
 
-    print(f'$ export PYTHONPATH="{site_path}"')
-
     if sys.version_info[:2] >= (3, 11):
         cmd = [sys.executable, "-P", "-m", "pytest"]
     else:
         cmd = ["pytest"]
-    p = _run(cmd + list(pytest_args))
+
+    cwd = os.getcwd()
+    pytest_p = _run(
+        cmd + ([f"--rootdir={site_path}"] if site_path else []) + list(pytest_args),
+        cwd=site_path,
+    )
+    os.chdir(cwd)
 
     if gcov:
         # Verify the tools are present
@@ -471,7 +533,7 @@ def test(
             fg="bright_green",
         )
 
-        raise SystemExit(p.returncode)
+    raise SystemExit(pytest_p.returncode)
 
 
 @click.command()
@@ -545,7 +607,8 @@ def ipython(ctx, ipython_args):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
-    print(f'💻 Launching IPython with PYTHONPATH="{p}"')
+    if p:
+        print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
@@ -570,9 +633,11 @@ def shell(ctx, shell_args=[]):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
+    if p:
+        print(f'💻 Launching shell with PYTHONPATH="{p}"')
+
     shell = os.environ.get("SHELL", "sh")
     cmd = [shell] + list(shell_args)
-    print(f'💻 Launching shell with PYTHONPATH="{p}"')
     print("⚠  Change directory to avoid importing source instead of built package")
     print("⚠  Ensure that your ~/.shellrc does not unset PYTHONPATH")
     _run(cmd, replace=True)
@@ -596,6 +661,9 @@ def python(ctx, python_args):
         ctx.invoke(build_cmd)
 
     p = _set_pythonpath()
+    if p:
+        print(f'🐍 Launching Python with PYTHONPATH="{p}"')
+
     v = sys.version_info
     if (v.major < 3) or (v.major == 3 and v.minor < 11):
         print("We're sorry, but this feature only works on Python 3.11 and greater 😢")
@@ -613,9 +681,7 @@ def python(ctx, python_args):
         print("import sys; del(sys.path[0])")
         sys.exit(-1)
 
-    print(f'🐍 Launching Python with PYTHONPATH="{p}"')
-
-    _run(["/usr/bin/env", "python", "-P"] + list(python_args), replace=True)
+    _run([sys.executable, "-P"] + list(python_args), replace=True)
 
 
 @click.command(context_settings={"ignore_unknown_options": True})
@@ -762,10 +828,15 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
         f"$ export SPHINXOPTS={os.environ['SPHINXOPTS']}", bold=True, fg="bright_blue"
     )
 
-    os.environ["PYTHONPATH"] = f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
-    click.secho(
-        f"$ export PYTHONPATH={os.environ['PYTHONPATH']}", bold=True, fg="bright_blue"
-    )
+    if site_path:
+        os.environ["PYTHONPATH"] = (
+            f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+        )
+        click.secho(
+            f"$ export PYTHONPATH={os.environ['PYTHONPATH']}",
+            bold=True,
+            fg="bright_blue",
+        )
     _run(["make", "-C", doc_dir, sphinx_target], replace=True)
 
 
