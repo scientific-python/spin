@@ -419,6 +419,14 @@ def test(
     For more, see `pytest --help`.
     """  # noqa: E501
     cfg = get_config()
+    distname = cfg.get("project.name", None)
+
+    if gcov and distname and _is_editable_install_of_same_source(distname):
+        click.secho(
+            "Error: cannot generate coverage report for editable installs",
+            fg="bright_red",
+        )
+        raise SystemExit(-1)
 
     build_cmd = _get_configured_command("build")
     if build_cmd:
@@ -486,7 +494,6 @@ def test(
     p = _run(
         cmd + ([f"--rootdir={site_path}"] if site_path else []) + list(pytest_args),
         cwd=site_path,
-        replace=True,
     )
 
     if gcov:
