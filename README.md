@@ -3,13 +3,16 @@
 ## A developer tool for scientific Python libraries
 
 Developers need to memorize a whole bunch of magic command-line incantations.
-And these incantations change from time to time!
-Typically, their lives are made simpler by a Makefile, but Makefiles can be convoluted, are not written in Python, and are hard to extend.
-The rationale behind `spin` is therefore to provide a simple interface for common development tasks.
+These incantations may also change over time.
+Often, Makefiles are used to provide aliases, but Makefiles can be convoluted, are not written in Python, and are hard to extend.
+The goal of `spin` is therefore to provide a simple, user-friendly, extendable interface for common development tasks.
 It comes with a few common build commands out the box, but can easily be customized per project.
 
 As a curiosity: the impetus behind developing the tool was the mass migration of scientific Python libraries (SciPy, scikit-image, and NumPy, etc.) to Meson, after distutils was deprecated.
 When many of the build and installation commands changed, it made sense to abstract away the nuisance of having to re-learn them.
+
+_Note:_ We now have experimental builds for editable installs.
+Most of the Meson commands listed below should work "out of the box" for those.
 
 ## Installation
 
@@ -92,7 +95,6 @@ Available as `spin.cmds.meson.*`.
   docs     📖 Build Sphinx documentation
   gdb      👾 Execute a Python snippet with GDB
   lldb     👾 Execute a Python snippet with LLDB
-  install  💽 Build and install package using pip.
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
