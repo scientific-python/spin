@@ -10,7 +10,7 @@ We're happy to announce the release of spin 0.9!
 - Add a pytest based testing framework and tests for build ([#160](https://github.com/scientific-python/spin/pull/160)).
 - Allow `spin --version` without configuration present ([#173](https://github.com/scientific-python/spin/pull/173)).
 - Allow setting default args for commands / callbacks ([#157](https://github.com/scientific-python/spin/pull/157)).
-- Add ``--gcov-report`` flag to ``spin test`` ([#159](https://github.com/scientific-python/spin/pull/159)).
+- Add `--gcov-report` flag to `spin test` ([#159](https://github.com/scientific-python/spin/pull/159)).
 - Allow editable install ([#155](https://github.com/scientific-python/spin/pull/155)).
 
 ## Bug Fixes
