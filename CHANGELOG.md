@@ -1,3 +1,61 @@
+# spin 0.9
+
+We're happy to announce the release of spin 0.9!
+
+## Enhancements
+
+- Warn user when trying to `spin run test.py` ([#148](https://github.com/scientific-python/spin/pull/148)).
+- Detect when a conflicting editable install exists ([#150](https://github.com/scientific-python/spin/pull/150)).
+- Add `gcov` flags for build ([#146](https://github.com/scientific-python/spin/pull/146)).
+- Add a pytest based testing framework and tests for build ([#160](https://github.com/scientific-python/spin/pull/160)).
+- Allow `spin --version` without configuration present ([#173](https://github.com/scientific-python/spin/pull/173)).
+- Allow setting default args for commands / callbacks ([#157](https://github.com/scientific-python/spin/pull/157)).
+- Add ``--gcov-report`` flag to ``spin test`` ([#159](https://github.com/scientific-python/spin/pull/159)).
+- Allow editable install ([#155](https://github.com/scientific-python/spin/pull/155)).
+
+## Bug Fixes
+
+- Fix doc hardcoded ([#179](https://github.com/scientific-python/spin/pull/179)).
+
+## Documentation
+
+- Document how to run test inside of LLDB ([#170](https://github.com/scientific-python/spin/pull/170)).
+
+## Maintenance
+
+- Bump pre-commit from 3.5.0 to 3.6.0 ([#145](https://github.com/scientific-python/spin/pull/145)).
+- Bump actions/setup-python from 4 to 5 ([#144](https://github.com/scientific-python/spin/pull/144)).
+- Update pre-commit repos ([#153](https://github.com/scientific-python/spin/pull/153)).
+- Use setup-python pip cache ([#164](https://github.com/scientific-python/spin/pull/164)).
+- pytest: use PYTHONPATH, not ., as first entry in sys.path ([#166](https://github.com/scientific-python/spin/pull/166)).
+- Bump changelist from 0.4 to 0.5 ([#169](https://github.com/scientific-python/spin/pull/169)).
+- Bump pre-commit from 3.6.0 to 3.6.2 ([#168](https://github.com/scientific-python/spin/pull/168)).
+- Bump pre-commit from 3.6.2 to 3.7.0 ([#175](https://github.com/scientific-python/spin/pull/175)).
+- Update pre-commit repos ([#180](https://github.com/scientific-python/spin/pull/180)).
+- Update year ([#181](https://github.com/scientific-python/spin/pull/181)).
+
+## Contributors
+
+5 authors added to this release (alphabetically):
+
+- [@dependabot[bot]](https://github.com/apps/dependabot)
+- Ganesh Kathiresan ([@ganesh-k13](https://github.com/ganesh-k13))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- M Bussonnier ([@Carreau](https://github.com/Carreau))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+7 reviewers added to this release (alphabetically):
+
+- Anton Akhmerov ([@akhmerov](https://github.com/akhmerov))
+- Ganesh Kathiresan ([@ganesh-k13](https://github.com/ganesh-k13))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lars Grüter ([@lagru](https://github.com/lagru))
+- M Bussonnier ([@Carreau](https://github.com/Carreau))
+- Ralf Gommers ([@rgommers](https://github.com/rgommers))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 # spin 0.8
 
 We're happy to announce the release of spin 0.8!
