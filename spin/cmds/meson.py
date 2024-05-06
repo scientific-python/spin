@@ -433,7 +433,10 @@ def test(
         click.secho(
             "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd, gcov=bool(gcov))
+        if gcov is not None:
+            ctx.invoke(build_cmd, gcov=bool(gcov))
+        else:
+            ctx.invoke(build_cmd)
 
     package = cfg.get("tool.spin.package", None)
     if (not pytest_args) and (not tests):
