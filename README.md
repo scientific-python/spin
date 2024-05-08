@@ -59,7 +59,7 @@ These commands will then be rendered as:
 
 ```
 Build:
-  build  🔧 Build package with Meson/ninja and install
+  build  🔧 Build package with Meson/ninja
   test   🔧 Run tests
 
 Environments:
@@ -86,7 +86,7 @@ python -m spin
 Available as `spin.cmds.meson.*`.
 
 ```
-  build    🔧 Build package with Meson/ninja and install to `build-install`
+  build    🔧 Build package with Meson/ninja
   ipython  💻 Launch IPython shell with PYTHONPATH set
   python   🐍 Launch Python shell with PYTHONPATH set
   shell    💻 Launch shell with PYTHONPATH set
