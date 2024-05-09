@@ -3,7 +3,7 @@ project(
   'c',
   version: '0.0.dev0',
   license: 'BSD-3',
-  meson_version: '>= 0.64.0',
+  meson_version: '>= 1.4.0',
   default_options: [
     'buildtype=debugoptimized',
     'c_std=c99',
