@@ -234,13 +234,13 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
 )
 @click.argument("meson_args", nargs=-1)
 def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
-    """🔧 Build package with Meson/ninja and install
+    """🔧 Build package with Meson/ninja
+
+    The package is installed to `build-install`.
 
     MESON_ARGS are passed through e.g.:
 
       spin build -- -Dpkg_config_path=/lib64/pkgconfig
-
-    The package is installed to build-install
 
     By default meson-python does release builds. To be able to use a debugger,
     tell meson to build in debug mode:
