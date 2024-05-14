@@ -45,7 +45,9 @@ def _editable_install_path(distname):
     except importlib_metadata.PackageNotFoundError:
         return None
 
-    if getattr(dist.origin.dir_info, "editable", False):
+    if hasattr(dist.origin, "dir_info") and getattr(
+        dist.origin.dir_info, "editable", False
+    ):
         if sys.platform == "win32":
             return dist.origin.url.removeprefix("file:///")
         else:
