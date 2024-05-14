@@ -110,9 +110,6 @@ Available as `spin.cmds.build.*`:
 `pip` allows for editable installs, another common
 development workflow.
 
-Note that, for now, the meson commands above do not work with an
-editable install of the package. We're [working on changing that](https://github.com/scientific-python/spin/pull/141).
-
 Available as `spin.cmds.pip.*`:
 
 ```
