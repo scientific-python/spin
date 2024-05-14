@@ -36,6 +36,11 @@ def install(pip_args, verbose, editable):
     pip_args += ["--no-build-isolation"]
     if editable:
         pip_args += ["--editable"]
+        if verbose:
+            # In case meson is used to install the editable hook, tell it to
+            # print verbose output each time an import triggers a build.
+            # This does not seem to affect setuptools builds.
+            pip_args = ["--config-settings=editable-verbose=true"] + pip_args
 
     pip_args = (["-v"] if verbose else []) + pip_args
 
