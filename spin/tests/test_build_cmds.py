@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from testutil import skip_on_windows, skip_unless_linux, spin, stdout
+from testutil import skip_on_windows, skip_unless_linux, skip_unless_macos, spin, stdout
 
 from spin.cmds.util import run
 
@@ -139,6 +139,20 @@ def test_gdb():
         'import example_pkg; example_pkg.echo("hi")',
         "--",
         "--eval",
+        "run",
+        "--batch",
+    )
+    assert "hi" in stdout(p)
+
+
+@skip_unless_macos
+def test_lldb():
+    p = spin(
+        "lldb",
+        "-c",
+        'import example_pkg; example_pkg.echo("hi")',
+        "--",
+        "-o",
         "run",
         "--batch",
     )
