@@ -441,13 +441,14 @@ def test(
             ctx.invoke(build_cmd)
 
     package = cfg.get("tool.spin.package", None)
+    if package is None:
+        print(
+            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
+        )
+        raise SystemExit(1)
+
     if (not pytest_args) and (not tests):
-        pytest_args = (package,)
-        if pytest_args == (None,):
-            print(
-                "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
-            )
-            sys.exit(1)
+        tests = package
 
     site_path = _set_pythonpath()
     if site_path:
@@ -496,12 +497,9 @@ def test(
     else:
         cmd = ["pytest"]
 
-    cwd = os.getcwd()
     pytest_p = _run(
-        cmd + ([f"--rootdir={site_path}"] if site_path else []) + list(pytest_args),
-        cwd=site_path,
+        cmd + list(pytest_args),
     )
-    os.chdir(cwd)
 
     if gcov:
         # Verify the tools are present
