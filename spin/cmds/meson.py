@@ -767,7 +767,9 @@ def run(ctx, *, args):
 )
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
-def docs(ctx, *, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
+def docs(
+        ctx, *, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot, clean_dirs=None
+):
     """📖 Build Sphinx documentation
 
     By default, SPHINXOPTS="-W", raising errors on warnings.
@@ -799,13 +801,18 @@ def docs(ctx, *, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
         sphinx_target = "help"
 
     if clean:
-        doc_dirs = [
-            f"./{doc_dir}/build/",
-            f"./{doc_dir}/source/api/",
-            f"./{doc_dir}/source/auto_examples/",
-            f"./{doc_dir}/source/jupyterlite_contents/",
-        ]
-        for target_dir in doc_dirs:
+        if clean_dirs is None:
+            clean_dirs = []
+            for prefix in ("", "_"):
+                clean_dirs += [
+                    f"./{doc_dir}/{prefix}build/",
+                    f"./{doc_dir}/{prefix}build/",
+                    f"./{doc_dir}/{prefix}source/api/",
+                    f"./{doc_dir}/{prefix}source/auto_examples/",
+                    f"./{doc_dir}/{prefix}source/jupyterlite_contents/",
+                ]
+
+        for target_dir in clean_dirs:
             if os.path.isdir(target_dir):
                 print(f"Removing {target_dir!r}")
                 shutil.rmtree(target_dir)
