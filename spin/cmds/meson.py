@@ -235,7 +235,9 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
     help="Enable C code coverage using `gcov`. Use `spin test --gcov` to generate reports.",
 )
 @click.argument("meson_args", nargs=-1)
-def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
+def build(
+    *, meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False
+):
     """🔧 Build package with Meson/ninja
 
     The package is installed to `build-install`.
@@ -370,6 +372,7 @@ Which tests to run. Can be a module, function, class, or method:
 @click.pass_context
 def test(
     ctx,
+    *,
     pytest_args,
     n_jobs,
     tests,
@@ -543,7 +546,7 @@ def test(
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("gdb_args", nargs=-1)
 @click.pass_context
-def gdb(ctx, code, gdb_args):
+def gdb(ctx, *, code, gdb_args):
     """👾 Execute code through GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
@@ -595,7 +598,7 @@ def gdb(ctx, code, gdb_args):
 @click.command()
 @click.argument("ipython_args", nargs=-1)
 @click.pass_context
-def ipython(ctx, ipython_args):
+def ipython(ctx, *, ipython_args):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
@@ -649,7 +652,7 @@ def shell(ctx, shell_args=[]):
 @click.command()
 @click.argument("python_args", nargs=-1)
 @click.pass_context
-def python(ctx, python_args):
+def python(ctx, *, python_args):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
@@ -690,7 +693,7 @@ def python(ctx, python_args):
 @click.command(context_settings={"ignore_unknown_options": True})
 @click.argument("args", nargs=-1)
 @click.pass_context
-def run(ctx, args):
+def run(ctx, *, args):
     """🏁 Run a shell command with PYTHONPATH set
 
     \b
@@ -764,7 +767,7 @@ def run(ctx, args):
 )
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
-def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
+def docs(ctx, *, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
     """📖 Build Sphinx documentation
 
     By default, SPHINXOPTS="-W", raising errors on warnings.
@@ -847,7 +850,7 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("lldb_args", nargs=-1)
 @click.pass_context
-def lldb(ctx, code, lldb_args):
+def lldb(ctx, *, code, lldb_args):
     """👾 Execute code through LLDB
 
       spin lldb -c 'import numpy as np; print(np.__version__)'
