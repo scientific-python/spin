@@ -13,6 +13,10 @@ skip_unless_linux = pytest.mark.skipif(
     not sys.platform.startswith("linux"), reason="Skipped; platform not Linux"
 )
 
+skip_unless_macos = pytest.mark.skipif(
+    not sys.platform.startswith("darwin"), reason="Skipped; platform not macOS"
+)
+
 
 def spin(*args, **user_kwargs):
     args = (str(el) for el in args)
