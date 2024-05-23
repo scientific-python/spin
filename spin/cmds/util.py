@@ -2,13 +2,21 @@ import os
 import shlex
 import subprocess
 import sys
+from typing import Optional
 
 import click
 
 
 def run(
-    cmd, cwd=None, replace=False, sys_exit=True, output=True, echo=True, *args, **kwargs
-):
+    cmd: list[str],
+    cwd: Optional[str] = None,  # in 3.10 and up: str | None
+    replace: bool = False,
+    sys_exit: bool = True,
+    output: bool = True,
+    echo: bool = True,
+    *args,
+    **kwargs,
+) -> subprocess.CompletedProcess:
     """Run a shell command.
 
     Parameters

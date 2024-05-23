@@ -215,9 +215,9 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
 
     # Verify the tools are installed prior to the build
     p = _run(["ninja", "-C", build_dir, "-t", "targets", "all"], output=False)
-    if f"coverage-{coverage_type.value}" not in p.stdout.decode("ascii"):
+    if f"coverage-{coverage_type}" not in p.stdout.decode("ascii"):
         raise click.ClickException(
-            f"coverage-{coverage_type.value} is not supported... "
+            f"coverage-{coverage_type} is not supported... "
             f"Ensure the following are installed: {', '.join(requirements[coverage_type])} "
             "and rerun `spin test --gcov`"
         )
@@ -235,7 +235,9 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
     help="Enable C code coverage using `gcov`. Use `spin test --gcov` to generate reports.",
 )
 @click.argument("meson_args", nargs=-1)
-def build(meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False):
+def build(
+    *, meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False
+):
     """🔧 Build package with Meson/ninja
 
     The package is installed to `build-install`.
@@ -363,13 +365,14 @@ Which tests to run. Can be a module, function, class, or method:
 )
 @click.option(
     "--gcov-format",
-    type=click.Choice(GcovReportFormat),
+    type=click.Choice([e.name for e in GcovReportFormat]),
     default="html",
     help=f"Format of the gcov report. Can be one of {', '.join(e.value for e in GcovReportFormat)}.",
 )
 @click.pass_context
 def test(
     ctx,
+    *,
     pytest_args,
     n_jobs,
     tests,
@@ -512,7 +515,7 @@ def test(
 
         # Generate report
         click.secho(
-            f"Generating {gcov_format.value} coverage report...",
+            f"Generating {gcov_format} coverage report...",
             bold=True,
             fg="bright_yellow",
         )
@@ -521,7 +524,7 @@ def test(
                 "ninja",
                 "-C",
                 build_dir,
-                f"coverage-{gcov_format.value.lower()}",
+                f"coverage-{gcov_format.lower()}",
             ],
             output=False,
         )
@@ -543,7 +546,7 @@ def test(
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("gdb_args", nargs=-1)
 @click.pass_context
-def gdb(ctx, code, gdb_args):
+def gdb(ctx, *, code, gdb_args):
     """👾 Execute code through GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
@@ -595,7 +598,7 @@ def gdb(ctx, code, gdb_args):
 @click.command()
 @click.argument("ipython_args", nargs=-1)
 @click.pass_context
-def ipython(ctx, ipython_args):
+def ipython(ctx, *, ipython_args):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
@@ -649,7 +652,7 @@ def shell(ctx, shell_args=[]):
 @click.command()
 @click.argument("python_args", nargs=-1)
 @click.pass_context
-def python(ctx, python_args):
+def python(ctx, *, python_args):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
@@ -690,7 +693,7 @@ def python(ctx, python_args):
 @click.command(context_settings={"ignore_unknown_options": True})
 @click.argument("args", nargs=-1)
 @click.pass_context
-def run(ctx, args):
+def run(ctx, *, args):
     """🏁 Run a shell command with PYTHONPATH set
 
     \b
@@ -764,7 +767,16 @@ def run(ctx, args):
 )
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
-def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
+def docs(
+    ctx,
+    *,
+    sphinx_target,
+    clean,
+    first_build,
+    jobs,
+    sphinx_gallery_plot,
+    clean_dirs=None,
+):
     """📖 Build Sphinx documentation
 
     By default, SPHINXOPTS="-W", raising errors on warnings.
@@ -796,13 +808,18 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
         sphinx_target = "help"
 
     if clean:
-        doc_dirs = [
-            f"./{doc_dir}/build/",
-            f"./{doc_dir}/source/api/",
-            f"./{doc_dir}/source/auto_examples/",
-            f"./{doc_dir}/source/jupyterlite_contents/",
-        ]
-        for target_dir in doc_dirs:
+        if clean_dirs is None:
+            clean_dirs = []
+            for prefix in ("", "_"):
+                clean_dirs += [
+                    f"./{doc_dir}/{prefix}build/",
+                    f"./{doc_dir}/{prefix}build/",
+                    f"./{doc_dir}/{prefix}source/api/",
+                    f"./{doc_dir}/{prefix}source/auto_examples/",
+                    f"./{doc_dir}/{prefix}source/jupyterlite_contents/",
+                ]
+
+        for target_dir in clean_dirs:
             if os.path.isdir(target_dir):
                 print(f"Removing {target_dir!r}")
                 shutil.rmtree(target_dir)
@@ -847,7 +864,7 @@ def docs(ctx, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot):
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("lldb_args", nargs=-1)
 @click.pass_context
-def lldb(ctx, code, lldb_args):
+def lldb(ctx, *, code, lldb_args):
     """👾 Execute code through LLDB
 
       spin lldb -c 'import numpy as np; print(np.__version__)'

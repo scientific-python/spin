@@ -36,3 +36,8 @@ repos:
     rev: 960ead214cd1184149d366c6d27ca6c369ce46b6 # frozen: 1.16.0
     hooks:
       - id: blacken-docs
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: e5ea6670624c24f8321f6328ef3176dbba76db46 # frozen: v1.10.0
+    hooks:
+      - id: mypy
