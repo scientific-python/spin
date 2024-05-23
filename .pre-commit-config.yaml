@@ -25,21 +25,17 @@ repos:
         files: \.(css|html|md|yml|yaml|toml)
         args: [--prose-wrap=preserve]
 
-  - repo: https://github.com/psf/black
-    rev: 3702ba224ecffbcec30af640c149f231d90aebdb # frozen: 24.4.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: f8a3f8c471fb698229face5ed7640a64900b781e # frozen: v0.4.4
     hooks:
-      - id: black
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
 
   - repo: https://github.com/adamchainz/blacken-docs
     rev: 960ead214cd1184149d366c6d27ca6c369ce46b6 # frozen: 1.16.0
     hooks:
       - id: blacken-docs
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 596470fba20d04adc68ec7903ff69a12e5e1a8d3 # frozen: v0.4.2
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: e5ea6670624c24f8321f6328ef3176dbba76db46 # frozen: v1.10.0
