@@ -1,3 +1,54 @@
+# spin 0.10
+
+We're happy to announce the release of spin 0.10!
+
+## Enhancements
+
+- Improve debug printing for Meson editable installs ([#192](https://github.com/scientific-python/spin/pull/192)).
+- Use --pyargs to select package to test ([#191](https://github.com/scientific-python/spin/pull/191)).
+- Print traceback for internal command errors ([#198](https://github.com/scientific-python/spin/pull/198)).
+- docs: allow overriding cleaned directories ([#199](https://github.com/scientific-python/spin/pull/199)).
+
+## Bug Fixes
+
+- Only add gcov flag when it's specified ([#183](https://github.com/scientific-python/spin/pull/183)).
+- `dir_info` metadata field does not exist for conda installs ([#194](https://github.com/scientific-python/spin/pull/194)).
+
+## Documentation
+
+- Clarify build cmd docstring ([#187](https://github.com/scientific-python/spin/pull/187)).
+
+## Maintenance
+
+- Allow older version of meson for testing ([#189](https://github.com/scientific-python/spin/pull/189)).
+- Update ruff configuration ([#201](https://github.com/scientific-python/spin/pull/201)).
+- Test lldb on macOS ([#200](https://github.com/scientific-python/spin/pull/200)).
+- Add type annotations for spin utils ([#188](https://github.com/scientific-python/spin/pull/188)).
+- Provide all command args as keywords ([#197](https://github.com/scientific-python/spin/pull/197)).
+- Replace `black` with `ruff format` ([#202](https://github.com/scientific-python/spin/pull/202)).
+
+## Other
+
+- Remove editable install caveat from README ([#190](https://github.com/scientific-python/spin/pull/190)).
+
+## Contributors
+
+4 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Jyn Spring 琴春 ([@vxst](https://github.com/vxst))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+3 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain
+duplicates._
+
 # spin 0.9
 
 We're happy to announce the release of spin 0.9!
