@@ -768,7 +768,14 @@ def run(ctx, *, args):
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
 @click.pass_context
 def docs(
-        ctx, *, sphinx_target, clean, first_build, jobs, sphinx_gallery_plot, clean_dirs=None
+    ctx,
+    *,
+    sphinx_target,
+    clean,
+    first_build,
+    jobs,
+    sphinx_gallery_plot,
+    clean_dirs=None,
 ):
     """📖 Build Sphinx documentation
 
