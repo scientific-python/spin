@@ -215,9 +215,9 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
 
     # Verify the tools are installed prior to the build
     p = _run(["ninja", "-C", build_dir, "-t", "targets", "all"], output=False)
-    if f"coverage-{coverage_type.value}" not in p.stdout.decode("ascii"):
+    if f"coverage-{coverage_type}" not in p.stdout.decode("ascii"):
         raise click.ClickException(
-            f"coverage-{coverage_type.value} is not supported... "
+            f"coverage-{coverage_type} is not supported... "
             f"Ensure the following are installed: {', '.join(requirements[coverage_type])} "
             "and rerun `spin test --gcov`"
         )
@@ -363,7 +363,7 @@ Which tests to run. Can be a module, function, class, or method:
 )
 @click.option(
     "--gcov-format",
-    type=click.Choice(GcovReportFormat),
+    type=click.Choice([e.name for e in GcovReportFormat]),
     default="html",
     help=f"Format of the gcov report. Can be one of {', '.join(e.value for e in GcovReportFormat)}.",
 )
@@ -512,7 +512,7 @@ def test(
 
         # Generate report
         click.secho(
-            f"Generating {gcov_format.value} coverage report...",
+            f"Generating {gcov_format} coverage report...",
             bold=True,
             fg="bright_yellow",
         )
@@ -521,7 +521,7 @@ def test(
                 "ninja",
                 "-C",
                 build_dir,
-                f"coverage-{gcov_format.value.lower()}",
+                f"coverage-{gcov_format.lower()}",
             ],
             output=False,
         )
