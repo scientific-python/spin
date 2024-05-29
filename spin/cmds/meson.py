@@ -450,7 +450,7 @@ def test(
         )
         raise SystemExit(1)
 
-    if (not pytest_args) and (not tests):
+    if not tests:
         tests = package
 
     site_path = _set_pythonpath()
