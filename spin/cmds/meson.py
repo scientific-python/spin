@@ -857,7 +857,9 @@ def docs(
             bold=True,
             fg="bright_blue",
         )
-    _run(["make", "-C", doc_dir, sphinx_target], replace=True)
+
+    make_cmd = "make.bat" if sys.platform == "win32" else "make"
+    _run([make_cmd, sphinx_target], cwd=doc_dir, replace=True)
 
 
 @click.command()
