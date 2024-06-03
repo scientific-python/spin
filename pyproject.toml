@@ -34,7 +34,7 @@ dynamic = ['version']
 spin = "spin.__main__:main"
 
 [project.optional-dependencies]
-lint = ["pre-commit == 3.7.0"]
+lint = ["pre-commit == 3.7.1"]
 dev = ["changelist == 0.5"]
 
 [project.urls]
