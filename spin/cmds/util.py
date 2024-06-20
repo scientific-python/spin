@@ -41,6 +41,10 @@ def run(
 
     Other arguments and keywords are passed directly to `subprocess.run`.
 
+
+    Returns
+    -------
+    p : CompletedProcess
     """
     if cwd:
         if echo:

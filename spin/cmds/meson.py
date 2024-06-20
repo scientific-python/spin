@@ -425,8 +425,35 @@ def test(
     """  # noqa: E501
     cfg = get_config()
     distname = cfg.get("project.name", None)
+    pytest_args = pytest_args or ()
 
-    if gcov and distname and _is_editable_install_of_same_source(distname):
+    # User specified tests without -t flag
+    # Rewrite arguments as though they specified using -t and proceed
+    if (len(pytest_args) == 1) and (not tests):
+        tests = pytest_args[0]
+        pytest_args = ()
+
+    package = cfg.get("tool.spin.package", None)
+    if package is None:
+        print(
+            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
+        )
+        raise SystemExit(1)
+
+    # User did not specify what to test, so we test
+    # the full package
+    if not (pytest_args or tests):
+        pytest_args = ("--pyargs", package)
+    elif tests:
+        if (os.path.sep in tests) or ("/" in tests):
+            # Tests specified as file path
+            pytest_args = pytest_args + (tests,)
+        else:
+            # Otherwise tests given as modules
+            pytest_args = pytest_args + ("--pyargs", tests)
+
+    is_editable_install = distname and _is_editable_install_of_same_source(distname)
+    if gcov and is_editable_install:
         click.secho(
             "Error: cannot generate coverage report for editable installs",
             fg="bright_red",
@@ -442,16 +469,6 @@ def test(
             ctx.invoke(build_cmd, gcov=bool(gcov))
         else:
             ctx.invoke(build_cmd)
-
-    package = cfg.get("tool.spin.package", None)
-    if package is None:
-        print(
-            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
-        )
-        raise SystemExit(1)
-
-    if (not pytest_args) and (not tests):
-        tests = package
 
     site_path = _set_pythonpath()
     if site_path:
@@ -476,8 +493,8 @@ def test(
     if (n_jobs != "1") and ("-n" not in pytest_args):
         pytest_args = ("-n", str(n_jobs)) + pytest_args
 
-    if tests and "--pyargs" not in pytest_args:
-        pytest_args = ("--pyargs", tests) + pytest_args
+    if not any("--import-mode" in arg for arg in pytest_args):
+        pytest_args = ("--import-mode=importlib",) + pytest_args
 
     if verbose:
         pytest_args = ("-v",) + pytest_args
@@ -500,9 +517,12 @@ def test(
     else:
         cmd = ["pytest"]
 
-    pytest_p = _run(
-        cmd + list(pytest_args),
-    )
+    if not os.path.exists(install_dir):
+        os.mkdir(install_dir)
+
+    cwd = os.getcwd()
+    pytest_p = _run(cmd + list(pytest_args), cwd=site_path)
+    os.chdir(cwd)
 
     if gcov:
         # Verify the tools are present
