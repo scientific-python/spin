@@ -6,7 +6,8 @@ py.extension_module(
 )
 
 python_sources = [
-  '__init__.py'
+  '__init__.py',
+  'conftest.py'
 ]
 
 py.install_sources(
@@ -14,4 +15,5 @@ py.install_sources(
   subdir: 'example_pkg'
 )
 
-install_subdir('tests', install_dir: py.get_install_dir() / 'example_pkg/tests')
+install_subdir('submodule', install_dir: py.get_install_dir() / 'example_pkg')
+install_subdir('tests', install_dir: py.get_install_dir() / 'example_pkg')

@@ -88,16 +88,6 @@ def test_recommend_run_python():
         ), "Failed to recommend `python run python file.py`"
 
 
-def test_test():
-    """Does the test command run?"""
-    spin("test")
-
-
-def test_test_with_pythonpath():
-    """Does `spin test` work when PYTHONPATH is set?"""
-    spin("test", env={**os.environ, "PYTHONPATH": "/tmp"})
-
-
 def test_sdist():
     spin("sdist")
 

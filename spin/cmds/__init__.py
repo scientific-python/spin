@@ -1,8 +1,3 @@
-from . import meson
+__all__ = ["meson"]
 
-# Backward compatibility with older versions
-build = meson.build
-test = meson.test
-ipython = meson.ipython
-python = meson.python
-shell = meson.shell
+from . import meson

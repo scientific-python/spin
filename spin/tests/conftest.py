@@ -18,3 +18,10 @@ def pre_post_test():
         os.chdir(cwd)
         util.run(["git", "clean", "-xdf"], cwd="example_pkg")
         os.chdir(cwd)
+
+
+@pytest.fixture
+def editable_install():
+    util.run(["pip", "install", "--quiet", "--no-build-isolation", "-e", "."])
+    yield
+    util.run(["pip", "uninstall", "--quiet", "-y", "example_pkg"])
