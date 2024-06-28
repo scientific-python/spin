@@ -45,6 +45,9 @@ def _editable_install_path(distname):
     except importlib_metadata.PackageNotFoundError:
         return None
 
+    if dist.origin is None:
+        return None
+
     if hasattr(dist.origin, "dir_info") and getattr(
         dist.origin.dir_info, "editable", False
     ):
