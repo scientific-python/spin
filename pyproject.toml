@@ -40,6 +40,9 @@ dev = ["changelist == 0.5"]
 [project.urls]
 homepage = "https://github.com/scientific-python/spin"
 
+[tool.changelist]
+ignored_user_logins = ["dependabot[bot]", "pre-commit-ci[bot]", "web-flow"]
+
 [tool.setuptools.dynamic.version]
 attr = 'spin.__version__'
 
