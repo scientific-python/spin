@@ -50,9 +50,13 @@ attr = 'spin.__version__'
 include = ["spin*"]
 
 [tool.pytest.ini_options]
+minversion = "8.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
 filterwarnings = [
   "ignore:cannot collect 'test' because it is not a function:",
 ]
+log_cli_level = "info"
 
 [tool.ruff.lint]
 select = [
