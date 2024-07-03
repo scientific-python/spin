@@ -54,10 +54,6 @@ filterwarnings = [
   "ignore:cannot collect 'test' because it is not a function:",
 ]
 
-[tool.ruff]
-line-length = 88
-target-version = "py38"
-
 [tool.ruff.lint]
 select = [
     "C",
@@ -66,6 +62,11 @@ select = [
     "W",
     "B",
     "I",
+    "C4",
+    "ISC",
+    "PGH",
     "UP",
+    "FURB",
+    "PYI",
 ]
 ignore = ["B006", "C901", "E501", "E722"]
