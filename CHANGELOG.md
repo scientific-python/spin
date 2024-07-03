@@ -1,3 +1,38 @@
+# spin 0.11
+
+We're happy to announce the release of spin 0.11!
+
+## Enhancements
+
+- FIX make sphinx docs work on Windows ([#206](https://github.com/scientific-python/spin/pull/206)).
+
+## Bug Fixes
+
+- Do not fail editable install detection when only system install is present ([#212](https://github.com/scientific-python/spin/pull/212)).
+- Fix testing for editable and non-editable installs alike ([#213](https://github.com/scientific-python/spin/pull/213)).
+
+## Maintenance
+
+- Bump pre-commit from 3.7.0 to 3.7.1 ([#207](https://github.com/scientific-python/spin/pull/207)).
+- Test on Python 3.13 development releases ([#210](https://github.com/scientific-python/spin/pull/210)).
+- Update pre-commit ([#215](https://github.com/scientific-python/spin/pull/215)).
+
+## Contributors
+
+3 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+3 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 # spin 0.10
 
 We're happy to announce the release of spin 0.10!
