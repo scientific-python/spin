@@ -301,6 +301,9 @@ def build(
         # Any other conditions that warrant a reconfigure?
 
     compile_flags = ["-v"] if verbose else []
+    if jobs:
+        compile_flags += ["-j", str(jobs)]
+
     p = _run(
         _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
         sys_exit=True,
