@@ -13,9 +13,6 @@ import click
 from .util import get_commands, get_config
 from .util import run as _run
 
-install_dir = "build-install"
-build_dir = "build"
-
 
 class GcovReportFormat(str, Enum):
     html = "html"
@@ -68,16 +65,15 @@ def _is_editable_install_of_same_source(distname):
     return editable_path and os.path.samefile(_editable_install_path(distname), ".")
 
 
-def _set_pythonpath(quiet=False):
+def _set_pythonpath(build_dir, quiet=False):
     """Set first entry of PYTHONPATH to site packages directory.
+
+    For editable installs, leave the PYTHONPATH alone.
 
     Returns
     -------
     site_packages
     """
-    site_packages = _get_site_packages()
-    env = os.environ
-
     cfg = get_config()
     distname = cfg.get("project.name", None)
     if distname:
@@ -101,6 +97,9 @@ def _set_pythonpath(quiet=False):
                     fg="bright_red",
                 )
 
+    site_packages = _get_site_packages(build_dir)
+    env = os.environ
+
     if "PYTHONPATH" in env:
         env["PYTHONPATH"] = f"{site_packages}{os.pathsep}{env['PYTHONPATH']}"
     else:
@@ -114,7 +113,12 @@ def _set_pythonpath(quiet=False):
     return site_packages
 
 
-def _get_site_packages():
+def _get_install_dir(build_dir):
+    return f"{build_dir}-install"
+
+
+def _get_site_packages(build_dir):
+    install_dir = _get_install_dir(build_dir)
     try:
         cfg = get_config()
         distname = cfg.get("project.name", None)
@@ -194,7 +198,7 @@ def _meson_coverage_configured() -> bool:
     return False
 
 
-def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
+def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir):
     requirements = {  # https://github.com/mesonbuild/meson/blob/6e381714c7cb15877e2bcaa304b93c212252ada3/docs/markdown/Unit-tests.md?plain=1#L49-L62
         GcovReportFormat.html: ["Gcovr/GenHTML", "lcov"],
         GcovReportFormat.xml: ["Gcovr (version 3.3 or higher)"],
@@ -226,6 +230,14 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
         )
 
 
+build_dir_option = click.option(
+    "-C",
+    "--build-dir",
+    default="build",
+    help="Meson build directory; package is installed into './{build-dir}-install'",
+)
+
+
 @click.command()
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
@@ -238,8 +250,16 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat):
     help="Enable C code coverage using `gcov`. Use `spin test --gcov` to generate reports.",
 )
 @click.argument("meson_args", nargs=-1)
+@build_dir_option
 def build(
-    *, meson_args, jobs=None, clean=False, verbose=False, gcov=False, quiet=False
+    *,
+    meson_args,
+    jobs=None,
+    clean=False,
+    verbose=False,
+    gcov=False,
+    quiet=False,
+    build_dir=None,
 ):
     """🔧 Build package with Meson/ninja
 
@@ -258,6 +278,7 @@ def build(
 
       CFLAGS="-O0 -g" spin build
     """
+    install_dir = _get_install_dir(build_dir)
     cfg = get_config()
     distname = cfg.get("project.name", None)
     if distname and _is_editable_install_of_same_source(distname):
@@ -301,6 +322,9 @@ def build(
         # Any other conditions that warrant a reconfigure?
 
     compile_flags = ["-v"] if verbose else []
+    if jobs:
+        compile_flags += ["-j", str(jobs)]
+
     p = _run(
         _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
         sys_exit=True,
@@ -372,6 +396,7 @@ Which tests to run. Can be a module, function, class, or method:
     default="html",
     help=f"Format of the gcov report. Can be one of {', '.join(e.value for e in GcovReportFormat)}.",
 )
+@build_dir_option
 @click.pass_context
 def test(
     ctx,
@@ -383,6 +408,7 @@ def test(
     coverage=False,
     gcov=None,
     gcov_format=None,
+    build_dir=None,
 ):
     """🔧 Run tests
 
@@ -469,13 +495,11 @@ def test(
             "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
         )
         if gcov is not None:
-            ctx.invoke(build_cmd, gcov=bool(gcov))
+            ctx.invoke(build_cmd, build_dir=build_dir, gcov=bool(gcov))
         else:
-            ctx.invoke(build_cmd)
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
-    site_path = _set_pythonpath()
-    if site_path:
-        print(f'$ export PYTHONPATH="{site_path}"')
+    site_path = _set_pythonpath(build_dir)
 
     # Sanity check that library built properly
     #
@@ -520,6 +544,7 @@ def test(
     else:
         cmd = ["pytest"]
 
+    install_dir = _get_install_dir(build_dir)
     if not os.path.exists(install_dir):
         os.mkdir(install_dir)
 
@@ -534,7 +559,7 @@ def test(
             bold=True,
             fg="bright_yellow",
         )
-        _check_coverage_tool_installation(gcov_format)
+        _check_coverage_tool_installation(gcov_format, build_dir)
 
         # Generate report
         click.secho(
@@ -568,8 +593,9 @@ def test(
 @click.command()
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("gdb_args", nargs=-1)
+@build_dir_option
 @click.pass_context
-def gdb(ctx, *, code, gdb_args):
+def gdb(ctx, *, code, gdb_args, build_dir):
     """👾 Execute code through GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
@@ -595,9 +621,9 @@ def gdb(ctx, *, code, gdb_args):
         click.secho(
             "Invoking `build` prior to invoking gdb:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
-    _set_pythonpath()
+    _set_pythonpath(build_dir)
     gdb_args = list(gdb_args)
 
     if gdb_args and gdb_args[0].endswith(".py"):
@@ -620,8 +646,9 @@ def gdb(ctx, *, code, gdb_args):
 
 @click.command()
 @click.argument("ipython_args", nargs=-1)
+@build_dir_option
 @click.pass_context
-def ipython(ctx, *, ipython_args):
+def ipython(ctx, *, ipython_args, build_dir):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
@@ -633,9 +660,9 @@ def ipython(ctx, *, ipython_args):
         click.secho(
             "Invoking `build` prior to invoking ipython:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
-    p = _set_pythonpath()
+    p = _set_pythonpath(build_dir)
     if p:
         print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
@@ -643,8 +670,9 @@ def ipython(ctx, *, ipython_args):
 
 @click.command()
 @click.argument("shell_args", nargs=-1)
+@build_dir_option
 @click.pass_context
-def shell(ctx, shell_args=[]):
+def shell(ctx, shell_args=[], build_dir=None):
     """💻 Launch shell with PYTHONPATH set
 
     SHELL_ARGS are passed through directly to the shell, e.g.:
@@ -659,9 +687,9 @@ def shell(ctx, shell_args=[]):
         click.secho(
             "Invoking `build` prior to invoking shell:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
-    p = _set_pythonpath()
+    p = _set_pythonpath(build_dir)
     if p:
         print(f'💻 Launching shell with PYTHONPATH="{p}"')
 
@@ -674,8 +702,9 @@ def shell(ctx, shell_args=[]):
 
 @click.command()
 @click.argument("python_args", nargs=-1)
+@build_dir_option
 @click.pass_context
-def python(ctx, *, python_args):
+def python(ctx, *, python_args, build_dir):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
@@ -687,9 +716,9 @@ def python(ctx, *, python_args):
         click.secho(
             "Invoking `build` prior to invoking Python:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
-    p = _set_pythonpath()
+    p = _set_pythonpath(build_dir)
     if p:
         print(f'🐍 Launching Python with PYTHONPATH="{p}"')
 
@@ -714,9 +743,10 @@ def python(ctx, *, python_args):
 
 
 @click.command(context_settings={"ignore_unknown_options": True})
+@build_dir_option
 @click.argument("args", nargs=-1)
 @click.pass_context
-def run(ctx, *, args):
+def run(ctx, *, args, build_dir=None):
     """🏁 Run a shell command with PYTHONPATH set
 
     \b
@@ -740,7 +770,7 @@ def run(ctx, *, args):
         # Redirect spin generated output
         with contextlib.redirect_stdout(sys.stderr):
             # Also ask build to be quiet
-            ctx.invoke(build_cmd, quiet=True)
+            ctx.invoke(build_cmd, build_dir=build_dir, quiet=True)
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
@@ -751,7 +781,7 @@ def run(ctx, *, args):
             # On Windows, we're going to try to use bash
             cmd_args = ["bash", "-c", cmd_args]
 
-    _set_pythonpath(quiet=True)
+    _set_pythonpath(build_dir, quiet=True)
     p = _run(cmd_args, echo=False, shell=shell, sys_exit=False)
 
     # Is the user trying to run a Python script, without calling the Python interpreter?
@@ -789,6 +819,7 @@ def run(ctx, *, args):
     help="Sphinx gallery: enable/disable plots",
 )
 @click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
+@build_dir_option
 @click.pass_context
 def docs(
     ctx,
@@ -799,6 +830,7 @@ def docs(
     jobs,
     sphinx_gallery_plot,
     clean_dirs=None,
+    build_dir=None,
 ):
     """📖 Build Sphinx documentation
 
@@ -853,10 +885,10 @@ def docs(
         click.secho(
             "Invoking `build` prior to building docs:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
     try:
-        site_path = _get_site_packages()
+        site_path = _get_site_packages(build_dir)
     except FileNotFoundError:
         print("No built numpy found; run `spin build` first.")
         sys.exit(1)
@@ -889,8 +921,9 @@ def docs(
 @click.command()
 @click.option("--code", "-c", help="Python program passed in as a string")
 @click.argument("lldb_args", nargs=-1)
+@build_dir_option
 @click.pass_context
-def lldb(ctx, *, code, lldb_args):
+def lldb(ctx, *, code, lldb_args, build_dir=None):
     """👾 Execute code through LLDB
 
       spin lldb -c 'import numpy as np; print(np.__version__)'
@@ -918,9 +951,9 @@ def lldb(ctx, *, code, lldb_args):
         click.secho(
             "Invoking `build` prior to invoking lldb:", bold=True, fg="bright_green"
         )
-        ctx.invoke(build_cmd)
+        ctx.invoke(build_cmd, build_dir=build_dir)
 
-    _set_pythonpath()
+    _set_pythonpath(build_dir)
     lldb_args = list(lldb_args)
 
     if code:
