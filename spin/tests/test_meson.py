@@ -15,91 +15,84 @@ def make_paths(root, paths):
         os.makedirs(pjoin(root, p.lstrip("/")))
 
 
-def test_path_discovery(monkeypatch):
+def test_path_discovery():
     version = sys.version_info
     X, Y = version.major, version.minor
 
-    # With multiple site-packages, choose the one that
-    # matches the current Python version
+    # With multiple site-packages, choose the one that matches the
+    # current Python version
     with tempfile.TemporaryDirectory() as d:
-        with monkeypatch.context() as m:
-            install_dir = pjoin(d, "build-install")
-            m.setattr(meson, "install_dir", install_dir)
+        build_dir = pjoin(d, "./build")
+        install_dir = pjoin(d, "./build-install")
 
-            make_paths(
-                install_dir,
-                [
-                    f"/usr/lib64/python{X}.{Y}/site-packages",
-                    f"/usr/lib64/python{X}.{Y + 1}/site-packages",
-                    f"/usr/lib64/python{X}.{Y + 2}/site-packages",
-                ],
-            )
-            assert (
-                normpath(f"/usr/lib64/python{X}.{Y}/site-packages")
-                in meson._get_site_packages()
-            )
+        make_paths(
+            install_dir,
+            [
+                f"/usr/lib64/python{X}.{Y}/site-packages",
+                f"/usr/lib64/python{X}.{Y + 1}/site-packages",
+                f"/usr/lib64/python{X}.{Y + 2}/site-packages",
+            ],
+        )
+        assert normpath(
+            f"/usr/lib64/python{X}.{Y}/site-packages"
+        ) in meson._get_site_packages(build_dir)
 
     # Debian uses dist-packages
     with tempfile.TemporaryDirectory() as d:
-        with monkeypatch.context() as m:
-            install_dir = pjoin(d, "build-install")
-            m.setattr(meson, "install_dir", install_dir)
+        build_dir = pjoin(d, "./build")
+        install_dir = pjoin(d, "./build-install")
 
-            make_paths(
-                install_dir,
-                [
-                    f"/usr/lib64/python{X}.{Y}/dist-packages",
-                ],
-            )
-            assert (
-                normpath(f"/usr/lib64/python{X}.{Y}/dist-packages")
-                in meson._get_site_packages()
-            )
+        make_paths(
+            install_dir,
+            [
+                f"/usr/lib64/python{X}.{Y}/dist-packages",
+            ],
+        )
+        assert normpath(
+            f"/usr/lib64/python{X}.{Y}/dist-packages"
+        ) in meson._get_site_packages(build_dir)
 
     # If there is no version information in site-packages,
     # use whatever site-packages can be found
     with tempfile.TemporaryDirectory() as d:
-        with monkeypatch.context() as m:
-            install_dir = pjoin(d, "build-install")
-            m.setattr(meson, "install_dir", install_dir)
+        build_dir = pjoin(d, "./build")
+        install_dir = pjoin(d, "./build-install")
 
-            make_paths(install_dir, ["/Python3/site-packages"])
-            assert normpath("/Python3/site-packages") in meson._get_site_packages()
+        make_paths(install_dir, ["/Python3/site-packages"])
+        assert normpath("/Python3/site-packages") in meson._get_site_packages(build_dir)
 
     # Raise if no site-package directory present
     with tempfile.TemporaryDirectory() as d:
-        with monkeypatch.context() as m:
-            install_dir = pjoin(d, "build-install")
-            m.setattr(meson, "install_dir", install_dir)
+        install_dir = pjoin(d, "-install")
 
-            with pytest.raises(FileNotFoundError):
-                meson._get_site_packages()
+        with pytest.raises(FileNotFoundError):
+            meson._get_site_packages(build_dir)
 
     # If there are multiple site-package paths, but without version information,
     # refuse the temptation to guess
     with tempfile.TemporaryDirectory() as d:
-        install_dir = pjoin(d, "build-install")
+        build_dir = pjoin(d, "./build")
+        install_dir = pjoin(d, "./build-install")
         make_paths(
             install_dir, ["/Python3/x/site-packages", "/Python3/y/site-packages"]
         )
         with pytest.raises(FileNotFoundError):
-            meson._get_site_packages()
+            meson._get_site_packages(build_dir)
 
     # Multiple site-package paths found, but none that matches our Python
     with tempfile.TemporaryDirectory() as d:
-        with monkeypatch.context() as m:
-            install_dir = pjoin(d, "build-install")
-            m.setattr(meson, "install_dir", install_dir)
+        build_dir = pjoin(d, "./build")
+        install_dir = pjoin(d, "./build-install")
 
-            make_paths(
-                install_dir,
-                [
-                    f"/usr/lib64/python{X}.{Y + 1}/site-packages",
-                    f"/usr/lib64/python{X}.{Y + 2}/site-packages",
-                ],
-            )
-            with pytest.raises(FileNotFoundError):
-                meson._get_site_packages()
+        make_paths(
+            install_dir,
+            [
+                f"/usr/lib64/python{X}.{Y + 1}/site-packages",
+                f"/usr/lib64/python{X}.{Y + 2}/site-packages",
+            ],
+        )
+        with pytest.raises(FileNotFoundError):
+            meson._get_site_packages(build_dir)
 
 
 def test_meson_cli_discovery(monkeypatch):
