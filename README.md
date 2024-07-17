@@ -249,6 +249,13 @@ fc-cache -f -v
 nox -s test
 ```
 
+Other examples:
+
+```
+nox -s test -- -v
+nox -s test -- -v spin/tests/test_meson.py
+```
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
