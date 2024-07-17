@@ -263,7 +263,8 @@ def build(
 ):
     """🔧 Build package with Meson/ninja
 
-    The package is installed to `build-install`.
+    The package is installed to `build-install` (unless a different
+    build directory is specified with `-C`).
 
     MESON_ARGS are passed through e.g.:
 
@@ -277,6 +278,17 @@ def build(
     or set CFLAGS appropriately:
 
       CFLAGS="-O0 -g" spin build
+
+    Build into a different build/build-install directory:
+
+      spin build -C build-for-feature-x
+
+    This feature is useful in combination with a shell alias, e.g.:
+
+      $ alias spin-clang="spin -C build-clang"
+
+    Which can then be used to build (`spin-clang build`), to test (`spin-clang test ...`), etc.
+
     """
     install_dir = _get_install_dir(build_dir)
     cfg = get_config()
