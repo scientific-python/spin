@@ -861,7 +861,9 @@ def docs(
     try:
         site_path = _get_site_packages()
     except FileNotFoundError:
-        print("No built numpy found; run `spin build` first.")
+        cfg = get_config()
+        distname = cfg.get("project.name", None)
+        print(f"{distname} build not found; run `spin build` or `spin install` first.")
         sys.exit(1)
 
     opts = os.environ.get("SPHINXOPTS", "-W")
