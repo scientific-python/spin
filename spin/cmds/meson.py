@@ -234,7 +234,9 @@ build_dir_option = click.option(
     "-C",
     "--build-dir",
     default="build",
-    help="Meson build directory; package is installed into './{build-dir}-install'",
+    show_envvar=True,
+    envvar="SPIN_BUILD_DIR",
+    help="Meson build directory; package is installed into './{build-dir}-install'.",
 )
 
 
@@ -279,13 +281,14 @@ def build(
 
       CFLAGS="-O0 -g" spin build
 
-    Build into a different build/build-install directory:
+    Build into a different build/build-install directory via the
+    `-C/--build-dir` flag:
 
       spin build -C build-for-feature-x
 
     This feature is useful in combination with a shell alias, e.g.:
 
-      $ alias spin-clang="spin -C build-clang"
+      $ alias spin-clang="SPIN_BUILD_DIR=build-clang CC=clang spin"
 
     Which can then be used to build (`spin-clang build`), to test (`spin-clang test ...`), etc.
 
@@ -350,7 +353,9 @@ def build(
             "-C",
             build_dir,
             "--destdir",
-            f"../{install_dir}",
+            install_dir
+            if os.path.isabs(install_dir)
+            else os.path.join("..", install_dir),
         ],
         output=(not quiet) and verbose,
     )
