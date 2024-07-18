@@ -172,9 +172,9 @@ def _meson_version():
         pass
 
 
-def _meson_version_configured():
+def _meson_version_configured(build_dir):
     try:
-        meson_info_fn = os.path.join("build", "meson-info", "meson-info.json")
+        meson_info_fn = os.path.join(build_dir, "meson-info", "meson-info.json")
         with open(meson_info_fn) as f:
             meson_info = json.load(f)
         return meson_info["meson_version"]["full"]
@@ -316,7 +316,7 @@ def build(
         if os.path.isdir(install_dir):
             shutil.rmtree(install_dir)
 
-    if not (os.path.exists(build_dir) and _meson_version_configured()):
+    if not (os.path.exists(build_dir) and _meson_version_configured(build_dir)):
         p = _run(setup_cmd, sys_exit=False, output=not quiet)
         if p.returncode != 0:
             raise RuntimeError(
@@ -326,7 +326,7 @@ def build(
         # Build dir has been configured; check if it was configured by
         # current version of Meson
 
-        if (_meson_version() != _meson_version_configured()) or (
+        if (_meson_version() != _meson_version_configured(build_dir)) or (
             gcov and not _meson_coverage_configured()
         ):
             _run(setup_cmd + ["--reconfigure"], output=not quiet)
