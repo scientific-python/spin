@@ -17,6 +17,10 @@ skip_unless_macos = pytest.mark.skipif(
     not sys.platform.startswith("darwin"), reason="Skipped; platform not macOS"
 )
 
+skip_py38 = pytest.mark.skipif(
+    sys.version_info[:2] == (3, 8), reason="Skipped; Python 3.8"
+)
+
 
 def spin(*args, **user_kwargs):
     args = (str(el) for el in args)

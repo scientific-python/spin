@@ -5,7 +5,14 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from testutil import skip_on_windows, skip_unless_linux, skip_unless_macos, spin, stdout
+from testutil import (
+    skip_on_windows,
+    skip_py38,
+    skip_unless_linux,
+    skip_unless_macos,
+    spin,
+    stdout,
+)
 
 from spin.cmds.util import run
 
@@ -149,6 +156,7 @@ def test_lldb():
     assert "hi" in stdout(p)
 
 
+@skip_py38  # python command does not run on py38
 def test_parallel_builds():
     spin("build")
     spin("build", "-C", "parallel-build")
