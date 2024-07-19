@@ -293,7 +293,10 @@ def build(
     Which can then be used to build (`spin-clang build`), to test (`spin-clang test ...`), etc.
 
     """
+    abs_build_dir = os.path.abspath(build_dir)
     install_dir = _get_install_dir(build_dir)
+    abs_install_dir = os.path.abspath(install_dir)
+
     cfg = get_config()
     distname = cfg.get("project.name", None)
     if distname and _is_editable_install_of_same_source(distname):
@@ -355,7 +358,7 @@ def build(
             "--destdir",
             install_dir
             if os.path.isabs(install_dir)
-            else os.path.join("..", install_dir),
+            else os.path.relpath(abs_install_dir, abs_build_dir),
         ],
         output=(not quiet) and verbose,
     )

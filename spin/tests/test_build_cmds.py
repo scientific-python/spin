@@ -159,18 +159,18 @@ def test_lldb():
 @skip_py_lt_311  # python command does not run on older pythons
 def test_parallel_builds():
     spin("build")
-    spin("build", "-C", "parallel-build")
+    spin("build", "-C", "parallel/build")
     p = spin("python", "--", "-c", "import example_pkg; print(example_pkg.__file__)")
     example_pkg_path = stdout(p).split("\n")[-1]
     p = spin(
         "python",
         "-C",
-        "parallel-build",
+        "parallel/build",
         "--",
         "-c",
         "import example_pkg; print(example_pkg.__file__)",
     )
     example_pkg_parallel_path = stdout(p).split("\n")[-1]
     assert "build-install" in example_pkg_path
-    assert "parallel-build-install" in example_pkg_parallel_path
-    assert "parallel-build-install" not in example_pkg_path
+    assert "parallel/build-install" in example_pkg_parallel_path
+    assert "parallel/build-install" not in example_pkg_path
