@@ -9,7 +9,12 @@ from .util import run as _run
     default=True,
     help="Install in editable mode.",
 )
-@click.option("-v", "--verbose", is_flag=True, help="Print detailed build output.")
+@click.option(
+    "-v/-q", "--verbose/--quiet",
+    is_flag=True,
+    default=True,
+    help="Print detailed build output."
+)
 @click.option(
     "--verbose-import/--no-verbose-import",
     is_flag=True,
