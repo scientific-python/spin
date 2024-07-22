@@ -10,10 +10,11 @@ from .util import run as _run
     help="Install in editable mode.",
 )
 @click.option(
-    "-v/-q", "--verbose/--quiet",
+    "-v/-q",
+    "--verbose/--quiet",
     is_flag=True,
     default=True,
-    help="Print detailed build output."
+    help="Print detailed build output.",
 )
 @click.option(
     "--verbose-import/--no-verbose-import",
