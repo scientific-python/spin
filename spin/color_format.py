@@ -36,7 +36,7 @@ class ColorHelpFormatter(click.formatting.HelpFormatter):
             },
             default={"bold": True, "fg": "cyan"},
         )
-        val_fmt = RegexpFormatter({r"\[default: .*?\]": {"dim": True}})
+        val_fmt = RegexpFormatter({r"\[(env var: .*?; )?default: .*?\]": {"dim": True}})
         items = [(key_fmt(key), val_fmt(val)) for (key, val) in items]
         super().write_dl(items)
 
