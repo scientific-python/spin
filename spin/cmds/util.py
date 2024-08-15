@@ -1,15 +1,18 @@
+from __future__ import (
+    annotations,  # noqa: F401  # TODO: remove once only >3.8 is supported
+)
+
 import os
 import shlex
 import subprocess
 import sys
-from typing import Optional
 
 import click
 
 
 def run(
     cmd: list[str],
-    cwd: Optional[str] = None,  # in 3.10 and up: str | None
+    cwd: str | None = None,  # in 3.10 and up: str | None
     replace: bool = False,
     sys_exit: bool = True,
     output: bool = True,
