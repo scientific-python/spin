@@ -148,6 +148,8 @@ def main():
                         if option.name in default_kwargs:
                             option.default = default_kwargs[option.name]
 
+                cmd_func.spec = cmd  # store where this function is defined
+                # for use in `introspect` command
                 commands[cmd] = cmd_func
 
             group.add_command(commands[cmd], section=section)
