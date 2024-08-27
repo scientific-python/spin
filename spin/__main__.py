@@ -132,9 +132,13 @@ def main():
 
                 try:
                     cmd_func = getattr(mod, func)
+                    cmd_func.module = mod  # metadata for use by `introspect` command
                 except AttributeError:
                     print(f"!! Could not load command `{func}` from file `{path}`.\n")
                     continue
+
+                # Save command definition for use in `introspect`
+                cmd_func.spec = cmd
 
                 default_kwargs = cmd_default_kwargs.get(cmd)
                 import functools
@@ -148,8 +152,6 @@ def main():
                         if option.name in default_kwargs:
                             option.default = default_kwargs[option.name]
 
-                cmd_func.spec = cmd  # store where this function is defined
-                # for use in `introspect` command
                 commands[cmd] = cmd_func
 
             group.add_command(commands[cmd], section=section)

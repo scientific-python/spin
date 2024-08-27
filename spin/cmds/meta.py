@@ -31,13 +31,8 @@ def introspect(*, cmd):
     try:
         code = inspect.getsource(cmd_func.callback)
     except TypeError:
+        # Perhaps a partial, try again
         code = inspect.getsource(cmd_func.callback.func)
-
-    click.secho(
-        f"The `{cmd}` command is defined in `{cmd_func.spec}`:\n",
-        bold=True,
-        fg="magenta",
-    )
 
     try:
         code = _highlight(code)
@@ -46,10 +41,20 @@ def introspect(*, cmd):
 
     print(code)
 
+    click.secho(
+        f"The `{cmd}` command is defined as `{cmd_func.spec}`.",
+        bold=True,
+        fg="magenta",
+    )
+
+    click.secho(
+        f"The code is in `{cmd_func.module.__file__}`.", bold=True, fg="magenta"
+    )
+
     if cmd_func.spec in overrides:
         click.secho(
-            "The function has the following keyword overrides defined:\n",
+            "\nThe function has the following keyword overrides defined:\n",
             bold=True,
             fg="magenta",
         )
-        print(overrides[cmd_func.spec])
+        print("  ", overrides[cmd_func.spec], "\n")
