@@ -1,3 +1,100 @@
+# spin 0.12rc0
+
+We're happy to announce the release of spin 0.12rc0!
+
+## Enhancements
+
+- Improve spin docs error message when no build is found ([#224](https://github.com/scientific-python/spin/pull/224)).
+- Make spin install verbose by default ([#225](https://github.com/scientific-python/spin/pull/225)).
+- Allow custom build directory ([#221](https://github.com/scientific-python/spin/pull/221)).
+- sdist: allow passing args to pyproject-build ([#229](https://github.com/scientific-python/spin/pull/229)).
+- Add introspection command ([#228](https://github.com/scientific-python/spin/pull/228)).
+- Guess project root and warn user ([#232](https://github.com/scientific-python/spin/pull/232)).
+
+## Bug Fixes
+
+- Re-activate jobs flag, so nr of CPUs can be tuned back ([#222](https://github.com/scientific-python/spin/pull/222)).
+
+## Documentation
+
+- Add example of how to test individual tests via nox ([#223](https://github.com/scientific-python/spin/pull/223)).
+- Running test inside of LLDB doesn't seem to work as expected; undocument ([#233](https://github.com/scientific-python/spin/pull/233)).
+
+## Maintenance
+
+- Add changelist config ([#216](https://github.com/scientific-python/spin/pull/216)).
+- Update ruff config ([#217](https://github.com/scientific-python/spin/pull/217)).
+- Update GH actions ([#218](https://github.com/scientific-python/spin/pull/218)).
+- Add codespell pre-commit ([#219](https://github.com/scientific-python/spin/pull/219)).
+- Update pytest config ([#220](https://github.com/scientific-python/spin/pull/220)).
+- Bump pre-commit from 3.7.1 to 3.8.0 in the actions group ([#227](https://github.com/scientific-python/spin/pull/227)).
+
+## Contributors
+
+3 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+4 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lars Grüter ([@lagru](https://github.com/lagru))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
+# spin 0.12
+
+We're happy to announce the release of spin 0.12!
+
+## Enhancements
+
+- Improve spin docs error message when no build is found ([#224](https://github.com/scientific-python/spin/pull/224)).
+- Make spin install verbose by default ([#225](https://github.com/scientific-python/spin/pull/225)).
+- Allow custom build directory ([#221](https://github.com/scientific-python/spin/pull/221)).
+- sdist: allow passing args to pyproject-build ([#229](https://github.com/scientific-python/spin/pull/229)).
+- Add introspection command ([#228](https://github.com/scientific-python/spin/pull/228)).
+- Guess project root and warn user ([#232](https://github.com/scientific-python/spin/pull/232)).
+
+## Bug Fixes
+
+- Re-activate jobs flag, so nr of CPUs can be tuned back ([#222](https://github.com/scientific-python/spin/pull/222)).
+
+## Documentation
+
+- Add example of how to test individual tests via nox ([#223](https://github.com/scientific-python/spin/pull/223)).
+- Running test inside of LLDB doesn't seem to work as expected; undocument ([#233](https://github.com/scientific-python/spin/pull/233)).
+
+## Maintenance
+
+- Add changelist config ([#216](https://github.com/scientific-python/spin/pull/216)).
+- Update ruff config ([#217](https://github.com/scientific-python/spin/pull/217)).
+- Update GH actions ([#218](https://github.com/scientific-python/spin/pull/218)).
+- Add codespell pre-commit ([#219](https://github.com/scientific-python/spin/pull/219)).
+- Update pytest config ([#220](https://github.com/scientific-python/spin/pull/220)).
+- Bump pre-commit from 3.7.1 to 3.8.0 in the actions group ([#227](https://github.com/scientific-python/spin/pull/227)).
+
+## Contributors
+
+3 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+4 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lars Grüter ([@lagru](https://github.com/lagru))
+- Loïc Estève ([@lesteve](https://github.com/lesteve))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain
+duplicates._
+
 # spin 0.11
 
 We're happy to announce the release of spin 0.11!
