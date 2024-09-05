@@ -62,7 +62,7 @@ def main():
 
     if not toml_config:
         click.secho(
-            f"Could not load configuration from one of: {", ".join(config_filenames)}",
+            f"Could not load configuration from one of: {', '.join(config_filenames)}",
             file=sys.stderr,
             fg="red",
         )
