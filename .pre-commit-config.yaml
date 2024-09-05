@@ -47,3 +47,10 @@ repos:
     hooks:
       - id: codespell
         args: ["-L", "ans"]
+
+  - repo: https://github.com/jsh9/markdown-toc-creator
+    rev: "3f0611a09c676ecb376c39d6ef1c2f8fe2be54f9" # frozen: v0.0.6
+    hooks:
+      - id: markdown-toc-creator
+        files: README.md
+        args: ["--skip-first-n-lines=4"]
