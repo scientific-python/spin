@@ -2,6 +2,7 @@ import collections
 import importlib
 import importlib.util
 import os
+import pathlib
 import sys
 import textwrap
 import traceback
@@ -19,7 +20,25 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
+
 click.Context.formatter_class = ColorHelpFormatter
+
+config_filenames = (
+    ".spin.toml",
+    "spin.toml",
+    "pyproject.toml",
+)
+
+
+def _detect_config_dir(path: pathlib.Path) -> pathlib.Path | None:
+    path = path.resolve()
+    files = os.listdir(path)
+    if any(f in files for f in config_filenames):
+        return path
+    elif path.parent != path:
+        return _detect_config_dir(path.parent)
+    else:
+        return None
 
 
 def main():
@@ -38,14 +57,24 @@ def main():
 
     toml_config = collections.ChainMap()
     toml_config.maps.extend(
-        DotDict(cfg)
-        for filename in (
-            ".spin.toml",
-            "spin.toml",
-            "pyproject.toml",
-        )
-        if (cfg := load_toml(filename))
+        DotDict(cfg) for filename in config_filenames if (cfg := load_toml(filename))
     )
+
+    if not toml_config:
+        click.secho(
+            f"Could not load configuration from one of: {", ".join(config_filenames)}",
+            file=sys.stderr,
+            fg="red",
+        )
+        config_dir = _detect_config_dir(pathlib.Path("."))
+        if config_dir:
+            print()
+            print(
+                "Are you running `spin` from the correct directory? Perhaps you'd like to\n"
+            )
+            click.secho(f" $ cd {os.path.relpath(config_dir, '.')}\n")
+            print("and try again.")
+        sys.exit(1)
 
     # Basic configuration validation
     version_query = len(sys.argv) == 2 and (sys.argv[1] == "--version")
@@ -55,15 +84,18 @@ def main():
         if "tool.spin" in toml_config:
             spin_config = toml_config["tool.spin"]
             if "tool.spin.commands" not in toml_config:
-                print(
-                    "Error: configuration is missing section [tool.spin.commands]\n",
+                click.secho(
+                    "Error: configuration is missing section [tool.spin.commands]\n"
+                    "See https://github.com/scientific-python/spin/blob/main/README.md\n",
                     file=sys.stderr,
+                    fg="red",
                 )
         else:
-            print(
+            click.secho(
                 "Error: need valid configuration in [.spin.toml], [spin.toml], or [pyproject.toml]\n"
                 "See https://github.com/scientific-python/spin/blob/main/README.md\n",
                 file=sys.stderr,
+                fg="red",
             )
 
     proj_name = (
