@@ -86,15 +86,15 @@ python -m spin
 Available as `spin.cmds.meson.*`.
 
 ```
-  build    🔧 Build package with Meson/ninja
-  ipython  💻 Launch IPython shell with PYTHONPATH set
-  python   🐍 Launch Python shell with PYTHONPATH set
-  shell    💻 Launch shell with PYTHONPATH set
-  test     🔧 Run pytest
-  run      🏁 Run a shell command with PYTHONPATH set
-  docs     📖 Build Sphinx documentation
-  gdb      👾 Execute a Python snippet with GDB
-  lldb     👾 Execute a Python snippet with LLDB
+build      🔧 Build package with Meson/ninja
+ipython    💻 Launch IPython shell with PYTHONPATH set
+python     🐍 Launch Python shell with PYTHONPATH set
+shell      💻 Launch shell with PYTHONPATH set
+test       🔧 Run pytest
+run        🏁 Run a shell command with PYTHONPATH set
+docs       📖 Build Sphinx documentation
+gdb        👾 Execute a Python snippet with GDB
+lldb       👾 Execute a Python snippet with LLDB
 ```
 
 ### [Build](https://pypa-build.readthedocs.io/en/stable/) (PEP 517 builder)
@@ -102,7 +102,7 @@ Available as `spin.cmds.meson.*`.
 Available as `spin.cmds.build.*`:
 
 ```
-  sdist    📦 Build a source distribution in `dist/`
+sdist      📦 Build a source distribution in `dist/`
 ```
 
 ### [pip](https://pip.pypa.io) (Package Installer for Python)
@@ -113,7 +113,15 @@ development workflow.
 Available as `spin.cmds.pip.*`:
 
 ```
-  install  💽 Build and install package using pip.
+install    💽 Build and install package using pip.
+```
+
+### Meta (commands that operate on commands)
+
+Available as `spin.cmds.meta.*`:
+
+```
+introspect 🔍 Print a command's location and source code
 ```
 
 ## 🧪 Custom commands
