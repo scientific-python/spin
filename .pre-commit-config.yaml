@@ -49,7 +49,7 @@ repos:
         args: ["-L", "ans"]
 
   - repo: https://github.com/jsh9/markdown-toc-creator
-    rev: "b58ee2e399d6d2bc6220304a9bc6d74b5575ab89" # frozen: v0.0.7
+    rev: "b7b53d559b569730c4ebca86e9ab1a9d796a2214" # frozen: v0.0.8
     hooks:
       - id: markdown-toc-creator
         files: README.md
