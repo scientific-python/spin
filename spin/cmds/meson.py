@@ -480,8 +480,9 @@ def test(
 
     package = cfg.get("tool.spin.package", None)
     if package is None:
-        print(
-            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`"
+        click.secho(
+            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`",
+            fg="bright_red",
         )
         raise SystemExit(1)
 
@@ -503,7 +504,7 @@ def test(
             "Error: cannot generate coverage report for editable installs",
             fg="bright_red",
         )
-        raise SystemExit(-1)
+        raise SystemExit(1)
 
     build_cmd = _get_configured_command("build")
     if build_cmd:
