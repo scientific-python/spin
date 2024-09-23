@@ -67,12 +67,16 @@ def run(
         print(f"Failed to launch `{cmd}`")
         sys.exit(-1)
     else:
-        p = subprocess.run(cmd, *args, **kwargs)
+        try:
+            p = subprocess.run(cmd, *args, **kwargs)
+        except FileNotFoundError:
+            click.secho(f"`{cmd[0]}` executable not found. Exiting.", fg="bright_red")
+            raise SystemExit(1) from None
         if p.returncode != 0 and sys_exit:
             # Output was suppressed, but the process failed, so print it anyway
             if output is False:
                 print(p.stdout.decode("utf-8"), end="")
-            sys.exit(p.returncode)
+            raise SystemExit(p.returncode)
         return p
 
 
