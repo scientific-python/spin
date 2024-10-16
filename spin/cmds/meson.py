@@ -319,12 +319,19 @@ def build(
             )
         return
 
-    meson_args_setup = list(meson_args["setup"])
+    if isinstance(meson_args, tuple):
+        meson_args_ = {}
+        meson_args_["setup"] = meson_args
+        meson_args_["compile"] = tuple()
+        meson_args_["install"] = tuple()
+        meson_args = meson_args_
+
+    meson_args_setup = list(meson_args.get("setup", tuple()))
 
     if gcov:
         meson_args_setup = meson_args_setup + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + meson_args_setup
+    setup_cmd = _meson_cli() + ["setup", abs_build_dir, "--prefix={}".format(abs_install_dir)] + meson_args_setup
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -351,30 +358,27 @@ def build(
 
         # Any other conditions that warrant a reconfigure?
 
-    meson_args_compile = list(meson_args["compile"])
+    meson_args_compile = list(meson_args.get("compile", tuple()))
     compile_flags = ["-v"] if verbose else []
     if "jobs" in meson_args:
         jobs = meson_args["jobs"]
-    compile_flags += ["-j", str(jobs)]
+    if jobs is not None:
+        compile_flags += ["-j", str(jobs)]
 
     p = _run(
-        _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir] ,
+        _meson_cli() + ["compile"] + compile_flags + ["-C", abs_build_dir] + meson_args_compile,
         sys_exit=True,
         output=not quiet,
     )
 
-    meson_args_install = list(meson_args["install"])
+    meson_args_install = list(meson_args.get("install", tuple()))
     p = _run(
         _meson_cli()
         + [
             "install",
             "--only-changed",
             "-C",
-            build_dir,
-            "--destdir",
-            install_dir
-            if os.path.isabs(install_dir)
-            else os.path.relpath(abs_install_dir, abs_build_dir),
+            build_dir
         ] + meson_args_install,
         output=(not quiet) and verbose,
     )
