@@ -312,7 +312,7 @@ def build(
     if gcov:
         meson_args = meson_args + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + meson_args
+    setup_cmd = _meson_cli() + ["setup", build_dir] + meson_args
 
     if clean:
         print(f"Removing `{build_dir}`")
