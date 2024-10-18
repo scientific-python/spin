@@ -229,10 +229,11 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir
             "and rerun `spin test --gcov`"
         )
 
-if sys.platform.startswith('win'):
-    DEFAULT_PREFIX="C:/"
+
+if sys.platform.startswith("win"):
+    DEFAULT_PREFIX = "C:/"
 else:
-    DEFAULT_PREFIX="/usr"
+    DEFAULT_PREFIX = "/usr"
 
 build_dir_option = click.option(
     "-C",
@@ -242,6 +243,7 @@ build_dir_option = click.option(
     envvar="SPIN_BUILD_DIR",
     help="Meson build directory; package is installed into './{build-dir}-install'.",
 )
+
 
 @click.command()
 @click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
@@ -254,7 +256,12 @@ build_dir_option = click.option(
     is_flag=True,
     help="Enable C code coverage using `gcov`. Use `spin test --gcov` to generate reports.",
 )
-@click.option("--prefix", help="The build prefix, passed directly to meson.", type=str, default=DEFAULT_PREFIX)
+@click.option(
+    "--prefix",
+    help="The build prefix, passed directly to meson.",
+    type=str,
+    default=DEFAULT_PREFIX,
+)
 @click.argument("meson_args", nargs=-1)
 @build_dir_option
 def build(
