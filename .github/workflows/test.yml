@@ -38,24 +38,3 @@ jobs:
       - name: Tests PyTest
         run: |
           pipx run nox --forcecolor -s test
-
-  test-uv-python:
-    strategy:
-      matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.13t"]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
-      - run: |
-          uv python install ${{ matrix.python_version }}
-          uv venv --python ${{ matrix.python_version }}
-      - name: Install system dependencies
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gdb lcov
-      - name: Tests PyTest
-        run: |
-          pipx run nox --forcecolor -s test
