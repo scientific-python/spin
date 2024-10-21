@@ -322,13 +322,6 @@ def build(
             )
         return
 
-    if isinstance(meson_args, tuple):
-        meson_args_ = {}
-        meson_args_["setup"] = meson_args
-        meson_args_["compile"] = tuple()
-        meson_args_["install"] = tuple()
-        meson_args = meson_args_
-
     meson_args_setup = list(meson_args.get("setup", tuple()))
 
     if gcov:
