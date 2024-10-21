@@ -1,5 +1,6 @@
 import contextlib
 import copy
+import datetime
 import json
 import os
 import re
@@ -7,6 +8,8 @@ import shutil
 import sys
 from enum import Enum
 from pathlib import Path
+import subprocess
+import time
 
 import click
 
@@ -372,16 +375,58 @@ def build(
     )
 
     meson_args_install = list(meson_args.get("install", tuple()))
-    p = _run(
-        _meson_cli()
-        + [
+    cmd = _meson_cli() + [
             "install",
             "--only-changed",
             "-C",
             build_dir
-        ] + meson_args_install,
-        output=(not quiet) and verbose,
-    )
+        ] + meson_args_install
+
+    if "root" not in meson_args:
+        raise KeyError("Project root not specified.")
+
+    dirs_root = meson_args["root"]
+    log_filename = dirs_root / 'meson-install.log'
+    start_time = datetime.datetime.now()
+    cmd_str = ' '.join([str(p) for p in cmd])
+    if meson_args.get("show_build_log", False):
+        ret = subprocess.call(cmd, cwd=dirs_root)
+    else:
+        print("Installing, see meson-install.log...")
+        with open(log_filename, 'w') as log:
+            p = subprocess.Popen(cmd, stdout=log, stderr=log,
+                                    cwd=dirs_root)
+
+        try:
+            # Wait for it to finish, and print something to indicate the
+            # process is alive, but only if the log file has grown (to
+            # allow continuous integration environments kill a hanging
+            # process accurately if it produces no output)
+            last_blip = time.time()
+            last_log_size = os.stat(log_filename).st_size
+            while p.poll() is None:
+                time.sleep(0.5)
+                if time.time() - last_blip > 60:
+                    log_size = os.stat(log_filename).st_size
+                    if log_size > last_log_size:
+                        elapsed = datetime.datetime.now() - start_time
+                        print(f"    ... installation in progress ({elapsed} "
+                                "elapsed)")
+                        last_blip = time.time()
+                        last_log_size = log_size
+
+            ret = p.wait()
+        except:  # noqa: E722
+            p.terminate()
+            raise
+    elapsed = datetime.datetime.now() - start_time
+
+    if ret != 0:
+        if meson_args.get("show_build_log", False):
+            with open(log_filename) as f:
+                print(f.read())
+        print(f"Installation failed! ({elapsed} elapsed)")
+        sys.exit(1)
 
 
 def _get_configured_command(command_name):
