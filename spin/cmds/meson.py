@@ -992,7 +992,11 @@ def docs(
 
     make_bat_exists = (Path(doc_dir) / "make.bat").exists()
     make_cmd = "make.bat" if sys.platform == "win32" and make_bat_exists else "make"
-    _run([make_cmd, sphinx_target], cwd=doc_dir, replace=True)
+    cmds = [make_cmd, "-j", str(jobs), sphinx_target]
+    if jobs == "auto":
+        cmds = [make_cmd, "-j", sphinx_target]
+
+    _run(cmds, cwd=doc_dir, replace=True)
 
 
 @click.command()
