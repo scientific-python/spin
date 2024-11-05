@@ -230,6 +230,11 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir
         )
 
 
+if sys.platform.startswith("win"):
+    DEFAULT_PREFIX = "C:/"
+else:
+    DEFAULT_PREFIX = "/usr"
+
 build_dir_option = click.option(
     "-C",
     "--build-dir",
@@ -251,6 +256,12 @@ build_dir_option = click.option(
     is_flag=True,
     help="Enable C code coverage using `gcov`. Use `spin test --gcov` to generate reports.",
 )
+@click.option(
+    "--prefix",
+    help="The build prefix, passed directly to meson.",
+    type=str,
+    default=DEFAULT_PREFIX,
+)
 @click.argument("meson_args", nargs=-1)
 @build_dir_option
 def build(
@@ -262,6 +273,7 @@ def build(
     gcov=False,
     quiet=False,
     build_dir=None,
+    prefix=None,
 ):
     """🔧 Build package with Meson/ninja
 
@@ -312,7 +324,7 @@ def build(
     if gcov:
         meson_args = meson_args + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, "--prefix=/usr"] + meson_args
+    setup_cmd = _meson_cli() + ["setup", build_dir, f"--prefix={prefix}"] + meson_args
 
     if clean:
         print(f"Removing `{build_dir}`")

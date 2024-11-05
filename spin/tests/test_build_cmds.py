@@ -35,6 +35,12 @@ def test_debug_builds():
     assert len(list(debug_files)) != 0, "debug files not generated for gcov build"
 
 
+def test_prefix_builds():
+    """does spin build --prefix create a build-install directory with the correct structure?"""
+    spin("build", "--prefix=/foobar/")
+    assert (Path("build-install") / Path("foobar")).exists()
+
+
 def test_coverage_builds():
     """Does gcov test generate coverage files?"""
     spin("test", "--gcov")
