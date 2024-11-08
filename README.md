@@ -14,6 +14,28 @@ When many of the build and installation commands changed, it made sense to abstr
 _Note:_ We now have experimental builds for editable installs.
 Most of the Meson commands listed below should work "out of the box" for those.
 
+<!--TOC-->
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Command sections](#command-sections)
+- [Running](#running)
+- [Built-in commands](#built-in-commands)
+  - [Meson](#meson)
+  - [Build (PEP 517 builder)](#build-pep-517-builder)
+  - [pip (Package Installer for Python)](#pip-package-installer-for-python)
+  - [Meta (commands that operate on commands)](#meta-commands-that-operate-on-commands)
+- [🧪 Custom commands](#-custom-commands)
+  - [Configuration](#configuration-1)
+  - [Argument overrides](#argument-overrides)
+  - [Advanced: adding arguments to built-in commands](#advanced-adding-arguments-to-built-in-commands)
+  - [Advanced: override Meson CLI](#advanced-override-meson-cli)
+- [FAQ](#faq)
+- [For contributors](#for-contributors)
+- [History](#history)
+
+<!--TOC-->
+
 ## Installation
 
 ```
