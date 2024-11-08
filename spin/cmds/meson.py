@@ -319,12 +319,23 @@ def build(
             )
         return
 
-    meson_args = list(meson_args)
+    if isinstance(meson_args, tuple):
+        # for backwards compatibility because
+        # previously meson_args was a tuple.
+        # all the members of the meson_args tuple
+        # were passed to meson setup subcommand.
+        meson_args_ = {}
+        meson_args_["setup"] = meson_args
+        meson_args_["compile"] = tuple()
+        meson_args_["install"] = tuple()
+        meson_args = meson_args_
+
+    meson_args_setup = list(meson_args.get("setup", tuple()))
 
     if gcov:
-        meson_args = meson_args + ["-Db_coverage=true"]
+        meson_args_setup = meson_args_setup + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, f"--prefix={prefix}"] + meson_args
+    setup_cmd = _meson_cli() + ["setup", abs_build_dir, "--prefix={}".format(abs_install_dir)] + meson_args_setup
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -351,30 +362,31 @@ def build(
 
         # Any other conditions that warrant a reconfigure?
 
+    meson_args_compile = list(meson_args.get("compile", tuple()))
     compile_flags = ["-v"] if verbose else []
-    if jobs:
+    if "jobs" in meson_args:
+        jobs = meson_args["jobs"]
+    if jobs is not None:
         compile_flags += ["-j", str(jobs)]
 
     p = _run(
-        _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
+        _meson_cli() + ["compile"] + compile_flags + ["-C", abs_build_dir] + meson_args_compile,
         sys_exit=True,
         output=not quiet,
     )
-    p = _run(
-        _meson_cli()
-        + [
+
+    meson_args_install = list(meson_args.get("install", tuple()))
+    cmd = _meson_cli() + [
             "install",
             "--only-changed",
             "-C",
-            build_dir,
-            "--destdir",
-            install_dir
-            if os.path.isabs(install_dir)
-            else os.path.relpath(abs_install_dir, abs_build_dir),
-        ],
-        output=(not quiet) and verbose,
-    )
+            build_dir
+        ] + meson_args_install
 
+    p = _run(
+         cmd,
+         output=(not quiet) and verbose,
+     )
 
 def _get_configured_command(command_name):
     command_groups = get_commands()
@@ -946,7 +958,11 @@ def docs(
 
     make_bat_exists = (Path(doc_dir) / "make.bat").exists()
     make_cmd = "make.bat" if sys.platform == "win32" and make_bat_exists else "make"
-    _run([make_cmd, sphinx_target], cwd=doc_dir, replace=True)
+    cmds = [make_cmd, "-j", str(jobs), sphinx_target]
+    if jobs == "auto":
+        cmds = [make_cmd, "-j", sphinx_target]
+
+    _run(cmds, cwd=doc_dir, replace=True)
 
 
 @click.command()
