@@ -384,13 +384,7 @@ def build(
         ] + meson_args_install
 
     p = _run(
-         _meson_cli()
-         + [
-             "install",
-             "--only-changed",
-             "-C",
-             build_dir,
-             ] + meson_args_install,
+         cmd,
          output=(not quiet) and verbose,
      )
 
