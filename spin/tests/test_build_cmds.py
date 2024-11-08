@@ -17,7 +17,7 @@ from testutil import (
 from spin.cmds.util import run
 
 
-def test_basic_build():
+def test_basic_build(example_pkg):
     """Does the package build?"""
     spin("build")
 
@@ -27,7 +27,7 @@ def test_basic_build():
     ).exists(), "`build-install` folder not created after `spin build`"
 
 
-def test_debug_builds():
+def test_debug_builds(example_pkg):
     """Does spin generate gcov debug output files?"""
     spin("build", "--gcov")
 
@@ -35,13 +35,13 @@ def test_debug_builds():
     assert len(list(debug_files)) != 0, "debug files not generated for gcov build"
 
 
-def test_prefix_builds():
+def test_prefix_builds(example_pkg):
     """does spin build --prefix create a build-install directory with the correct structure?"""
     spin("build", "--prefix=/foobar/")
     assert (Path("build-install") / Path("foobar")).exists()
 
 
-def test_coverage_builds():
+def test_coverage_builds(example_pkg):
     """Does gcov test generate coverage files?"""
     spin("test", "--gcov")
 
@@ -58,7 +58,7 @@ def test_coverage_builds():
         ("sonarqube", Path("sonarqube.xml")),
     ],
 )
-def test_coverage_reports(report_type, output_file):
+def test_coverage_reports(example_pkg, report_type, output_file):
     """Does gcov test generate coverage reports?"""
     spin("test", "--gcov", f"--gcov-format={report_type}")
 
@@ -68,7 +68,7 @@ def test_coverage_reports(report_type, output_file):
     ), f"coverage report not generated for gcov build ({report_type})"
 
 
-def test_expand_pythonpath():
+def test_expand_pythonpath(example_pkg):
     """Does an $ENV_VAR get expanded in `spin run`?"""
     output = spin("run", "echo $PYTHONPATH")
     assert any(
@@ -76,7 +76,7 @@ def test_expand_pythonpath():
     ), f"Expected value of $PYTHONPATH, got {stdout(output)} instead"
 
 
-def test_run_stdout():
+def test_run_stdout(example_pkg):
     """Ensure `spin run` only includes command output on stdout."""
     p = spin(
         "run",
@@ -92,7 +92,7 @@ def test_run_stdout():
 # Detecting whether a file is executable is not that easy on Windows,
 # as it seems to take into consideration whether that file is associated as an executable.
 @skip_on_windows
-def test_recommend_run_python():
+def test_recommend_run_python(example_pkg):
     """If `spin run file.py` is called, is `spin run python file.py` recommended?"""
     with tempfile.NamedTemporaryFile(suffix=".py") as f:
         p = spin("run", f.name, sys_exit=False)
@@ -101,20 +101,20 @@ def test_recommend_run_python():
         ), "Failed to recommend `python run python file.py`"
 
 
-def test_sdist():
+def test_sdist(example_pkg):
     spin("sdist")
 
 
-def test_example():
+def test_example(example_pkg):
     spin("example")
 
 
-def test_docs():
+def test_docs(example_pkg):
     run(["pip", "install", "--quiet", "sphinx"])
     spin("docs")
 
 
-def test_spin_install():
+def test_spin_install(example_pkg):
     cwd = os.getcwd()
     spin("install")
     with tempfile.TemporaryDirectory() as d:
@@ -135,7 +135,7 @@ def test_spin_install():
 
 
 @skip_unless_linux
-def test_gdb():
+def test_gdb(example_pkg):
     p = spin(
         "gdb",
         "-c",
@@ -149,7 +149,7 @@ def test_gdb():
 
 
 @skip_unless_macos
-def test_lldb():
+def test_lldb(example_pkg):
     p = spin(
         "lldb",
         "-c",
@@ -163,7 +163,7 @@ def test_lldb():
 
 
 @skip_py_lt_311  # python command does not run on older pythons
-def test_parallel_builds():
+def test_parallel_builds(example_pkg):
     spin("build")
     spin("build", "-C", "parallel/build")
     p = spin("python", "--", "-c", "import example_pkg; print(example_pkg.__file__)")
