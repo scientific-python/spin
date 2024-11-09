@@ -4,6 +4,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import sys
 from enum import Enum
 from pathlib import Path
@@ -811,7 +812,17 @@ def run(ctx, *, args, build_dir=None):
             cmd_args = ["bash", "-c", cmd_args]
 
     _set_pythonpath(build_dir, quiet=True)
-    p = _run(cmd_args, echo=False, shell=shell, sys_exit=False)
+
+    # Let the subprocess handle its own signals
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    def attach_sigint():
+        # Reset SIGINT handler to default
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    p = _run(
+        cmd_args, echo=False, shell=shell, sys_exit=False, preexec_fn=attach_sigint
+    )
 
     # Is the user trying to run a Python script, without calling the Python interpreter?
     executable = args[0]
