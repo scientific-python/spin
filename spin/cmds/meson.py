@@ -499,12 +499,16 @@ def test(
         raise SystemExit(1)
 
     # User did not specify what to test, so we test
-    # the full package
+    # the full package, or the tests directory if that is present
     if not (pytest_args or tests):
-        pytest_args = ("--pyargs", package)
+        if os.path.isdir("./tests"):
+            # tests dir exists, presuming you are not shipping tests
+            # with your package, and prefer to run those instead
+            pytest_args = (os.path.abspath("./tests"),)
+        else:
+            pytest_args = ("--pyargs", package)
     elif tests:
         if (os.path.sep in tests) or ("/" in tests):
-            # Tests specified as file path
             pytest_args = pytest_args + (tests,)
         else:
             # Otherwise tests given as modules
@@ -549,9 +553,6 @@ def test(
     if (n_jobs != "1") and ("-n" not in pytest_args):
         pytest_args = ("-n", str(n_jobs)) + pytest_args
 
-    if not any("--import-mode" in arg for arg in pytest_args):
-        pytest_args = ("--import-mode=importlib",) + pytest_args
-
     if verbose:
         pytest_args = ("-v",) + pytest_args
 
@@ -577,8 +578,11 @@ def test(
     if not os.path.exists(install_dir):
         os.mkdir(install_dir)
 
+    # Unless we have a src layout, we need to switch away from the current directory into build install to avoid importing ./package instead of the built package.
+    test_path = site_path if not os.path.isdir("./src") else None
+
     cwd = os.getcwd()
-    pytest_p = _run(cmd + list(pytest_args), cwd=site_path)
+    pytest_p = _run(cmd + list(pytest_args), cwd=test_path)
     os.chdir(cwd)
 
     if gcov:
