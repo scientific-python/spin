@@ -5,7 +5,10 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from testutil import (
+
+from spin.cmds.util import run
+
+from .testutil import (
     skip_on_windows,
     skip_py_lt_311,
     skip_unless_linux,
@@ -13,8 +16,6 @@ from testutil import (
     spin,
     stdout,
 )
-
-from spin.cmds.util import run
 
 
 def test_basic_build(example_pkg):

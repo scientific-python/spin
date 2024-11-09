@@ -1,6 +1,6 @@
-from testutil import spin, stdout
-
 import spin as libspin
+
+from .testutil import spin, stdout
 
 
 def test_get_version(example_pkg):

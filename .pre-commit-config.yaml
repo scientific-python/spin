@@ -41,6 +41,10 @@ repos:
     rev: 6f546f30c2b142ad5b3edcf20e3d27cf1789b932 # frozen: v1.10.1
     hooks:
       - id: mypy
+        exclude: |
+          (?x)(
+            ^example_pkg_src/
+          )
 
   - repo: https://github.com/codespell-project/codespell
     rev: "193cd7d27cd571f79358af09a8fb8997e54f8fff" # frozen: v2.3.0

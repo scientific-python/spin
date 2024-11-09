@@ -1,4 +1,4 @@
-from testutil import spin, stdout
+from .testutil import spin, stdout
 
 
 def test_detect_editable(example_pkg, editable_install):

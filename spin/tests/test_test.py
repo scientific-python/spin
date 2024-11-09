@@ -1,6 +1,6 @@
 import os
 
-from testutil import spin
+from .testutil import spin
 
 
 def test_test(example_pkg):
