@@ -1,0 +1,20 @@
+[project]
+name = "example_pkg"
+version = "0.0dev0"
+requires-python = ">=3.7"
+description = "spin Example Package"
+
+[build-system]
+build-backend = "mesonpy"
+requires = [
+  "meson-python>=0.13.0rc0",
+]
+
+[tool.spin]
+package = 'example_pkg'
+
+[tool.spin.commands]
+"Build" = [
+  "spin.cmds.meson.build",
+  "spin.cmds.meson.test"
+]
