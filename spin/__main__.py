@@ -131,6 +131,8 @@ def main():
     }
     cmd_default_kwargs = toml_config.get("tool.spin.kwargs", {})
 
+    custom_module_cache = {}
+
     for section, cmds in config_cmds.items():
         for cmd in cmds:
             if cmd not in commands:
@@ -147,11 +149,17 @@ def main():
                 else:
                     try:
                         path, func = cmd.split(":")
-                        spec = importlib.util.spec_from_file_location(
-                            "custom_mod", path
-                        )
-                        mod = importlib.util.module_from_spec(spec)
-                        spec.loader.exec_module(mod)
+
+                        if path not in custom_module_cache:
+                            spec = importlib.util.spec_from_file_location(
+                                "custom_mod", path
+                            )
+                            mod = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(mod)
+                            custom_module_cache[path] = mod
+                        else:
+                            mod = custom_module_cache[path]
+
                     except FileNotFoundError:
                         print(
                             f"!! Could not find file `{path}` to load custom command `{cmd}`.\n"

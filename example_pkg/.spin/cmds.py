@@ -2,6 +2,7 @@ import json
 
 import click
 
+import spin
 from spin import util
 
 
@@ -33,3 +34,15 @@ def example(flag, test, default_kwd=None):
 
     click.secho("\nTool config is:", fg="yellow")
     print(json.dumps(config["tool.spin"], indent=2))
+
+
+@click.option("-e", "--extra", help="Extra test flag", type=int)
+@util.extend_command(spin.cmds.meson.build)
+def build_ext(*, parent_callback, extra=None, **kwargs):
+    """
+    This version of build also provides the EXTRA flag, that can be used
+    to specify an extra integer argument.
+    """
+    print(f"Preparing for build with {extra=}")
+    parent_callback(**kwargs)
+    print("Finalizing build...")

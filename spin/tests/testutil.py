@@ -38,3 +38,8 @@ def stdout(p):
 
 def stderr(p):
     return p.stderr.decode("utf-8").strip()
+
+
+def get_usage(cmd):
+    ctx = cmd.make_context(None, [])
+    return cmd.get_help(ctx)

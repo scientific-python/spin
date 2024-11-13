@@ -2,10 +2,12 @@ from __future__ import (
     annotations,  # noqa: F401  # TODO: remove once only >3.8 is supported
 )
 
+import copy
 import os
 import shlex
 import subprocess
 import sys
+from collections.abc import Callable
 
 import click
 
@@ -98,3 +100,68 @@ def get_commands():
        ``commands`` key.
     """
     return click.get_current_context().meta["commands"]
+
+
+Decorator = Callable[[Callable], Callable]
+
+
+def extend_command(cmd: click.Command, doc: str | None = None) -> Decorator:
+    """This is a decorator factory.
+
+    The resulting decorator lets the user derive their own command from `cmd`.
+    The new command can support arguments not supported by `cmd`.
+
+    Parameters
+    ----------
+    cmd : click.Command
+        Command to extend.
+    doc : str
+        Replacement docstring.
+        The wrapped function's docstring is also appended.
+
+    Examples
+    --------
+
+    @click.option("-e", "--extra", help="Extra test flag")
+    @util.extend_cmd(
+        spin.cmds.meson.build
+    )
+    @extend_cmd(spin.cmds.meson.build)
+    def build(*args, constant=None, **kwargs):
+        '''
+        Some extra documentation related to the constant flag.
+        '''
+        ...
+        ctx.forward(spin.cmds.meson.build, *args, **kwargs)
+        ...
+
+    """
+    my_cmd = copy.copy(cmd)
+
+    # This is necessary to ensure that added options do not leak
+    # to the original command
+    my_cmd.params = copy.deepcopy(cmd.params)
+
+    def decorator(user_func: Callable) -> click.Command:
+        def callback_with_parent_callback(ctx, *args, **kwargs):
+            """Wrap the user callback to receive a
+            `parent_callback` keyword argument, containing the
+            callback from the originally wrapped command."""
+
+            def parent_cmd(*user_args, **user_kwargs):
+                ctx.invoke(cmd.callback, *user_args, **user_kwargs)
+
+            return user_func(*args, parent_callback=parent_cmd, **kwargs)
+
+        my_cmd.callback = click.pass_context(callback_with_parent_callback)
+
+        if doc is not None:
+            my_cmd.help = doc
+        my_cmd.help = (my_cmd.help or "") + "\n\n" + (user_func.__doc__ or "")
+        my_cmd.help = my_cmd.help.strip()
+
+        my_cmd.name = user_func.__name__.replace("_", "-")
+
+        return my_cmd
+
+    return decorator
