@@ -68,6 +68,15 @@ def test_ext_additional_args():
         )
 
 
+def test_ext_remove_arg():
+    @extend_command(cmds.meson.build, remove_args=("gcov",))
+    def build_ext(*, parent_callback, extra=None, **kwargs):
+        pass
+
+    assert "gcov" in get_usage(cmds.meson.build)
+    assert "gcov" not in get_usage(build_ext)
+
+
 def test_cli_additional_arg(example_pkg):
     p = spin("build-ext", "--extra=3")
     assert b"Preparing for build with extra=3" in p.stdout

@@ -37,7 +37,7 @@ def example(flag, test, default_kwd=None):
 
 
 @click.option("-e", "--extra", help="Extra test flag", type=int)
-@util.extend_command(spin.cmds.meson.build)
+@util.extend_command(spin.cmds.meson.build, remove_args=("gcov",))
 def build_ext(*, parent_callback, extra=None, **kwargs):
     """
     This version of build also provides the EXTRA flag, that can be used

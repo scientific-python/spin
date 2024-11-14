@@ -233,6 +233,8 @@ The matching entry in `pyproject.toml` is:
 The `extend_cmd` decorator also accepts a `doc` argument, for setting the new command's `--help` description.
 The function documentation ("This version of build...") is also appended.
 
+Finally, `remove_args` is a tuple of arguments that are not inherited from the original command.
+
 ### Advanced: override Meson CLI
 
 Some packages use a vendored version of Meson. The path to a custom

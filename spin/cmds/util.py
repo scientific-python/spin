@@ -105,7 +105,9 @@ def get_commands():
 Decorator = Callable[[Callable], Callable]
 
 
-def extend_command(cmd: click.Command, doc: str | None = None) -> Decorator:
+def extend_command(
+    cmd: click.Command, doc: str | None = None, remove_args: tuple[str] | None = None
+) -> Decorator:
     """This is a decorator factory.
 
     The resulting decorator lets the user derive their own command from `cmd`.
@@ -118,6 +120,10 @@ def extend_command(cmd: click.Command, doc: str | None = None) -> Decorator:
     doc : str
         Replacement docstring.
         The wrapped function's docstring is also appended.
+    remove_args : tuple of str
+        List of arguments to remove from the parent command.
+        These arguments can still be set explicitly by calling
+        ``parent_callback(..., removed_flag=value)``.
 
     Examples
     --------
@@ -127,12 +133,12 @@ def extend_command(cmd: click.Command, doc: str | None = None) -> Decorator:
         spin.cmds.meson.build
     )
     @extend_cmd(spin.cmds.meson.build)
-    def build(*args, constant=None, **kwargs):
+    def build(*, parent_callback, extra=None, **kwargs):
         '''
         Some extra documentation related to the constant flag.
         '''
         ...
-        ctx.forward(spin.cmds.meson.build, *args, **kwargs)
+        parent_callback(**kwargs)
         ...
 
     """
@@ -161,6 +167,11 @@ def extend_command(cmd: click.Command, doc: str | None = None) -> Decorator:
         my_cmd.help = my_cmd.help.strip()
 
         my_cmd.name = user_func.__name__.replace("_", "-")
+
+        if remove_args:
+            my_cmd.params = [
+                param for param in my_cmd.params if param.name not in remove_args
+            ]
 
         return my_cmd
 
