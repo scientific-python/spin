@@ -207,11 +207,11 @@ For this purpose, we provide the `spin.util.extend_cmd` decorator.
 Here, we show how to add a `--extra` flag to the existing `build` function:
 
 ```python
-from spin.cmds import meson
+import spin
 
 
 @click.option("-e", "--extra", help="Extra test flag")
-@util.extend_command(spin.cmds.meson.build)
+@spin.util.extend_command(spin.cmds.meson.build)
 def build_extend(*, parent_callback, extra=None, **kwargs):
     """
     This version of build also provides the EXTRA flag, that can be used
