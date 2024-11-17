@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import signal
+import subprocess
 import sys
 from enum import Enum
 from pathlib import Path
@@ -817,16 +818,43 @@ def run(ctx, *, args, build_dir=None):
 
     _set_pythonpath(build_dir, quiet=True)
 
-    # Let the subprocess handle its own signals
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    is_windows = sys.platform == "win32"
+    is_posix = not is_windows
+
+    if is_posix:
+        # Let the subprocess handle its own signals
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     def attach_sigint():
         # Reset SIGINT handler to default
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    p = _run(
-        cmd_args, echo=False, shell=shell, sys_exit=False, preexec_fn=attach_sigint
+    kwargs = (
+        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if is_windows else {}
     )
+
+    # --- launch subprocess ---
+    p = _run(
+        cmd_args,
+        echo=False,
+        shell=shell,
+        sys_exit=False,
+        preexec_fn=attach_sigint if is_posix else None,
+        **kwargs,
+    )
+
+    # Handle Ctrl+C (SIGINT) on Windows
+    def windows_ctrl_handler(ctrl_type):
+        if ctrl_type == signal.CTRL_C_EVENT:
+            # Forward CTRL_BREAK_EVENT to the child process
+            p.send_signal(signal.CTRL_BREAK_EVENT)
+            return True
+        return False
+
+    if is_windows:
+        import win32api
+
+        win32api.SetConsoleCtrlHandler(windows_ctrl_handler, True)
 
     # Is the user trying to run a Python script, without calling the Python interpreter?
     executable = args[0]
