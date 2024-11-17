@@ -201,52 +201,39 @@ click options or function keywords:
 
 ### Advanced: adding arguments to built-in commands
 
-Instead of rewriting a command from scratch, a project may want to add a flag to a built-in `spin` command, or perhaps do some pre- or post-processing.
-For this, we have to use an internal Click concept called a [context](https://click.palletsprojects.com/en/8.1.x/complex/#contexts).
-Fortunately, we don't need to know anything about contexts other than that they allow us to execute commands within commands.
+Instead of rewriting a command from scratch, a project may simply want to add a flag to an existing `spin` command, or perhaps do some pre- or post-processing.
+For this purpose, we provide the `spin.util.extend_cmd` decorator.
 
-We proceed by duplicating the function header of the existing command, and adding our own flag:
+Here, we show how to add a `--extra` flag to the existing `build` function:
 
 ```python
-from spin.cmds import meson
-
-# Take this from the built-in implementation, in `spin.cmds.meson.build`:
+import spin
 
 
-@click.command()
-@click.argument("meson_args", nargs=-1)
-@click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
-@click.option("--clean", is_flag=True, help="Clean build directory before build")
-@click.option(
-    "-v", "--verbose", is_flag=True, help="Print all build output, even installation"
-)
-
-# This is our new option
-@click.option("--custom-arg/--no-custom-arg")
-
-# This tells spin that we will need a context, which we
-# can use to invoke the built-in command
-@click.pass_context
-
-# This is the original function signature, plus our new flag
-def build(ctx, meson_args, jobs=None, clean=False, verbose=False, custom_arg=False):
-    """Docstring goes here. You may want to copy and customize the original."""
-
-    # Do something with the new option
-    print("The value of custom arg is:", custom_arg)
-
-    # The spin `build` command doesn't know anything about `custom_arg`,
-    # so don't send it on.
-    del ctx.params["custom_arg"]
-
-    # Call the built-in `build` command, passing along
-    # all arguments and options.
-    ctx.forward(meson.build)
-
-    # Also see:
-    # - https://click.palletsprojects.com/en/8.1.x/api/#click.Context.forward
-    # - https://click.palletsprojects.com/en/8.1.x/api/#click.Context.invoke
+@click.option("-e", "--extra", help="Extra test flag")
+@spin.util.extend_command(spin.cmds.meson.build)
+def build_extend(*, parent_callback, extra=None, **kwargs):
+    """
+    This version of build also provides the EXTRA flag, that can be used
+    to specify an extra integer argument.
+    """
+    print(f"Preparing for build with {extra=}")
+    parent_callback(**kwargs)
+    print("Finalizing build...")
 ```
+
+Note that `build_extend` receives the parent command callback (the function the `build` command would have executed) as its first argument.
+
+The matching entry in `pyproject.toml` is:
+
+```
+"Build" = [".spin/cmds.py:build_extend"]
+```
+
+The `extend_cmd` decorator also accepts a `doc` argument, for setting the new command's `--help` description.
+The function documentation ("This version of build...") is also appended.
+
+Finally, `remove_args` is a tuple of arguments that are not inherited from the original command.
 
 ### Advanced: override Meson CLI
 

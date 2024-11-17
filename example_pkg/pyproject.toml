@@ -43,7 +43,7 @@ package = 'example_pkg'
   "spin.cmds.meson.gdb",
   "spin.cmds.meson.lldb"
 ]
-"Extensions" = [".spin/cmds.py:example"]
+"Extensions" = [".spin/cmds.py:example", ".spin/cmds.py:build_ext"]
 "Pip" = [
   "spin.cmds.pip.install"
 ]
