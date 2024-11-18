@@ -1,3 +1,45 @@
+# spin 0.13rc0
+
+We're happy to announce the release of spin 0.13rc0!
+
+## Enhancements
+
+- Clarify error message when executed binary not found ([#237](https://github.com/scientific-python/spin/pull/237)).
+- Add mechanism for extending existing spin commands ([#248](https://github.com/scientific-python/spin/pull/248)).
+
+## Bug Fixes
+
+- Allow overriding --prefix in spin build ([#241](https://github.com/scientific-python/spin/pull/241)).
+- Improve source layout test discovery ([#247](https://github.com/scientific-python/spin/pull/247)).
+- Let subprocess launched by run handle its own sigint ([#246](https://github.com/scientific-python/spin/pull/246)).
+
+## Documentation
+
+- Auto-generate README table of contents ([#234](https://github.com/scientific-python/spin/pull/234)).
+
+## Maintenance
+
+- Bump pre-commit from 3.8.0 to 4.0.1 in the actions group ([#243](https://github.com/scientific-python/spin/pull/243)).
+- Update pre-commit repos ([#249](https://github.com/scientific-python/spin/pull/249)).
+- Support Python 3.13 ([#250](https://github.com/scientific-python/spin/pull/250)).
+
+## Contributors
+
+3 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Nathan Goldbaum ([@ngoldbaum](https://github.com/ngoldbaum))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+4 reviewers added to this release (alphabetically):
+
+- Adrin Jalali ([@adrinjalali](https://github.com/adrinjalali))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Nathan Goldbaum ([@ngoldbaum](https://github.com/ngoldbaum))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 # spin 0.12
 
 We're happy to announce the release of spin 0.12!
