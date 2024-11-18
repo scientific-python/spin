@@ -241,13 +241,20 @@ build_dir_option = click.option(
     "--build-dir",
     default="build",
     show_envvar=True,
+    metavar="BUILD_DIR",
     envvar="SPIN_BUILD_DIR",
     help="Meson build directory; package is installed into './{build-dir}-install'.",
 )
 
 
 @click.command()
-@click.option("-j", "--jobs", help="Number of parallel tasks to launch", type=int)
+@click.option(
+    "-j",
+    "--jobs",
+    metavar="N_JOBS",
+    help="Number of parallel tasks to launch",
+    type=int,
+)
 @click.option("--clean", is_flag=True, help="Clean build directory before build")
 @click.option(
     "-v", "--verbose", is_flag=True, help="Print detailed build and installation output"
@@ -261,6 +268,7 @@ build_dir_option = click.option(
     "--prefix",
     help="The build prefix, passed directly to meson.",
     type=str,
+    metavar="PREFIX",
     default=DEFAULT_PREFIX,
 )
 @click.argument("meson_args", nargs=-1)
@@ -625,7 +633,9 @@ def test(
 
 
 @click.command()
-@click.option("--code", "-c", help="Python program passed in as a string")
+@click.option(
+    "--code", "-c", metavar="CODE", help="Python program passed in as a string"
+)
 @click.argument("gdb_args", nargs=-1)
 @build_dir_option
 @click.pass_context
@@ -872,7 +882,13 @@ def run(ctx, *, args, build_dir=None):
     default=True,
     help="Sphinx gallery: enable/disable plots",
 )
-@click.option("--jobs", "-j", default="auto", help="Number of parallel build jobs")
+@click.option(
+    "--jobs",
+    "-j",
+    default="auto",
+    metavar="N_JOBS",
+    help="Number of parallel build jobs",
+)
 @build_dir_option
 @click.pass_context
 def docs(
@@ -975,7 +991,9 @@ def docs(
 
 
 @click.command()
-@click.option("--code", "-c", help="Python program passed in as a string")
+@click.option(
+    "--code", "-c", metavar="CODE", help="Python program passed in as a string"
+)
 @click.argument("lldb_args", nargs=-1)
 @build_dir_option
 @click.pass_context
