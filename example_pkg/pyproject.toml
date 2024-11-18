@@ -53,3 +53,4 @@ package = 'example_pkg'
 
 [tool.spin.kwargs]
 ".spin/cmds.py:example" = {"test" = "default override", "default_kwd" = 3}
+"spin.cmds.meson.ipython" = {"pre_import" = '''import example_pkg as ep; print(f'\nPreimported example_pkg {ep.__version__} as ep')'''}

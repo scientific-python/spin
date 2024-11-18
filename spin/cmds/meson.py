@@ -682,7 +682,7 @@ def gdb(ctx, *, code, gdb_args, build_dir):
 @click.argument("ipython_args", nargs=-1)
 @build_dir_option
 @click.pass_context
-def ipython(ctx, *, ipython_args, build_dir):
+def ipython(ctx, *, ipython_args, build_dir, pre_import=""):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
@@ -692,13 +692,15 @@ def ipython(ctx, *, ipython_args, build_dir):
     build_cmd = _get_configured_command("build")
     if build_cmd:
         click.secho(
-            "Invoking `build` prior to invoking ipython:", bold=True, fg="bright_green"
+            "Invoking `build` prior to launching ipython:", bold=True, fg="bright_green"
         )
         ctx.invoke(build_cmd, build_dir=build_dir)
 
     p = _set_pythonpath(build_dir)
     if p:
         print(f'💻 Launching IPython with PYTHONPATH="{p}"')
+    if pre_import:
+        ipython_args = (f"--TerminalIPythonApp.exec_lines={pre_import}",) + ipython_args
     _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
 
 
