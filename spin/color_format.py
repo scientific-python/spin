@@ -32,7 +32,7 @@ class ColorHelpFormatter(click.formatting.HelpFormatter):
         key_fmt = RegexpFormatter(
             {
                 " [A-Z_]+": {"bold": True, "fg": "yellow"},
-                r"\-[a-z]{1}(?=[ ,]{1})": {"fg": "green"},
+                r"\-[a-zA-Z]{1}(?=[ ,]{1})": {"fg": "green"},
             },
             default={"bold": True, "fg": "cyan"},
         )
