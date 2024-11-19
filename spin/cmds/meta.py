@@ -29,7 +29,11 @@ def introspect(*, cmd):
 
     cmd_func = cmds[cmd]
     try:
-        code = inspect.getsource(cmd_func.callback)
+        if hasattr(cmd_func.callback, "_parent"):
+            # `util.extend_command` was used
+            code = inspect.getsource(cmd_func.callback._parent)
+        else:
+            code = inspect.getsource(cmd_func.callback)
     except TypeError:
         # Perhaps a partial, try again
         code = inspect.getsource(cmd_func.callback.func)
