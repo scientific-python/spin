@@ -1,21 +1,25 @@
-# spin 0.13rc0
+# spin 0.13
 
-We're happy to announce the release of spin 0.13rc0!
+We're happy to announce the release of spin 0.13!
 
 ## Enhancements
 
 - Clarify error message when executed binary not found ([#237](https://github.com/scientific-python/spin/pull/237)).
 - Add mechanism for extending existing spin commands ([#248](https://github.com/scientific-python/spin/pull/248)).
+- Add pre-import keyword to IPython command ([#251](https://github.com/scientific-python/spin/pull/251)).
 
 ## Bug Fixes
 
 - Allow overriding --prefix in spin build ([#241](https://github.com/scientific-python/spin/pull/241)).
 - Improve source layout test discovery ([#247](https://github.com/scientific-python/spin/pull/247)).
 - Let subprocess launched by run handle its own sigint ([#246](https://github.com/scientific-python/spin/pull/246)).
+- Correctly colorize uppercase single character flags ([#253](https://github.com/scientific-python/spin/pull/253)).
+- Find correct source for extended commands ([#254](https://github.com/scientific-python/spin/pull/254)).
 
 ## Documentation
 
 - Auto-generate README table of contents ([#234](https://github.com/scientific-python/spin/pull/234)).
+- Add metavars for improved docstring rendering ([#252](https://github.com/scientific-python/spin/pull/252)).
 
 ## Maintenance
 
