@@ -274,6 +274,8 @@ def build(
     quiet=False,
     build_dir=None,
     prefix=None,
+    meson_compile_args=tuple(),
+    meson_install_args=tuple(),
 ):
     """🔧 Build package with Meson/ninja
 
@@ -319,18 +321,7 @@ def build(
             )
         return
 
-    if isinstance(meson_args, tuple):
-        # for backwards compatibility because
-        # previously meson_args was a tuple.
-        # all the members of the meson_args tuple
-        # were passed to meson setup subcommand.
-        meson_args_ = {}
-        meson_args_["setup"] = meson_args
-        meson_args_["compile"] = tuple()
-        meson_args_["install"] = tuple()
-        meson_args = meson_args_
-
-    meson_args_setup = list(meson_args.get("setup", tuple()))
+    meson_args_setup = list(meson_args)
 
     if gcov:
         meson_args_setup = meson_args_setup + ["-Db_coverage=true"]
@@ -362,26 +353,24 @@ def build(
 
         # Any other conditions that warrant a reconfigure?
 
-    meson_args_compile = list(meson_args.get("compile", tuple()))
+    meson_compile_args = list(meson_compile_args)
     compile_flags = ["-v"] if verbose else []
-    if "jobs" in meson_args:
-        jobs = meson_args["jobs"]
     if jobs is not None:
         compile_flags += ["-j", str(jobs)]
 
     p = _run(
-        _meson_cli() + ["compile"] + compile_flags + ["-C", abs_build_dir] + meson_args_compile,
+        _meson_cli() + ["compile"] + compile_flags + ["-C", abs_build_dir] + meson_compile_args,
         sys_exit=True,
         output=not quiet,
     )
 
-    meson_args_install = list(meson_args.get("install", tuple()))
+    meson_install_args = list(meson_install_args)
     cmd = _meson_cli() + [
             "install",
             "--only-changed",
             "-C",
             build_dir
-        ] + meson_args_install
+        ] + meson_install_args
 
     p = _run(
          cmd,
