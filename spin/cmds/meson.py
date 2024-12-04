@@ -283,13 +283,15 @@ def build(
     quiet=False,
     build_dir=None,
     prefix=None,
+    meson_compile_args=(),
+    meson_install_args=(),
 ):
     """🔧 Build package with Meson/ninja
 
     The package is installed to `build-install` (unless a different
     build directory is specified with `-C`).
 
-    MESON_ARGS are passed through e.g.:
+    MESON_ARGS are passed through to `meson setup` e.g.:
 
       spin build -- -Dpkg_config_path=/lib64/pkgconfig
 
@@ -328,12 +330,14 @@ def build(
             )
         return
 
-    meson_args = list(meson_args)
+    meson_args_setup = list(meson_args)
 
     if gcov:
-        meson_args = meson_args + ["-Db_coverage=true"]
+        meson_args_setup = meson_args_setup + ["-Db_coverage=true"]
 
-    setup_cmd = _meson_cli() + ["setup", build_dir, f"--prefix={prefix}"] + meson_args
+    setup_cmd = (
+        _meson_cli() + ["setup", build_dir, f"--prefix={prefix}"] + meson_args_setup
+    )
 
     if clean:
         print(f"Removing `{build_dir}`")
@@ -365,10 +369,15 @@ def build(
         compile_flags += ["-j", str(jobs)]
 
     p = _run(
-        _meson_cli() + ["compile"] + compile_flags + ["-C", build_dir],
+        _meson_cli()
+        + ["compile"]
+        + compile_flags
+        + ["-C", build_dir]
+        + list(meson_compile_args),
         sys_exit=True,
         output=not quiet,
     )
+
     p = _run(
         _meson_cli()
         + [
@@ -380,7 +389,8 @@ def build(
             install_dir
             if os.path.isabs(install_dir)
             else os.path.relpath(abs_install_dir, abs_build_dir),
-        ],
+        ]
+        + list(meson_install_args),
         output=(not quiet) and verbose,
     )
 
