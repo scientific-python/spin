@@ -1,6 +1,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "shlib.h"
+
 static PyObject *
 core_echo(PyObject *self, PyObject *args)
 {
@@ -17,8 +19,21 @@ core_echo(PyObject *self, PyObject *args)
     return ret;
 }
 
+static PyObject *
+example_sum(PyObject *self, PyObject *args)
+{
+    int a, b;
+    if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
+        return NULL;
+    }
+
+    long result = sum(a, b);
+    return PyLong_FromLong(result);
+}
+
 static PyMethodDef CoreMethods[] = {
     {"echo",  core_echo, METH_VARARGS, "Echo a string and return 42"},
+    {"example_sum", example_sum, METH_VARARGS, "Sum up two integers"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
