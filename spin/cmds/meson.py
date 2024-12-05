@@ -231,11 +231,6 @@ def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir
         )
 
 
-if sys.platform.startswith("win"):
-    DEFAULT_PREFIX = "C:/"
-else:
-    DEFAULT_PREFIX = "/usr"
-
 build_dir_option = click.option(
     "-C",
     "--build-dir",
@@ -266,10 +261,10 @@ build_dir_option = click.option(
 )
 @click.option(
     "--prefix",
-    help="The build prefix, passed directly to meson.",
+    help="The build prefix as an absolute path, passed directly to meson.",
     type=str,
     metavar="PREFIX",
-    default=DEFAULT_PREFIX,
+    default="",
 )
 @click.argument("meson_args", nargs=-1)
 @build_dir_option
@@ -316,9 +311,11 @@ def build(
     Which can then be used to build (`spin-clang build`), to test (`spin-clang test ...`), etc.
 
     """
-    abs_build_dir = os.path.abspath(build_dir)
     install_dir = _get_install_dir(build_dir)
     abs_install_dir = os.path.abspath(install_dir)
+
+    if not prefix:
+        prefix = abs_install_dir
 
     cfg = get_config()
     distname = cfg.get("project.name", None)
@@ -385,10 +382,6 @@ def build(
             "--only-changed",
             "-C",
             build_dir,
-            "--destdir",
-            install_dir
-            if os.path.isabs(install_dir)
-            else os.path.relpath(abs_install_dir, abs_build_dir),
         ]
         + list(meson_install_args),
         output=(not quiet) and verbose,
