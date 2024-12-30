@@ -13,8 +13,7 @@ project(
 
 cc = meson.get_compiler('c')
 
-py_mod = import('python')
-py = py_mod.find_installation(pure: false)
+py = import('python').find_installation(pure: false)
 py_dep = py.dependency()
 
 subdir('example_pkg')

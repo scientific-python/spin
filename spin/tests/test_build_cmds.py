@@ -38,7 +38,8 @@ def test_debug_builds(example_pkg):
 
 def test_prefix_builds(example_pkg):
     """does spin build --prefix create a build-install directory with the correct structure?"""
-    spin("build", "--prefix=/foobar/")
+    prefix = Path.cwd() / "build-install" / "foobar"
+    spin("build", f"--prefix={prefix}")
     assert (Path("build-install") / Path("foobar")).exists()
 
 
