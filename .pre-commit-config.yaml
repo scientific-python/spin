@@ -32,7 +32,7 @@ repos:
         args: [--prose-wrap=preserve]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 89c421dff2e1026ba12cdb9ebd731f4a83aa8021  # frozen: v0.8.6
+    rev: 89c421dff2e1026ba12cdb9ebd731f4a83aa8021 # frozen: v0.8.6
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes", "--exit-non-zero-on-fix"]
@@ -44,7 +44,7 @@ repos:
       - id: blacken-docs
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: bbc3dc1f890007061f18f17e2334f216ea9e5df7  # frozen: v1.14.1
+    rev: bbc3dc1f890007061f18f17e2334f216ea9e5df7 # frozen: v1.14.1
     hooks:
       - id: mypy
         exclude: |
@@ -59,7 +59,7 @@ repos:
         args: ["-L", "ans"]
 
   - repo: https://github.com/jsh9/markdown-toc-creator
-    rev: "30d2161201e9ea2cf2c211f4b30bc8346847de08"  # frozen: 0.0.10
+    rev: "30d2161201e9ea2cf2c211f4b30bc8346847de08" # frozen: 0.0.10
     hooks:
       - id: markdown-toc-creator
         files: README.md
