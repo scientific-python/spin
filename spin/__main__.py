@@ -1,11 +1,11 @@
 import collections
 import importlib
 import importlib.util
+import inspect
 import os
 import pathlib
 import sys
 import textwrap
-import traceback
 from typing import Union
 
 import click
@@ -199,20 +199,26 @@ def main():
 
     try:
         group()
-    except Exception:
-        click.secho("\n" + traceback.format_exc(limit=-3), fg="red", file=sys.stderr)
+    except Exception as e:
         click.secho(
             textwrap.dedent(
                 f"""\
-        An internal error has occurred. Please file a bug report at
 
-          https://github.com/scientific-python/spin
+            {type(e).__name__}: {e}
 
-        including the above traceback and the following information:
+            This exception was raised from:
 
-          spin: {__version__}, package: {proj_name}
+              {inspect.trace()[-1].filename}
 
-        Aborting."""
+            If you suspect this is a bug in `spin`, please file a report at:
+
+              https://github.com/scientific-python/spin
+
+            including the above traceback and the following information:
+
+              spin: {__version__}, package: {proj_name}
+
+            Aborting."""
             ),
             fg="red",
             bold=True,
