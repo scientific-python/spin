@@ -716,6 +716,13 @@ def ipython(ctx, *, ipython_args, build_dir, pre_import=""):
         )
         ctx.invoke(build_cmd, build_dir=build_dir)
 
+    if not shutil.which("ipython"):
+        click.secho(
+            "Could not locate IPython; please install it using `pip install ipython` or similar.",
+            fg="bright_red",
+        )
+        sys.exit(1)
+
     p = _set_pythonpath(build_dir)
     if p:
         print(f'💻 Launching IPython with PYTHONPATH="{p}"')
