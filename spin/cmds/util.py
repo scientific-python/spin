@@ -5,6 +5,7 @@ from __future__ import (
 import copy
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 from collections.abc import Callable
@@ -65,8 +66,15 @@ def run(
         kwargs = {**output_kwargs, **kwargs}
 
     if replace and (sys.platform in ("linux", "darwin")):
+        if not shutil.which(cmd[0]):
+            click.secho(
+                f"`{cmd[0]}` executable not found; exiting.",
+                fg="bright_red",
+            )
+            raise SystemExit(1) from None
+
         os.execvp(cmd[0], cmd)
-        print(f"Failed to launch `{cmd}`")
+        print(f"Failed to launch `{cmd}`; exiting.")
         sys.exit(-1)
     else:
         try:
