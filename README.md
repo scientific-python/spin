@@ -248,7 +248,8 @@ cli = 'path/to/custom/meson'
 
 ## Auto-completion
 
-To enable shell auto-completion, first install `spin`, then follow these instructions.
+To enable shell auto-completion, first install `spin`, then follow these instructions
+(from the [click documentation](https://click.palletsprojects.com/en/stable/shell-completion/#enabling-completion)).
 The same instructions work for ZSH, just replace "bash" with "zsh".
 
 1. Create a completions file:
