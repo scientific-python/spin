@@ -1,8 +1,13 @@
+subdir('submodule')
+
 py.extension_module(
   '_core',
   'coremodule.c',
+  include_directories: 'submodule',
+  dependencies: shlib_dep,
   install: true,
-  subdir: 'example_pkg'
+  subdir: 'example_pkg',
+  install_rpath: '$ORIGIN/submodule',
 )
 
 python_sources = [
@@ -15,5 +20,4 @@ py.install_sources(
   subdir: 'example_pkg'
 )
 
-install_subdir('submodule', install_dir: py.get_install_dir() / 'example_pkg')
 install_subdir('tests', install_dir: py.get_install_dir() / 'example_pkg')
