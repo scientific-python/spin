@@ -30,6 +30,7 @@ Most of the Meson commands listed below should work "out of the box" for those.
   - [Argument overrides](#argument-overrides)
   - [Advanced: adding arguments to built-in commands](#advanced-adding-arguments-to-built-in-commands)
   - [Advanced: override Meson CLI](#advanced-override-meson-cli)
+- [Auto-completion](#auto-completion)
 - [FAQ](#faq)
 - [For contributors](#for-contributors)
 - [History](#history)
@@ -244,6 +245,28 @@ Meson CLI can be set in `pyproject.toml`:
 [tool.spin.meson]
 cli = 'path/to/custom/meson'
 ```
+
+## Auto-completion
+
+To enable shell auto-completion, first install `spin`, then follow these instructions
+(from the [click documentation](https://click.palletsprojects.com/en/stable/shell-completion/#enabling-completion)).
+The same instructions work for ZSH, just replace "bash" with "zsh".
+
+1. Create a completions file:
+
+```
+_SPIN_COMPLETE=bash_source spin > ~/.spin-complete.bash
+```
+
+Ignore the "need valid configuration" error messages.
+
+2. In your `~/.bashrc`, add:
+
+```
+source ~/.spin-complete.bash
+```
+
+Auto-completions should now work in any spin-enabled project directory.
 
 ## FAQ
 
