@@ -14,6 +14,7 @@ from .testutil import (
     skip_unless_linux,
     skip_unless_macos,
     spin,
+    stderr,
     stdout,
 )
 
@@ -88,6 +89,15 @@ def test_run_stdout(example_pkg):
     assert (
         stdout(p) == "0.0.0dev0"
     ), f"`spin run` stdout did not yield version, but {stdout(p)}"
+
+
+def test_run_no_build(example_pkg):
+    """Does spin run ... --no-build correctly avoid building."""
+    output = stderr(spin("run", "echo $PYTHONPATH"))
+    assert "meson compile" in output
+
+    output = stderr(spin("run", "--no-build", "echo $PYTHONPATH"))
+    assert "meson compile" not in output
 
 
 # Detecting whether a file is executable is not that easy on Windows,
