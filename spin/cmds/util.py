@@ -1,5 +1,5 @@
 from __future__ import (
-    annotations,  # noqa: F401  # TODO: remove once only >3.8 is supported
+    annotations,  # noqa: F401  # TODO: remove once only >3.14 is supported
 )
 
 import copy
