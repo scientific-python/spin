@@ -1,7 +1,7 @@
 [project]
 name = "example_pkg"
 version = "0.0dev0"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 description = "spin Example Package"
 
 [build-system]
