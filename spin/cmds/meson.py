@@ -989,7 +989,7 @@ def docs(
 
     if site_path:
         os.environ["PYTHONPATH"] = (
-            f'{site_path}{os.sep}:{os.environ.get("PYTHONPATH", "")}'
+            f"{site_path}{os.sep}:{os.environ.get('PYTHONPATH', '')}"
         )
         click.secho(
             f"$ export PYTHONPATH={os.environ['PYTHONPATH']}",

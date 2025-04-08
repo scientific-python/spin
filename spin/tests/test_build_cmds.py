@@ -23,9 +23,9 @@ def test_basic_build(example_pkg):
     spin("build")
 
     assert Path("build").exists(), "`build` folder not created after `spin build`"
-    assert Path(
-        "build-install"
-    ).exists(), "`build-install` folder not created after `spin build`"
+    assert Path("build-install").exists(), (
+        "`build-install` folder not created after `spin build`"
+    )
 
 
 def test_debug_builds(example_pkg):
@@ -64,17 +64,17 @@ def test_coverage_reports(example_pkg, report_type, output_file):
     spin("test", "--gcov", f"--gcov-format={report_type}")
 
     coverage_report = Path("./build/meson-logs", output_file)
-    assert (
-        coverage_report.exists()
-    ), f"coverage report not generated for gcov build ({report_type})"
+    assert coverage_report.exists(), (
+        f"coverage report not generated for gcov build ({report_type})"
+    )
 
 
 def test_expand_pythonpath(example_pkg):
     """Does an $ENV_VAR get expanded in `spin run`?"""
     output = spin("run", "echo $PYTHONPATH")
-    assert any(
-        p in stdout(output) for p in ("site-packages", "dist-packages")
-    ), f"Expected value of $PYTHONPATH, got {stdout(output)} instead"
+    assert any(p in stdout(output) for p in ("site-packages", "dist-packages")), (
+        f"Expected value of $PYTHONPATH, got {stdout(output)} instead"
+    )
 
 
 def test_run_stdout(example_pkg):
@@ -85,9 +85,9 @@ def test_run_stdout(example_pkg):
         "-c",
         "import sys; del sys.path[0]; import example_pkg; print(example_pkg.__version__)",
     )
-    assert (
-        stdout(p) == "0.0.0dev0"
-    ), f"`spin run` stdout did not yield version, but {stdout(p)}"
+    assert stdout(p) == "0.0.0dev0", (
+        f"`spin run` stdout did not yield version, but {stdout(p)}"
+    )
 
 
 # Detecting whether a file is executable is not that easy on Windows,
@@ -97,9 +97,9 @@ def test_recommend_run_python(example_pkg):
     """If `spin run file.py` is called, is `spin run python file.py` recommended?"""
     with tempfile.NamedTemporaryFile(suffix=".py") as f:
         p = spin("run", f.name, sys_exit=False)
-        assert "Did you mean to call" in stdout(
-            p
-        ), "Failed to recommend `python run python file.py`"
+        assert "Did you mean to call" in stdout(p), (
+            "Failed to recommend `python run python file.py`"
+        )
 
 
 def test_sdist(example_pkg):
