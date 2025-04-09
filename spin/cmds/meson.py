@@ -238,9 +238,12 @@ else:
 
 
 build_option = click.option(
-    "--build/--no-build",
-    default=True,
-    help="Whether to build or not before executing commands",
+    "--no-build",
+    "build",
+    is_flag=True,
+    callback=lambda ctx, param, value: not value,  # store opposite value in `build` var
+    default=False,
+    help="Disable building before executing command",
 )
 
 build_dir_option = click.option(
