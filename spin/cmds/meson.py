@@ -236,6 +236,16 @@ if sys.platform.startswith("win"):
 else:
     DEFAULT_PREFIX = "/usr"
 
+
+build_option = click.option(
+    "--no-build",
+    "build",
+    is_flag=True,
+    callback=lambda ctx, param, value: not value,  # store opposite value in `build` var
+    default=False,
+    help="Disable building before executing command",
+)
+
 build_dir_option = click.option(
     "-C",
     "--build-dir",
@@ -447,6 +457,7 @@ Which tests to run. Can be a module, function, class, or method:
     default="html",
     help=f"Format of the gcov report. Can be one of {', '.join(e.value for e in GcovReportFormat)}.",
 )
+@build_option
 @build_dir_option
 @click.pass_context
 def test(
@@ -459,6 +470,7 @@ def test(
     coverage=False,
     gcov=None,
     gcov_format=None,
+    build=None,
     build_dir=None,
 ):
     """🔧 Run tests
@@ -541,15 +553,16 @@ def test(
         )
         raise SystemExit(1)
 
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
-        )
-        if gcov is not None:
-            ctx.invoke(build_cmd, build_dir=build_dir, gcov=bool(gcov))
-        else:
-            ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to running tests:", bold=True, fg="bright_green"
+            )
+            if gcov is not None:
+                ctx.invoke(build_cmd, build_dir=build_dir, gcov=bool(gcov))
+            else:
+                ctx.invoke(build_cmd, build_dir=build_dir)
 
     site_path = _set_pythonpath(build_dir)
 
@@ -647,9 +660,10 @@ def test(
     "--code", "-c", metavar="CODE", help="Python program passed in as a string"
 )
 @click.argument("gdb_args", nargs=-1)
+@build_option
 @build_dir_option
 @click.pass_context
-def gdb(ctx, *, code, gdb_args, build_dir):
+def gdb(ctx, *, code, gdb_args, build=None, build_dir=None):
     """👾 Execute code through GDB
 
       spin gdb -c 'import numpy as np; print(np.__version__)'
@@ -670,12 +684,13 @@ def gdb(ctx, *, code, gdb_args, build_dir):
      spin gdb my_tests.py
      spin gdb -- my_tests.py --mytest-flag
     """
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to invoking gdb:", bold=True, fg="bright_green"
-        )
-        ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to invoking gdb:", bold=True, fg="bright_green"
+            )
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
     _set_pythonpath(build_dir)
     gdb_args = list(gdb_args)
@@ -700,21 +715,25 @@ def gdb(ctx, *, code, gdb_args, build_dir):
 
 @click.command()
 @click.argument("ipython_args", nargs=-1)
+@build_option
 @build_dir_option
 @click.pass_context
-def ipython(ctx, *, ipython_args, build_dir, pre_import=""):
+def ipython(ctx, *, ipython_args, build=None, build_dir=None, pre_import=""):
     """💻 Launch IPython shell with PYTHONPATH set
 
     IPYTHON_ARGS are passed through directly to IPython, e.g.:
 
     spin ipython -- -i myscript.py
     """
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to launching ipython:", bold=True, fg="bright_green"
-        )
-        ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to launching ipython:",
+                bold=True,
+                fg="bright_green",
+            )
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
     p = _set_pythonpath(build_dir)
     if p:
@@ -726,9 +745,10 @@ def ipython(ctx, *, ipython_args, build_dir, pre_import=""):
 
 @click.command()
 @click.argument("shell_args", nargs=-1)
+@build_option
 @build_dir_option
 @click.pass_context
-def shell(ctx, shell_args=[], build_dir=None):
+def shell(ctx, shell_args=[], build=None, build_dir=None):
     """💻 Launch shell with PYTHONPATH set
 
     SHELL_ARGS are passed through directly to the shell, e.g.:
@@ -738,12 +758,15 @@ def shell(ctx, shell_args=[], build_dir=None):
     Ensure that your shell init file (e.g., ~/.zshrc) does not override
     the PYTHONPATH.
     """
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to invoking shell:", bold=True, fg="bright_green"
-        )
-        ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to invoking shell:",
+                bold=True,
+                fg="bright_green",
+            )
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
     p = _set_pythonpath(build_dir)
     if p:
@@ -758,21 +781,25 @@ def shell(ctx, shell_args=[], build_dir=None):
 
 @click.command()
 @click.argument("python_args", nargs=-1)
+@build_option
 @build_dir_option
 @click.pass_context
-def python(ctx, *, python_args, build_dir):
+def python(ctx, *, python_args, build=None, build_dir=None):
     """🐍 Launch Python shell with PYTHONPATH set
 
     PYTHON_ARGS are passed through directly to Python, e.g.:
 
     spin python -- -c 'import sys; print(sys.path)'
     """
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to invoking Python:", bold=True, fg="bright_green"
-        )
-        ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to invoking Python:",
+                bold=True,
+                fg="bright_green",
+            )
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
     p = _set_pythonpath(build_dir)
     if p:
@@ -799,10 +826,11 @@ def python(ctx, *, python_args, build_dir):
 
 
 @click.command(context_settings={"ignore_unknown_options": True})
+@build_option
 @build_dir_option
 @click.argument("args", nargs=-1)
 @click.pass_context
-def run(ctx, *, args, build_dir=None):
+def run(ctx, *, args, build=None, build_dir=None):
     """🏁 Run a shell command with PYTHONPATH set
 
     \b
@@ -821,12 +849,13 @@ def run(ctx, *, args, build_dir=None):
     if not len(args) > 0:
         raise RuntimeError("No command given")
 
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        # Redirect spin generated output
-        with contextlib.redirect_stdout(sys.stderr):
-            # Also ask build to be quiet
-            ctx.invoke(build_cmd, build_dir=build_dir, quiet=True)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            # Redirect spin generated output
+            with contextlib.redirect_stdout(sys.stderr):
+                # Also ask build to be quiet
+                ctx.invoke(build_cmd, build_dir=build_dir, quiet=True)
 
     is_posix = sys.platform in ("linux", "darwin")
     shell = len(args) == 1
@@ -883,12 +912,6 @@ def run(ctx, *, args, build_dir=None):
     help="Clean previously built docs before building",
 )
 @click.option(
-    "--build/--no-build",
-    "first_build",
-    default=True,
-    help="Build project before generating docs",
-)
-@click.option(
     "--plot/--no-plot",
     "sphinx_gallery_plot",
     default=True,
@@ -901,6 +924,7 @@ def run(ctx, *, args, build_dir=None):
     metavar="N_JOBS",
     help="Number of parallel build jobs",
 )
+@build_option
 @build_dir_option
 @click.pass_context
 def docs(
@@ -908,10 +932,10 @@ def docs(
     *,
     sphinx_target,
     clean,
-    first_build,
     jobs,
     sphinx_gallery_plot,
     clean_dirs=None,
+    build=None,
     build_dir=None,
 ):
     """📖 Build Sphinx documentation
@@ -941,7 +965,7 @@ def docs(
 
     if sphinx_target in ("targets", "help"):
         clean = False
-        first_build = False
+        build = False
         sphinx_target = "help"
 
     if clean:
@@ -963,7 +987,7 @@ def docs(
 
     build_cmd = _get_configured_command("build")
 
-    if build_cmd and first_build:
+    if build_cmd and build:
         click.secho(
             "Invoking `build` prior to building docs:", bold=True, fg="bright_green"
         )
@@ -1007,9 +1031,10 @@ def docs(
     "--code", "-c", metavar="CODE", help="Python program passed in as a string"
 )
 @click.argument("lldb_args", nargs=-1)
+@build_option
 @build_dir_option
 @click.pass_context
-def lldb(ctx, *, code, lldb_args, build_dir=None):
+def lldb(ctx, *, code, lldb_args, build=None, build_dir=None):
     """👾 Execute code through LLDB
 
       spin lldb -c 'import numpy as np; print(np.__version__)'
@@ -1032,12 +1057,13 @@ def lldb(ctx, *, code, lldb_args, build_dir=None):
      spin lldb -- --arch x86_64 -- my_tests.py
      spin lldb -c 'import numpy as np; print(np.__version__)' -- --arch x86_64
     """
-    build_cmd = _get_configured_command("build")
-    if build_cmd:
-        click.secho(
-            "Invoking `build` prior to invoking lldb:", bold=True, fg="bright_green"
-        )
-        ctx.invoke(build_cmd, build_dir=build_dir)
+    if build:
+        build_cmd = _get_configured_command("build")
+        if build_cmd:
+            click.secho(
+                "Invoking `build` prior to invoking lldb:", bold=True, fg="bright_green"
+            )
+            ctx.invoke(build_cmd, build_dir=build_dir)
 
     _set_pythonpath(build_dir)
     lldb_args = list(lldb_args)
