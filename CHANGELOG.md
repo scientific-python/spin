@@ -1,3 +1,46 @@
+# spin 0.14
+
+We're happy to announce the release of spin 0.14!
+
+## Enhancements
+
+- DEV: Update `spin` to accept arguments of `meson compile` and `meson install` ([#256](https://github.com/scientific-python/spin/pull/256)).
+- On run with replace, warn if executable not found ([#271](https://github.com/scientific-python/spin/pull/271)).
+- Add ability to switch pre-build on/off ([#272](https://github.com/scientific-python/spin/pull/272)).
+
+## Documentation
+
+- Improve advice on when to file bug ([#266](https://github.com/scientific-python/spin/pull/266)).
+- Add auto-completion docs ([#273](https://github.com/scientific-python/spin/pull/273)).
+
+## Maintenance
+
+- Update pre-commit (12/2024) ([#259](https://github.com/scientific-python/spin/pull/259)).
+- [pre-commit.ci] pre-commit autoupdate ([#261](https://github.com/scientific-python/spin/pull/261)).
+- Bump pre-commit from 4.0.1 to 4.1.0 in the actions group ([#265](https://github.com/scientific-python/spin/pull/265)).
+- Bump scientific-python/attach-next-milestone-action from bc07be829f693829263e57d5e8489f4e57d3d420 to c9cfab10ad0c67fed91b01103db26b7f16634639 in the actions group ([#267](https://github.com/scientific-python/spin/pull/267)).
+- Bump pre-commit from 4.1.0 to 4.2.0 in the actions group ([#274](https://github.com/scientific-python/spin/pull/274)).
+- Drop Python 3.8 support ([#275](https://github.com/scientific-python/spin/pull/275)).
+- [pre-commit.ci] pre-commit autoupdate ([#276](https://github.com/scientific-python/spin/pull/276)).
+
+## Contributors
+
+3 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+- ਗਗਨਦੀਪ ਸਿੰਘ (Gagandeep Singh) ([@czgdp1807](https://github.com/czgdp1807))
+
+5 reviewers added to this release (alphabetically):
+
+- Brigitta Sipőcz ([@bsipocz](https://github.com/bsipocz))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Ralf Gommers ([@rgommers](https://github.com/rgommers))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+- ਗਗਨਦੀਪ ਸਿੰਘ (Gagandeep Singh) ([@czgdp1807](https://github.com/czgdp1807))
+
+_These lists are automatically generated, and may not be complete or may contain duplicates._
+
 # spin 0.13
 
 We're happy to announce the release of spin 0.13!
@@ -175,8 +218,7 @@ We're happy to announce the release of spin 0.10!
 - Loïc Estève ([@lesteve](https://github.com/lesteve))
 - Stefan van der Walt ([@stefanv](https://github.com/stefanv))
 
-_These lists are automatically generated, and may not be complete or may contain
-duplicates._
+_These lists are automatically generated, and may not be complete or may contain duplicates._
 
 # spin 0.9
 
