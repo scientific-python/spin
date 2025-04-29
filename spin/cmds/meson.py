@@ -83,7 +83,7 @@ def _set_pythonpath(build_dir, quiet=False):
                 if not (quiet):
                     click.secho(
                         "Editable install of same source directory detected; not setting PYTHONPATH",
-                        fg="bright_red",
+                        fg="yellow",
                     )
                 return ""
             else:
@@ -336,7 +336,7 @@ def build(
         if not quiet:
             click.secho(
                 "Editable install of same source detected; skipping build",
-                fg="bright_red",
+                fg="yellow",
             )
         return
 
