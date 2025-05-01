@@ -1,11 +1,11 @@
 import collections
 import importlib
 import importlib.util
-import inspect
 import os
 import pathlib
 import sys
 import textwrap
+import traceback
 from typing import Union
 
 import click
@@ -199,17 +199,16 @@ def main():
 
     try:
         group()
-    except Exception as e:
+    except Exception:
         click.secho(
-            textwrap.dedent(
-                f"""\
+            "\n" + "".join(traceback.format_exception(*sys.exc_info(), limit=-1)),
+            fg="red",
+            bold=True,
+            file=sys.stderr,
+        )
 
-            {type(e).__name__}: {e}
-
-            This exception was raised from:
-
-              {inspect.trace()[-1].filename}
-
+        click.secho(
+            textwrap.dedent(f"""\
             If you suspect this is a bug in `spin`, please file a report at:
 
               https://github.com/scientific-python/spin
@@ -218,9 +217,8 @@ def main():
 
               spin: {__version__}, package: {proj_name}
 
-            Aborting."""
-            ),
-            fg="red",
+            Aborting."""),
+            fg="yellow",
             bold=True,
             file=sys.stderr,
         )
