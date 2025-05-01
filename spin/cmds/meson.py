@@ -8,6 +8,7 @@ import signal
 import sys
 from enum import Enum
 from pathlib import Path
+from typing import Union
 
 import click
 
@@ -35,7 +36,15 @@ def _meson_cli():
         return [meson_cli]
 
 
-def _editable_install_path(distname):
+def editable_install_path(distname: str) -> Union[str, None]:
+    """Return path of the editable install for package `distname`.
+
+    If the package is not an editable install, return None.
+
+    See Also
+    --------
+    is_editable_install
+    """
     import importlib_metadata
 
     try:
@@ -57,16 +66,34 @@ def _editable_install_path(distname):
         return None
 
 
-def _is_editable_install(distname):
-    return _editable_install_path(distname) is not None
+# backward compat
+_editable_install_path = editable_install_path
 
 
-def _is_editable_install_of_same_source(distname):
-    editable_path = _editable_install_path(distname)
-    return editable_path and os.path.samefile(_editable_install_path(distname), ".")
+def is_editable_install(distname: str, verify_path: bool = False) -> bool:
+    """Whether or not an editable install of `distname` is present.
+
+    Parameters
+    ----------
+    `distname` : str
+        Name of the package. E.g., ``numpy`` or ``scikit-image``.
+        Not always the same as the module name (``numpy`` and
+        ``skimage`` for the above).
+    """
+    return editable_install_path(distname) is not None
 
 
-def _set_pythonpath(build_dir, quiet=False):
+# backward compat
+_is_editable_install = is_editable_install
+
+
+def _is_editable_install_of_same_source(distname: str) -> bool:
+    """Check whether the editable install was made from the current directory."""
+    editable_path = editable_install_path(distname)
+    return (editable_path is not None) and os.path.samefile(editable_path, ".")
+
+
+def _set_pythonpath(build_dir: str, quiet: bool = False) -> str:
     """Set first entry of PYTHONPATH to site packages directory.
 
     For editable installs, leave the PYTHONPATH alone.
@@ -78,7 +105,7 @@ def _set_pythonpath(build_dir, quiet=False):
     cfg = get_config()
     distname = cfg.get("project.name", None)
     if distname:
-        if _is_editable_install(distname):
+        if is_editable_install(distname):
             if _is_editable_install_of_same_source(distname):
                 if not (quiet):
                     click.secho(
@@ -114,11 +141,11 @@ def _set_pythonpath(build_dir, quiet=False):
     return site_packages
 
 
-def _get_install_dir(build_dir):
+def _get_install_dir(build_dir: str) -> str:
     return f"{build_dir}-install"
 
 
-def _get_site_packages(build_dir):
+def _get_site_packages(build_dir: str) -> str:
     install_dir = _get_install_dir(build_dir)
     try:
         cfg = get_config()
@@ -140,13 +167,12 @@ def _get_site_packages(build_dir):
     site_packages = None
     if any(f"python{X}." in p for p in candidate_paths):
         # We have a system that uses `python3.X/site-packages` or `python3.X/dist-packages`
-        site_packages = [p for p in candidate_paths if f"python{X}.{Y}" in p]
-        if len(site_packages) == 0:
+        site_packages_paths = [p for p in candidate_paths if f"python{X}.{Y}" in p]
+        if len(site_packages_paths) == 0:
             raise FileNotFoundError(
                 f"No site-packages found in {install_dir} for Python {X}.{Y}"
             )
-        else:
-            site_packages = site_packages[0]
+        site_packages = site_packages_paths[0]
     else:
         # A naming scheme that does not encode the Python major/minor version is used, so return
         # whatever site-packages path was found
@@ -165,22 +191,22 @@ def _get_site_packages(build_dir):
     return site_packages
 
 
-def _meson_version():
+def _meson_version() -> Union[str, None]:
     try:
         p = _run(_meson_cli() + ["--version"], output=False, echo=False)
         return p.stdout.decode("ascii").strip()
     except:
-        pass
+        return None
 
 
-def _meson_version_configured(build_dir):
+def _meson_version_configured(build_dir: str) -> Union[str, None]:
     try:
         meson_info_fn = os.path.join(build_dir, "meson-info", "meson-info.json")
         with open(meson_info_fn) as f:
             meson_info = json.load(f)
         return meson_info["meson_version"]["full"]
     except:
-        pass
+        return None
 
 
 def _meson_coverage_configured() -> bool:
@@ -199,7 +225,7 @@ def _meson_coverage_configured() -> bool:
     return False
 
 
-def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir):
+def _check_coverage_tool_installation(coverage_type: GcovReportFormat, build_dir: str):
     requirements = {  # https://github.com/mesonbuild/meson/blob/6e381714c7cb15877e2bcaa304b93c212252ada3/docs/markdown/Unit-tests.md?plain=1#L49-L62
         GcovReportFormat.html: ["Gcovr/GenHTML", "lcov"],
         GcovReportFormat.xml: ["Gcovr (version 3.3 or higher)"],

@@ -168,7 +168,7 @@ def extend_command(
             return user_func(*args, parent_callback=parent_cmd, **kwargs)
 
         my_cmd.callback = click.pass_context(callback_with_parent_callback)
-        my_cmd.callback._parent = user_func
+        my_cmd.callback._parent = user_func  # type: ignore[attr-defined]
 
         if doc is not None:
             my_cmd.help = doc
