@@ -28,6 +28,7 @@ def test_doc_setter():
 
     assert "Additional docstring" in get_usage(build_ext)
     assert "Additional docstring" not in get_usage(cmds.meson.build)
+    assert get_usage(cmds.meson.build) not in get_usage(build_ext)
 
     @extend_command(cmds.meson.build, doc="Hello world")
     def build_ext(*, parent_callback, extra=None, **kwargs):
@@ -39,6 +40,7 @@ def test_doc_setter():
     doc = get_usage(build_ext)
     assert "Hello world\n" in doc
     assert "\n  Additional docstring" in doc
+    assert get_usage(cmds.meson.build) not in get_usage(build_ext)
 
 
 def test_ext_additional_args():
