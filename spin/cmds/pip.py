@@ -1,3 +1,5 @@
+import sys
+
 import click
 
 from .util import run as _run
@@ -37,7 +39,7 @@ def install(*, pip_args, editable, verbose, verbose_import):
       pip install . --no-build-isolation --editable --no-clean
     """
     pip_args = list(pip_args)
-    pip_cmd = ["pip", "install"]
+    pip_cmd = [sys.executable, "-m", "pip", "install"]
     pip_args += ["--no-build-isolation"]
 
     if editable:
