@@ -513,7 +513,7 @@ def test(
 
     To run test modules, functions, classes, or methods:
 
-      spin -t numpy.random
+      spin test -t numpy.random
 
     To report the durations of the N slowest tests:
 
