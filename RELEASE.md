@@ -1,4 +1,4 @@
-tgit g# Release process for `spin`
+# Release process for `spin`
 
 ## Introduction
 
