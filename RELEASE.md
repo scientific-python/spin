@@ -37,10 +37,10 @@ Example `version number`
 
 - Tag the release in git:
 
-      git tag -a -s v${VERSION} -m "signed ${VERSION} tag"
+      git tag -s v${VERSION} -m "signed ${VERSION} tag"
 
-  If you do not have a gpg key, use -u instead; it is important for
-  Debian packaging that the tags are annotated
+  If you do not have a gpg key, use -a instead; it is important for
+  Debian packaging that the tags are annotated.
 
 - Push the new meta-data to github:
 
