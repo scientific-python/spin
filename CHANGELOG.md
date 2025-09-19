@@ -1,3 +1,47 @@
+# spin 0.15
+
+We're happy to announce the release of spin 0.15!
+
+## Enhancements
+
+- Expose `is_editable_install` and `editable_install_path` ([#279](https://github.com/scientific-python/spin/pull/279)).
+- Improve traceback printout ([#280](https://github.com/scientific-python/spin/pull/280)).
+- Use sys.executable to run pip in the 'install' command ([#286](https://github.com/scientific-python/spin/pull/286)).
+
+## Bug Fixes
+
+- Pin upper version of click ([#294](https://github.com/scientific-python/spin/pull/294)).
+
+## Documentation
+
+- DOC: fix typo in docstring ([#285](https://github.com/scientific-python/spin/pull/285)).
+
+## Maintenance
+
+- Change color of editable install warnings ([#278](https://github.com/scientific-python/spin/pull/278)).
+- Support for Python 3.14 ([#290](https://github.com/scientific-python/spin/pull/290)).
+
+## Contributors
+
+5 authors added to this release (alphabetically):
+
+- Brigitta Sipőcz ([@bsipocz](https://github.com/bsipocz))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Lucas Colley ([@lucascolley](https://github.com/lucascolley))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+- Warren Weckesser ([@WarrenWeckesser](https://github.com/WarrenWeckesser))
+
+5 reviewers added to this release (alphabetically):
+
+- Brigitta Sipőcz ([@bsipocz](https://github.com/bsipocz))
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Ralf Gommers ([@rgommers](https://github.com/rgommers))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+- Warren Weckesser ([@WarrenWeckesser](https://github.com/WarrenWeckesser))
+
+_These lists are automatically generated, and may not be complete or may contain
+duplicates._
+
 # spin 0.14
 
 We're happy to announce the release of spin 0.14!
