@@ -39,8 +39,8 @@ Example `version number`
 
       git tag -s v${VERSION} -m "signed ${VERSION} tag"
 
-  If you do not have a gpg key, use -a instead; it is important for
-  Debian packaging that the tags are annotated.
+  (If you do not have a GPG key, follow the tutorial to set it up:
+   https://help.github.com/articles/signing-commits-with-gpg/)
 
 - Push the new meta-data to github:
 
