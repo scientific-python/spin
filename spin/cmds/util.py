@@ -170,9 +170,15 @@ def extend_command(
         my_cmd.callback = click.pass_context(callback_with_parent_callback)
         my_cmd.callback._parent = user_func  # type: ignore[attr-defined]
 
+        # If doc is present then combine it with user_func.__doc__
+        # Otherwise override it with user_func.__doc__
+        # if it is not empty.
         if doc is not None:
-            my_cmd.help = doc
-        my_cmd.help = (my_cmd.help or "") + "\n\n" + (user_func.__doc__ or "")
+            my_cmd.help = doc + "\n\n" + (user_func.__doc__ or "")
+        else:
+            my_cmd.help = (my_cmd.help or "")
+            if user_func.__doc__ is not None:
+                my_cmd.help = user_func.__doc__
         my_cmd.help = my_cmd.help.strip()
 
         my_cmd.name = user_func.__name__.replace("_", "-")
