@@ -445,7 +445,7 @@ def _get_configured_command(command_name):
     metavar="N_JOBS",
     default="1",
     help=(
-        "Number of parallel jobs for testing. Can be set to `auto` to use all cores."
+        "Number of parallel jobs for testing with pytest-xdist. Can be set to `auto` to use all cores."
     ),
 )
 @click.option(
