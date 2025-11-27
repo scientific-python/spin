@@ -116,6 +116,10 @@ def test_sdist(example_pkg):
     spin("sdist")
 
 
+def test_wheel(example_pkg):
+    spin("wheel")
+
+
 def test_example(example_pkg):
     spin("example")
 
