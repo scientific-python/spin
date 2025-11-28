@@ -118,6 +118,8 @@ def test_sdist(example_pkg):
 
 def test_wheel(example_pkg):
     spin("wheel")
+    wheel_file_list = list(Path("dist").glob("example_pkg-0.0.0dev0-*.whl"))
+    assert len(wheel_file_list) == 1, "Wheel file not created in dist/"
 
 
 def test_example(example_pkg):
