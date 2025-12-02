@@ -126,6 +126,7 @@ Available as `spin.cmds.build.*`:
 
 ```
 sdist      📦 Build a source distribution in `dist/`
+wheel      📦 Build a wheel distribution in `dist/`
 ```
 
 ### [pip](https://pip.pypa.io) (Package Installer for Python)

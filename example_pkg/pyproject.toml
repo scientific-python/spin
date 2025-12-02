@@ -29,6 +29,7 @@ package = 'example_pkg'
   "spin.cmds.meson.build",
   "spin.cmds.meson.test",
   "spin.cmds.build.sdist",
+  "spin.cmds.build.wheel",
 ]
 "Documentation" = [
   "spin.cmds.meson.docs"
