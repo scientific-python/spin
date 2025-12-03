@@ -297,6 +297,9 @@ nox -s test -- -v
 nox -s test -- -v spin/tests/test_meson.py
 ```
 
+`spin` takes a slightly more conservative approach than [SPEC 0](https://scientific-python.org/specs/spec-0000/), and
+supports all non-EOL versions of Python.
+
 ## History
 
 The `dev.py` tool was [proposed for SciPy](https://github.com/scipy/scipy/issues/15489) by Ralf Gommers and [implemented](https://github.com/scipy/scipy/pull/15959) by Sayantika Banik, Eduardo Naufel Schettino, and Ralf Gommers (also see [Sayantika's blog post](https://labs.quansight.org/blog/the-evolution-of-the-scipy-developer-cli)).
