@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-  "click>=8,!=8.3.0,<8.4",
+  "click>=8,<8.3",
   "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'",
   "importlib_metadata >= 7"
