@@ -24,14 +24,17 @@ skip_py_lt_311 = pytest.mark.skipif(
 
 def spin(*args, **user_kwargs):
     args = (str(el) for el in args)
+    # Capture stdout, stderr separately
     default_kwargs = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
-        "sys_exit": True,
+        "sys_exit": False,
     }
     p = run(["spin"] + list(args), **{**default_kwargs, **user_kwargs})
     if p.returncode != 0:
         print(p.stdout.decode("utf-8"), end="")
+        print(p.stderr.decode("utf-8"), end="")
+        sys.exit(p.returncode)
     return p
 
 
