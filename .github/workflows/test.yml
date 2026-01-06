@@ -26,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
+        id: setup-python
         with:
           python-version: ${{ matrix.python_version }}
           allow-prereleases: true
@@ -37,4 +38,4 @@ jobs:
           sudo apt-get install -y gdb lcov
       - name: Tests PyTest
         run: |
-          pipx run nox --forcecolor -s test
+          pipx run --python '${{ steps.setup-python.outputs.python-path }}' nox --forcecolor -s test
