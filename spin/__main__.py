@@ -6,7 +6,6 @@ import pathlib
 import sys
 import textwrap
 import traceback
-from typing import Union
 
 import click
 
@@ -31,7 +30,7 @@ config_filenames = (
 )
 
 
-def _detect_config_dir(path: pathlib.Path) -> Union[pathlib.Path, None]:
+def _detect_config_dir(path: pathlib.Path) -> pathlib.Path | None:
     path = path.resolve()
     files = os.listdir(path)
     if any(f in files for f in config_filenames):
