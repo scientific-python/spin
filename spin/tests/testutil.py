@@ -29,7 +29,10 @@ def spin(*args, **user_kwargs):
         "stderr": subprocess.PIPE,
         "sys_exit": True,
     }
-    return run(["spin"] + list(args), **{**default_kwargs, **user_kwargs})
+    p = run(["spin"] + list(args), **{**default_kwargs, **user_kwargs})
+    if p.returncode != 0:
+        print(p.stdout.decode("utf-8"), end="")
+    return p
 
 
 def stdout(p):
