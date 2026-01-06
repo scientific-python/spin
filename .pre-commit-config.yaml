@@ -9,7 +9,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -25,26 +25,26 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: 14abee445aea04b39069c19b4bd54efff6775819  # frozen: v3.7.4
+    rev: 14abee445aea04b39069c19b4bd54efff6775819 # frozen: v3.7.4
     hooks:
       - id: prettier
         files: \.(css|html|md|yml|yaml|toml)
         args: [--prose-wrap=preserve]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 5ba58aca0bd5bc7c0e1c0fc45af2e88d6a2bde83  # frozen: v0.14.10
+    rev: 5ba58aca0bd5bc7c0e1c0fc45af2e88d6a2bde83 # frozen: v0.14.10
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes", "--exit-non-zero-on-fix"]
       - id: ruff-format
 
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: dda8db18cfc68df532abf33b185ecd12d5b7b326  # frozen: 1.20.0
+    rev: dda8db18cfc68df532abf33b185ecd12d5b7b326 # frozen: 1.20.0
     hooks:
       - id: blacken-docs
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: a66e98df7b4aeeb3724184b332785976d062b92e  # frozen: v1.19.1
+    rev: a66e98df7b4aeeb3724184b332785976d062b92e # frozen: v1.19.1
     hooks:
       - id: mypy
         exclude: |
@@ -59,8 +59,13 @@ repos:
         args: ["-L", "ans"]
 
   - repo: https://github.com/jsh9/markdown-toc-creator
-    rev: "02e248af5abb8e1722b77642c58c4abbf93703dd"  # frozen: 0.1.3
+    rev: "02e248af5abb8e1722b77642c58c4abbf93703dd" # frozen: 0.1.3
     hooks:
       - id: markdown-toc-creator
         files: README.md
-        args: ["--skip-first-n-lines=4"]
+        args:
+          [
+            "--skip-first-n-lines=4",
+            "--add-toc-title=false",
+            "--add-horizontal-rules=false",
+          ]
