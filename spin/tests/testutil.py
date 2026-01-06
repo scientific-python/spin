@@ -34,7 +34,10 @@ def spin(*args, **user_kwargs):
     if p.returncode != 0:
         print(p.stdout.decode("utf-8"), end="")
         print(p.stderr.decode("utf-8"), end="")
-        sys.exit(p.returncode)
+        # Exit unless the spin call explicitly asks us not to
+        # by setting sys_exit=False
+        if user_kwargs.get("sys_exit", True):
+            sys.exit(p.returncode)
     return p
 
 
