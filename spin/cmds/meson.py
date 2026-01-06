@@ -8,7 +8,6 @@ import signal
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Union
 
 import click
 
@@ -36,7 +35,7 @@ def _meson_cli():
         return [meson_cli]
 
 
-def editable_install_path(distname: str) -> Union[str, None]:
+def editable_install_path(distname: str) -> str | None:
     """Return path of the editable install for package `distname`.
 
     If the package is not an editable install, return None.
@@ -191,7 +190,7 @@ def _get_site_packages(build_dir: str) -> str:
     return site_packages
 
 
-def _meson_version() -> Union[str, None]:
+def _meson_version() -> str | None:
     try:
         p = _run(_meson_cli() + ["--version"], output=False, echo=False)
         return p.stdout.decode("ascii").strip()
@@ -199,7 +198,7 @@ def _meson_version() -> Union[str, None]:
         return None
 
 
-def _meson_version_configured(build_dir: str) -> Union[str, None]:
+def _meson_version_configured(build_dir: str) -> str | None:
     try:
         meson_info_fn = os.path.join(build_dir, "meson-info", "meson-info.json")
         with open(meson_info_fn) as f:

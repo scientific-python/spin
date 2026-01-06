@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 import tempfile
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 import pytest
 
@@ -17,6 +17,10 @@ from .testutil import (
     stderr,
     stdout,
 )
+
+
+def unix_path(p: str) -> str:
+    return PureWindowsPath(p).as_posix()
 
 
 def test_basic_build(example_pkg):
@@ -39,7 +43,7 @@ def test_debug_builds(example_pkg):
 
 def test_prefix_builds(example_pkg):
     """does spin build --prefix create a build-install directory with the correct structure?"""
-    spin("build", "--prefix=/foobar/")
+    spin("build", f"--prefix={os.path.abspath('/foobar')}")
     assert (Path("build-install") / Path("foobar")).exists()
 
 
@@ -184,7 +188,7 @@ def test_parallel_builds(example_pkg):
     spin("build")
     spin("build", "-C", "parallel/build")
     p = spin("python", "--", "-c", "import example_pkg; print(example_pkg.__file__)")
-    example_pkg_path = stdout(p).split("\n")[-1]
+    example_pkg_path = unix_path(stdout(p).split("\n")[-1])
     p = spin(
         "python",
         "-C",
@@ -193,7 +197,7 @@ def test_parallel_builds(example_pkg):
         "-c",
         "import example_pkg; print(example_pkg.__file__)",
     )
-    example_pkg_parallel_path = stdout(p).split("\n")[-1]
+    example_pkg_parallel_path = unix_path(stdout(p).split("\n")[-1])
     assert "build-install" in example_pkg_path
     assert "parallel/build-install" in example_pkg_parallel_path
     assert "parallel/build-install" not in example_pkg_path
