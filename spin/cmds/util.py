@@ -127,7 +127,14 @@ def extend_command(
         Command to extend.
     doc : str
         Replacement docstring.
-        The wrapped function's docstring is also appended.
+        The decorated function's docstring is also appended.
+        This is done so that two modes of documenting are enabled:
+
+        1. Extend original command documentation.
+           Do this by providing a docstring on the decorated function.
+        2. Replace the original command's documentation.
+           Do this either by setting ``doc`` to a docstring, or by
+           setting ``doc=''`` and adding a docstring to the decorated function.
     remove_args : tuple of str
         List of arguments to remove from the parent command.
         These arguments can still be set explicitly by calling
