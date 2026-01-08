@@ -482,6 +482,16 @@ Which tests to run. Can be a module, function, class, or method:
     default="html",
     help=f"Format of the gcov report. Can be one of {', '.join(e.value for e in GcovReportFormat)}.",
 )
+@click.option(
+    "--lldb",
+    is_flag=True,
+    help="Run pytest via lldb.",
+)
+@click.option(
+    "--gdb",
+    is_flag=True,
+    help="Run pytest via gdb.",
+)
 @build_option
 @build_dir_option
 @click.pass_context
@@ -495,6 +505,8 @@ def test(
     coverage=False,
     gcov=None,
     gcov_format=None,
+    lldb=False,
+    gdb=False,
     build=None,
     build_dir=None,
 ):
@@ -630,6 +642,17 @@ def test(
         cmd = [sys.executable, "-P", "-m", "pytest"]
     else:
         cmd = ["pytest"]
+
+    if lldb:
+        cmd = [
+            "lldb",
+            "-O",
+            "settings set target.process.follow-fork-mode child",
+            "--",
+        ] + cmd
+
+    if gdb:
+        cmd = ["gdb", "-ex", "set detach-on-fork on", "--args"] + cmd
 
     install_dir = _get_install_dir(build_dir)
     if not os.path.exists(install_dir):
