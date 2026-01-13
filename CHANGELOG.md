@@ -1,3 +1,39 @@
+# spin 0.16
+
+We're happy to announce the release of spin 0.16!
+
+## Enhancements
+
+- Add wheel command to pyproject-build commands ([#305](https://github.com/scientific-python/spin/pull/305)).
+
+## Documentation
+
+- Make it clearer that parallel testing happens via pytest-xdist ([#303](https://github.com/scientific-python/spin/pull/303)).
+- Better explain how to document extended commands ([#310](https://github.com/scientific-python/spin/pull/310)).
+
+## Maintenance
+
+- Use annotated tags for releases ([#295](https://github.com/scientific-python/spin/pull/295)).
+- Correct release notes re: annotation ([#296](https://github.com/scientific-python/spin/pull/296)).
+- Add dependabot cooldown, run on 15th of each month ([#298](https://github.com/scientific-python/spin/pull/298)).
+- Update to Python 3.10 as minimum (3.9 is EOL) ([#304](https://github.com/scientific-python/spin/pull/304)).
+- Support for click 8.3 ([#309](https://github.com/scientific-python/spin/pull/309)).
+
+## Contributors
+
+4 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Klaus Zimmermann ([@zklaus](https://github.com/zklaus))
+- Nathan Goldbaum ([@ngoldbaum](https://github.com/ngoldbaum))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+3 reviewers added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- Klaus Zimmermann ([@zklaus](https://github.com/zklaus))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
 # spin 0.15
 
 We're happy to announce the release of spin 0.15!
