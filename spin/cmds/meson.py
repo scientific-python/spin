@@ -765,7 +765,10 @@ def ipython(ctx, *, ipython_args, build=None, build_dir=None, pre_import=""):
         print(f'💻 Launching IPython with PYTHONPATH="{p}"')
     if pre_import:
         ipython_args = (f"--TerminalIPythonApp.exec_lines={pre_import}",) + ipython_args
-    _run(["ipython", "--ignore-cwd"] + list(ipython_args), replace=True)
+    _run(
+        [sys.executable, "-P", "-m", "IPython", "--ignore-cwd"] + list(ipython_args),
+        replace=True,
+    )
 
 
 @click.command()
