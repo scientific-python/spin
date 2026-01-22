@@ -23,7 +23,6 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-  "click>=8,<=8.2; python_version == '3.10'",  # cannot deepcopy cmd params (specifically, Sentinel.UNSET) on 3.10
   "click>=8,!=8.3.0,<8.4",
   "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'",
