@@ -3,6 +3,7 @@ from __future__ import (
 )
 
 import copy
+import enum
 import os
 import shlex
 import shutil
@@ -158,6 +159,14 @@ def extend_command(
 
     """
     my_cmd = copy.copy(cmd)
+
+    # This patch is to work around an enum deepcopy bug in Python 3.10.
+    if not hasattr(enum.Enum, "__deepcopy__"):
+
+        def __deepcopy__(self, memo):
+            return self
+
+        enum.Enum.__deepcopy__ = __deepcopy__  # type: ignore[method-assign]
 
     # This is necessary to ensure that added options do not leak
     # to the original command
