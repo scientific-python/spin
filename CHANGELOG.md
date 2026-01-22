@@ -1,3 +1,15 @@
+# spin 0.17
+
+## Maintenance
+
+- Patch in enum deepcopy on Python 3.10 ([#312](https://github.com/scientific-python/spin/pull/312)).
+
+## Contributors
+
+1 authors added to this release (alphabetically):
+
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
 # spin 0.16
 
 We're happy to announce the release of spin 0.16!
