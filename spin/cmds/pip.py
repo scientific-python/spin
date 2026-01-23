@@ -51,4 +51,7 @@ def install(*, pip_args, editable, verbose, verbose_import):
     if verbose:
         pip_args = ["-v"] + pip_args
 
+    if "." in pip_args:
+        pip_args.remove(".")
+
     _run(pip_cmd + pip_args + ["."], sys_exit=False, replace=True)
