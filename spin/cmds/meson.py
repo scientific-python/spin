@@ -417,6 +417,7 @@ def build(
         _meson_cli()
         + [
             "install",
+            "--no-rebuild",
             "--only-changed",
             "-C",
             build_dir,
