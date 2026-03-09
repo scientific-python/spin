@@ -201,3 +201,18 @@ def test_parallel_builds(example_pkg):
     assert "build-install" in example_pkg_path
     assert "parallel/build-install" in example_pkg_parallel_path
     assert "parallel/build-install" not in example_pkg_path
+
+
+def test_coverage_default(example_pkg):
+    """Does `spin coverage` run and produce terminal coverage output?"""
+    p = spin("coverage", sys_exit=False)
+    assert p.returncode == 0
+    assert "coverage" in stdout(p).lower() or "TOTAL" in stdout(p)
+
+
+def test_coverage_with_cov_report(example_pkg):
+    """Does `spin coverage --cov-report` generate a file-based report?"""
+    p = spin("coverage", "--cov-report", "json:coverage.json", sys_exit=False)
+    assert p.returncode == 0
+    report = Path("build/coverage/coverage.json")
+    assert report.exists(), f"coverage report not generated at {report}"

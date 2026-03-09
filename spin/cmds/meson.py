@@ -681,6 +681,126 @@ def test(
     raise SystemExit(pytest_p.returncode)
 
 
+def _resolve_cov_report(report: str, base: Path) -> str:
+    """Resolve a --cov-report value, rebasing relative paths under `base`."""
+    if ":" not in report:
+        return report
+
+    fmt, dest = report.split(":", 1)
+    dest_path = Path(dest)
+    if not dest_path.is_absolute():
+        dest_path = base / dest_path
+    if dest_path.exists():
+        click.secho(f"Removing `{dest_path}`", fg="bright_yellow")
+        if dest_path.is_dir():
+            shutil.rmtree(dest_path)
+        else:
+            dest_path.unlink()
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    return f"{fmt}:{dest_path}"
+
+
+@click.command()
+@click.argument("pytest_args", nargs=-1)
+@click.option(
+    "-j",
+    "n_jobs",
+    metavar="N_JOBS",
+    default="1",
+    help="Number of parallel jobs for testing with pytest-xdist.",
+)
+@click.option(
+    "--tests",
+    "-t",
+    metavar="TESTS",
+    help="Which tests to run. Can be a module, function, class, or method.",
+)
+@click.option("--verbose", "-v", is_flag=True, default=False)
+@click.option(
+    "--cov-report",
+    "cov_report",
+    multiple=True,
+    metavar="TYPE",
+    help=(
+        "Coverage report type passed to pytest-cov (e.g. term, term-missing, "
+        "html:dir, xml:file.xml, json:file.json, lcov:file.lcov, annotate:dir). "
+        "Can be specified multiple times. Defaults to `term`."
+    ),
+)
+@build_option
+@build_dir_option
+@click.pass_context
+def coverage(
+    ctx,
+    *,
+    pytest_args,
+    n_jobs,
+    tests,
+    verbose,
+    cov_report,
+    build=None,
+    build_dir=None,
+):
+    """📊 Run tests with Python code coverage
+
+    Generate coverage reports using pytest-cov. By default, a terminal
+    report is printed. Supports any report type that pytest-cov supports.
+
+    For file-based reports, use the `type:path` format. Relative paths
+    are placed under `build/coverage/`.
+
+    To generate an HTML report:
+
+      spin coverage --cov-report html:htmlcov
+
+    Multiple report types can be specified:
+
+      spin coverage --cov-report term-missing --cov-report xml:coverage.xml
+
+    Run coverage on specific tests:
+
+     \b
+     spin coverage -t example_pkg.echo
+     spin coverage example_pkg/tests
+
+    Pass additional pytest arguments after `--`:
+
+      spin coverage -- --durations=10 -k "test_foo"
+
+    Run tests in parallel (requires pytest-xdist):
+
+      spin coverage -j auto
+    """
+    cfg = get_config()
+    package = cfg.get("tool.spin.package", None)
+    if package is None:
+        click.secho(
+            "Please specify `package = packagename` under `tool.spin` section of `pyproject.toml`",
+            fg="bright_red",
+        )
+        raise SystemExit(1)
+
+    # Build --cov-report flags, resolving relative paths under build/coverage/
+    coverage_base = Path.cwd() / "build" / "coverage"
+    cov_args = [f"--cov={package}"]
+    cov_reports = cov_report or ("term",)
+    for report in cov_reports:
+        cov_args.append(f"--cov-report={_resolve_cov_report(report, coverage_base)}")
+
+    # Prepend cov args so user's `--` args come after
+    pytest_args = tuple(cov_args) + (pytest_args or ())
+
+    ctx.invoke(
+        test,
+        pytest_args=pytest_args,
+        n_jobs=n_jobs,
+        tests=tests,
+        verbose=verbose,
+        build=build,
+        build_dir=build_dir,
+    )
+
+
 @click.command()
 @click.option(
     "--code", "-c", metavar="CODE", help="Python program passed in as a string"
