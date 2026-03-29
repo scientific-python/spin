@@ -1,3 +1,23 @@
+# spin 0.18
+
+## Enhancements
+
+- Avoid duplicate path specification in `pip install` ([#313](https://github.com/scientific-python/spin/pull/313)).
+- Launch IPython directly from package, instead of from path ([#307](https://github.com/scientific-python/spin/pull/307)).
+- Avoid triggering a rebuild on `meson install` ([#317](https://github.com/scientific-python/spin/pull/317)).
+
+## Contributors
+
+2 authors added to this release (alphabetically):
+
+- Ralf Gommers ([@rgommers](https://github.com/rgommers))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+2 reviewers added to this release (alphabetically):
+
+- Lucas Colley ([@lucascolley](https://github.com/lucascolley))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
 # spin 0.17
 
 ## Maintenance
