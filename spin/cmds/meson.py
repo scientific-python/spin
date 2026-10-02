@@ -385,6 +385,8 @@ def build(
     if not (os.path.exists(build_dir) and _meson_version_configured(build_dir)):
         p = _run(setup_cmd, sys_exit=False, output=not quiet)
         if p.returncode != 0:
+            if quiet:
+                print(p.stdout.decode("utf-8"), end="")
             raise RuntimeError(
                 "Meson configuration failed; please try `spin build` again with the `--clean` flag."
             )
