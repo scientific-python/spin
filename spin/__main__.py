@@ -1,6 +1,7 @@
 import collections
 import importlib
 import importlib.util
+import io
 import os
 import pathlib
 import sys
@@ -42,6 +43,10 @@ def _detect_config_dir(path: pathlib.Path) -> pathlib.Path | None:
 
 
 def main():
+    # Replace characters, such as emoji, that the stdout encoding cannot represent
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(errors="replace")
+
     # Alias `spin help` to `spin --help`
     if (len(sys.argv) == 2) and (sys.argv[1] == "help"):
         sys.argv[1] = "--help"
