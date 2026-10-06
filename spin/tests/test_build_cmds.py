@@ -201,3 +201,12 @@ def test_parallel_builds(example_pkg):
     assert "build-install" in example_pkg_path
     assert "parallel/build-install" in example_pkg_parallel_path
     assert "parallel/build-install" not in example_pkg_path
+
+
+@skip_py_lt_311  # python command does not run on older pythons
+def test_unencodable_output(example_pkg):
+    # `spin python` prints an emoji, which ASCII cannot encode
+    p = spin(
+        "python", "--", "-c", "pass", env={**os.environ, "PYTHONIOENCODING": "ascii"}
+    )
+    assert p.returncode == 0
