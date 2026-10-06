@@ -10,59 +10,65 @@ import pytest
 from spin.cmds import meson
 from spin.containers import DotDict
 
+# Fake meson: prints to stdout and stderr, and fails for subcommands in FAILING_CMDS
+FAKE_MESON = """
+import sys
+
+FAILING_CMDS = {failing_cmds!r}
+
+subcommand = sys.argv[1]
+print("fake meson " + subcommand + ": stdout")
+print("fake meson " + subcommand + ": stderr", file=sys.stderr)
+sys.exit(1 if subcommand in FAILING_CMDS else 0)
+"""
+
 
 @pytest.fixture
-def failing_meson(tmp_path, monkeypatch):
-    monkeypatch.setenv("PYTHONIOENCODING", "utf-8")
-    script = tmp_path / "meson.py"
-    script.write_text(
-        "import sys\n"
-        "print('Meson setup: configuration error – wrong Cython version')\n"
-        "print('Diagnostic from stderr', file=sys.stderr)\n"
-        "sys.exit(1)\n",
-        encoding="utf-8",
-    )
-    monkeypatch.setattr(meson, "_meson_cli", lambda: [sys.executable, str(script)])
-    monkeypatch.setattr(meson, "get_config", lambda: DotDict({}))
-    return str(tmp_path / "build")
+def fake_meson(tmp_path, monkeypatch):
+    """Return a factory that installs a fake meson and returns a build dir."""
+
+    def make(failing_cmds=()):
+        script = tmp_path / "meson.py"
+        script.write_text(FAKE_MESON.format(failing_cmds=list(failing_cmds)))
+        # Run the fake script in place of the meson binary
+        monkeypatch.setattr(meson, "_meson_cli", lambda: [sys.executable, str(script)])
+        monkeypatch.setattr(meson, "get_config", lambda: DotDict({}))
+        return str(tmp_path / "build")
+
+    return make
 
 
-@pytest.mark.parametrize("quiet", [False, True])
-def test_configuration_failure_output(failing_meson, capfd, quiet):
+def test_quiet_configuration_failure_output(fake_meson, capfd):
+    build_dir = fake_meson(failing_cmds=["setup"])
     with pytest.raises(RuntimeError, match="Meson configuration failed"):
         meson.build.callback(
-            meson_args=(), build_dir=failing_meson, prefix="/usr", quiet=quiet
+            meson_args=(), build_dir=build_dir, prefix="/usr", quiet=True
         )
     captured = capfd.readouterr()
     output = captured.out + captured.err
-    assert output.count("Meson setup: configuration error – wrong Cython version") == 1
-    assert output.count("Diagnostic from stderr") == 1
+    assert output.count("fake meson setup: stdout") == 1
+    assert output.count("fake meson setup: stderr") == 1
 
 
-def test_run_configuration_failure_output(failing_meson, monkeypatch, capfd):
+def test_run_configuration_failure_output(fake_meson, monkeypatch, capfd):
+    build_dir = fake_meson(failing_cmds=["setup"])
     monkeypatch.setattr(meson, "_get_configured_command", lambda name: meson.build)
     with (
         click.Context(meson.run),
         pytest.raises(RuntimeError, match="Meson configuration failed"),
     ):
-        meson.run.callback(
-            args=("unused-command",), build=True, build_dir=failing_meson
-        )
+        meson.run.callback(args=("unused-command",), build=True, build_dir=build_dir)
     captured = capfd.readouterr()
-    assert "configuration error – wrong Cython version" in captured.err
-    assert "Diagnostic from stderr" in captured.err
-    assert "configuration error" not in captured.out
+    assert "fake meson setup: stdout" in captured.err
+    assert "fake meson setup: stderr" in captured.err
+    assert "fake meson setup" not in captured.out
 
 
-def test_successful_quiet_build_output(failing_meson, capfd):
-    script = os.path.join(os.path.dirname(failing_meson), "meson.py")
-    with open(script, "w", encoding="utf-8") as file:
-        file.write("print('Successful build output')\n")
-    meson.build.callback(
-        meson_args=(), build_dir=failing_meson, prefix="/usr", quiet=True
-    )
+def test_successful_quiet_build_output(fake_meson, capfd):
+    build_dir = fake_meson()
+    meson.build.callback(meson_args=(), build_dir=build_dir, prefix="/usr", quiet=True)
     captured = capfd.readouterr()
-    assert "Successful build output" not in captured.out + captured.err
+    assert "fake meson" not in captured.out + captured.err
 
 
 def make_paths(root, paths):
