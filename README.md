@@ -110,6 +110,7 @@ Available as `spin.cmds.meson.*`.
 
 ```
 build      🔧 Build package with Meson/ninja
+coverage   📊 Run tests with Python code coverage
 ipython    💻 Launch IPython shell with PYTHONPATH set
 python     🐍 Launch Python shell with PYTHONPATH set
 shell      💻 Launch shell with PYTHONPATH set
