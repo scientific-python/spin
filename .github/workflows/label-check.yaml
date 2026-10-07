@@ -9,6 +9,8 @@ on:
       - unlabeled
       - synchronize
 
+permissions: {}
+
 env:
   LABELS: ${{ join( github.event.pull_request.labels.*.name, ' ' ) }}
 
