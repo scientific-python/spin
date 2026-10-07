@@ -27,7 +27,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-  "click>=8,!=8.3.0,<8.4",
+  "click>=8,!=8.3.0,<8.5",
   "tomli; python_version < '3.11'",
   "colorama; platform_system == 'Windows'",
   "importlib_metadata >= 7"
@@ -38,7 +38,7 @@ dynamic = ['version']
 spin = "spin.__main__:main"
 
 [project.optional-dependencies]
-lint = ["pre-commit == 4.3.0"]
+lint = ["pre-commit == 4.6.0"]
 dev = ["changelist == 0.5"]
 
 [project.urls]
