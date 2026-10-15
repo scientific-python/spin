@@ -3,7 +3,7 @@ name: Milestone
 on:
   push:
     branches:
-      - 'main'
+      - "main"
 
 permissions: {}
 
