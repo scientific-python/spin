@@ -1,3 +1,35 @@
+# spin 0.19
+
+## Enhancements
+
+- fix: display quiet Meson configuration errors ([#325](https://github.com/scientific-python/spin/pull/325)).
+
+## Bug Fixes
+
+- Replace unencodable characters in stdout ([#326](https://github.com/scientific-python/spin/pull/326)).
+
+## Maintenance
+
+- Support Python 3.15 ([#327](https://github.com/scientific-python/spin/pull/327)).
+- Allow click 8.4 and 8.5 ([#331](https://github.com/scientific-python/spin/pull/331)).
+- Bump the actions group with 2 updates ([#330](https://github.com/scientific-python/spin/pull/330)).
+- Bump actions; upgrade milestone attacher ([#329](https://github.com/scientific-python/spin/pull/329)).
+- Improve licence metadata (PEP 639) ([#322](https://github.com/scientific-python/spin/pull/322)).
+- Specify a build-system (setuptools) ([#323](https://github.com/scientific-python/spin/pull/323)).
+
+## Contributors
+
+4 authors added to this release (alphabetically):
+
+- Jarrod Millman ([@jarrodmillman](https://github.com/jarrodmillman))
+- mika ([@mikamikasuki](https://github.com/mikamikasuki))
+- Mike Taves ([@mwtoews](https://github.com/mwtoews))
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
+1 reviewers added to this release (alphabetically):
+
+- Stefan van der Walt ([@stefanv](https://github.com/stefanv))
+
 # spin 0.18
 
 ## Enhancements
