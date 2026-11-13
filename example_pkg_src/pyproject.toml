@@ -16,5 +16,6 @@ package = 'example_pkg'
 [tool.spin.commands]
 "Build" = [
   "spin.cmds.meson.build",
-  "spin.cmds.meson.test"
+  "spin.cmds.meson.test",
+  "spin.cmds.meta.introspect"
 ]

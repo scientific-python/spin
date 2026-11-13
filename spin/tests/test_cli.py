@@ -15,3 +15,8 @@ def test_arg_override(example_pkg):
 
     p = spin("example", "-t", 6)
     assert "--test is: 6" in stdout(p)
+
+
+def test_introspect_without_kwargs(example_pkg_src_layout):
+    p = spin("introspect", "build")
+    assert "The `build` command is defined as `spin.cmds.meson.build`." in stdout(p)
