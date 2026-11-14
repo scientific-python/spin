@@ -18,7 +18,7 @@ def _highlight(src):
 def introspect(*, cmd):
     """🔍 Print a command's location and source code."""
     cmds_by_section = get_commands()
-    overrides = get_config().get("tool.spin.kwargs")
+    overrides = get_config().get("tool.spin.kwargs", {})
 
     cmds = {}
     for section in cmds_by_section:
